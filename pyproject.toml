@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "abating-hte-sectors"
+version = "0.1.0"
+description = "Software used for techno-economic analysis of hard-to-electrify sectors"
+authors = ["clarabachorz <clara.bachorz@pik-potsdam.de>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+numpy = "^1.26.4"
+pandas = "^2.2.1"
+pathlib = "^1.0.1"
+matplotlib = "^3.8.3"
+seaborn = "^0.13.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

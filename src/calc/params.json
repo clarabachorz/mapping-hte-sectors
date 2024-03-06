@@ -1,0 +1,453 @@
+{
+    "techs": [
+        {
+            "key": "elec",
+            "LCO": 40,
+            "co2em": 0,
+            "elecdemand": 1,
+            "desc": "electricity"
+        },
+        {
+            "key": "elecoffgrid",
+            "LCO": 30,
+            "co2em": 0,
+            "elecoffgriddemand": 1,
+            "desc": "electricity off grid"
+        },
+        {
+            "key": "heat",
+            "co2em": 0,
+            "elecdemand": 0.75,
+            "desc": "low temperature heat"
+        },
+        {
+            "key": "co2ccu",
+            "LCO": 0,
+            "co2em": 0.5,
+            "elecdemand": 0,
+            "desc": "co2 from fossil source"
+        },
+        {
+            "key": "co2ts",
+            "LCO": 10,
+            "co2em": 0,
+            "elecdemand": 0,
+            "desc": "co2 transport and storage"
+        },
+        {
+            "key": "co2tax",
+            "LCO": 0,
+            "co2em": 0,
+            "elecdemand": 0,
+            "desc": "co2 tax"
+        },
+        {
+            "key": "fossilJ",
+            "LCO": 51.94,
+            "co2em": 0.32,
+            "unit": "EUR/MWh",
+            "desc": "fossil jet fuel (kerosene)"
+        },
+        {
+            "key": "fossildiesel",
+            "LCO": 102.19,
+            "co2em": 0.2454,
+            "unit": "EUR/MWh",
+            "desc": "fossil diesel"
+        },
+        {
+            "key": "fossilhfo",
+            "LCO": 52.03,
+            "co2em": 0.2786,
+            "unit": "EUR/MWh",
+            "desc": "fossil HFO (low sufur content)"
+        },
+        {
+            "key": "fossilch3oh",
+            "LCO": 72.72,
+            "co2em": 0.29,
+            "unit": "EUR/MWh",
+            "desc": "fossil methanol"
+        },
+        {
+            "key": "fossilnaphta",
+            "LCO": 518,
+            "co2em": 3.29,
+            "unit": "EUR/t",
+            "desc": "fossil naphta"
+        },
+        {
+            "key": "fossilcoal",
+            "LCO": 8.91,
+            "co2em": 0.336,
+            "unit": "EUR/MWh",
+            "desc": "fossil bituminous coal"
+        },
+        {
+            "key": "fossilng",
+            "LCO": 20.38,
+            "co2em": 0.202,
+            "unit": "EUR/MWh",
+            "desc": "fossil natural gas"
+        },
+        {
+            "key": "fossilpci",
+            "LCO": 127.6,
+            "co2em": 3.13,
+            "unit": "EUR/t",
+            "desc": "fossil PCI"
+        },
+        {
+            "key": "fossilccoal",
+            "LCO": 148.2,
+            "co2em": 2.84,
+            "unit": "EUR/t",
+            "desc": "fossil coking coal"
+        },
+        {
+            "key": "h2",
+            "capex": 121,
+            "opex": 2,
+            "lifetime": 20,
+            "flh": 0.3,
+            "elecdemand ": 1.61,
+            "unit": "EUR/MWh",
+            "desc": "h2 using electrolysis"
+        },
+        {
+            "key": "lh2",
+            "othercosts": 37.5,
+            "elecdemand": 0.35,
+            "h2demand": 1,
+            "unit": "EUR/MWh",
+            "desc": "liquified h2"
+        },
+        {
+            "key": "co2",
+            "capex": 1800,
+            "opex": 4,
+            "lifetime": 20,
+            "flh": 0.8,
+            "elecdemand ": 0.25,
+            "heatdemand ": 1.75,
+            "unit": "EUR/tCO2",
+            "desc": "direct air capture"
+        },
+        {
+            "key": "nh3",
+            "capex": 148.4,
+            "opex": 4,
+            "lifetime": 25,
+            "elecdemand ": 0.089,
+            "h2demand ": 1.148,
+            "unit": "EUR/MWh",
+            "desc": "ammonia using an asu"
+        },
+        {
+            "key": "ch3oh",
+            "capex": 79.9,
+            "opex": 4,
+            "lifetime": 25,
+            "elecdemand ": 0.067,
+            "heatdemand ": 0.086,
+            "h2demand ": 1.23,
+            "co2demand ": 0.27,
+            "unit": "EUR/MWh",
+            "desc": "power-to-methanol using dac"
+        },
+        {
+            "key": "ch3ohccu",
+            "capex": 79.9,
+            "opex": 4,
+            "lifetime": 25,
+            "elecdemand ": 0.067,
+            "heatdemand ": 0.086,
+            "h2demand ": 1.23,
+            "co2ccudemand ": 0.27,
+            "unit": "EUR/MWh",
+            "desc": "power-to-methanol using point-source co2"
+        },
+        {
+            "key": "MtJ",
+            "capex": 114.16,
+            "opex": 4,
+            "lifetime": 25,
+            "elecdemand ": 0.016,
+            "h2demand ": 0.024,
+            "ch3ohdemand ": 1.048,
+            "unit": "EUR/MWh",
+            "desc": "power-to-jetfuel using dac"
+        },
+        {
+            "key": "MtJccu",
+            "capex": 114.16,
+            "opex": 4,
+            "lifetime": 25,
+            "elecdemand ": 0.016,
+            "h2demand ": 0.024,
+            "ch3ohccudemand ": 1.048,
+            "unit": "EUR/MWh",
+            "desc": "power-to-jetfuel using point source co2"
+        },
+        {
+            "key": "fossil_plane",
+            "othercosts": 3.28e-2,
+            "fossilJdemand": 2.47e-4,
+            "unit": "EUR/PAX/km",
+            "desc": "fossil \n kerosene"
+        },
+        {
+            "key": "comp_plane",
+            "othercosts": 3.28e-2,
+            "fossilJdemand": 2.47e-4,
+            "compensation": true,
+            "unit": "EUR/PAX/km",
+            "desc": "DACCS \n compensation"
+        },
+        {
+            "key": "efuel_plane",
+            "othercosts": 3.28e-2,
+            "MtJdemand": 2.47e-4,
+            "unit": "EUR/PAX/km",
+            "desc": "e-kerosene \n(DAC)"
+        },
+        {
+            "key": "ccu_plane",
+            "othercosts": 3.28e-2,
+            "MtJccudemand": 2.47e-4,
+            "unit": "EUR/PAX/km",
+            "desc": "e-kerosene \n(PSco2)"
+        },
+        {
+            "key": "h2_plane",
+            "othercosts": 3.54e-2,
+            "lh2demand": 2.63e-4,
+            "unit": "EUR/PAX/km",
+            "desc": "LH2"
+        },
+        {
+            "key": "fossil_ship",
+            "capex": 88.5,
+            "opex": 2.5,
+            "lifetime": 30,
+            "wacc": 0.07,
+            "fossilhfodemand": 2.22222,
+            "unit": "EUR/MWh",
+            "desc": "fossil \ndiesel"
+        },
+        {
+            "key": "comp_ship",
+            "capex": 88.5,
+            "opex": 2.5,
+            "lifetime": 30,
+            "wacc": 0.07,
+            "fossilhfodemand": 2.22222,
+            "compensation": true,
+            "unit": "EUR/MWh",
+            "desc": "DACCS \ncompensation"
+        },
+        {
+            "key": "efuel_ship",
+            "capex": 119.3,
+            "opex": 2.5,
+            "lifetime": 30,
+            "wacc": 0.09,
+            "ch3ohdemand": 2.22222,
+            "unit": "EUR/MWh",
+            "desc": "e-methanol \n(DAC)"
+        },
+        {
+            "key": "ccu_ship",
+            "capex": 119.3,
+            "opex": 2.5,
+            "lifetime": 30,
+            "wacc": 0.09,
+            "ch3ohccudemand": 2.22222,
+            "unit": "EUR/MWh",
+            "desc": "e-methanol \n(PSco2)"
+        },
+        {
+            "key": "h2_ship",
+            "capex": 223.2,
+            "opex": 4.5,
+            "lifetime": 27.5,
+            "wacc": 0.12,
+            "h2demand": 0.67, 
+            "nh3demand": 1.56,
+            "unit": "EUR/MWh",
+            "desc": "e-ammonia \n(green H2)"
+        },
+        {
+            "key": "fossil_steel",
+            "capex":889.7,
+            "wacc":0.1,
+            "lifetime":25,
+            "othercosts": 279.1,
+            "elecdemand": 0.4,
+            "fossilccoaldemand":0.524,
+            "fossilpcidemand":0.151,
+            "fossilngdemand":0.24,
+            "unit": "EUR/t",
+            "desc": "BF-BOF"
+        },
+        {
+            "key": "comp_steel",
+            "capex":889.7,
+            "wacc":0.1,
+            "lifetime":25,
+            "othercosts": 279.1,
+            "elecdemand": 0.4,
+            "fossilccoaldemand":0.524,
+            "fossilpcidemand":0.151,
+            "fossilngdemand":0.24,
+            "compensation": true,
+            "unit": "EUR/t",
+            "desc": "DACCS \ncompensation"
+        },
+        {
+            "key": "ccs_steel",
+            "capex":1146.8,
+            "wacc":0.1,
+            "lifetime":25,
+            "othercosts": 293.5,
+            "elecdemand": 0.62,
+            "fossilccoaldemand":0.524,
+            "fossilpcidemand":0.151,
+            "fossilngdemand":1.53,
+            "co2capt": 1.53,
+            "unit": "EUR/t",
+            "desc": "BF-BOF + CCS"
+        },
+        {
+            "key": "ccu_steel",
+            "capex":1146.8,
+            "wacc":0.1,
+            "lifetime":25,
+            "othercosts": 293.5,
+            "elecdemand": 0.62,
+            "fossilccoaldemand":0.524,
+            "fossilpcidemand":0.151,
+            "fossilngdemand":1.53,
+            "co2ccusupply": 1.53,
+            "unit": "EUR/t",
+            "desc": "BF-BOF + CCU"
+        },
+        {
+            "key": "h2_steel",
+            "capex": 745.2,
+            "lifetime": 18,
+            "wacc": 0.1,
+            "flh": 0.9,
+            "othercosts": 337,
+            "elecdemand": 0.69,
+            "h2demand": 1.62,
+            "fossilngdemand":0.57,
+            "unit": "EUR/t",
+            "desc": "DRI-EAF with \ngreen H2"
+        },
+        {
+            "key": "fossil_chem",
+            "capex": 514.2,
+            "lifetime": 25,
+            "wacc": 0.08,
+            "opex":4.5,
+            "elecdemand":0.277,
+            "fossilnaphtademand": 1.56,
+            "recycledco2": 0.314,
+            "unit": "EUR/t",
+            "desc": "fossil olefins"
+        },
+        {
+            "key": "comp_chem",
+            "capex": 514.2,
+            "lifetime": 25,
+            "wacc": 0.08,
+            "opex":4.5,
+            "elecdemand":0.277,
+            "fossilnaphtademand": 1.56,
+            "recycledco2": 0.314,
+            "compensation": true,
+            "unit": "EUR/t",
+            "desc": "DACCS \ncompensation"
+        },
+        {
+            "key": "efuel_chem",
+            "capex": 662.5,
+            "lifetime":20,
+            "wacc":0.08,
+            "othercosts":125.7,
+            "elecdemand":0.72,
+            "ch3ohdemand": 16.41,
+            "recycledco2": 0.314,
+            "unit": "EUR/t",
+            "desc": "MTO \nusing DAC"
+        },
+        {
+            "key": "ccu_chem",
+            "capex": 662.5,
+            "lifetime":20,
+            "wacc":0.08,
+            "othercosts":125.7,
+            "elecdemand":0.72,
+            "ch3ohccudemand": 16.41,
+            "recycledco2": 0.314,
+            "unit": "EUR/t",
+            "desc": "MTO \nusing PSco2"
+        },
+        {
+            "key": "fossil_cement",
+            "capex": 210.47,
+            "flh": 0.9,
+            "lifetime":25,
+            "wacc":0.08,
+            "othercosts": 27.0,
+            "elecdemand": 0.131,
+            "fossilcoaldemand": 0.9,
+            "co2em": 0.563,
+            "unit": "EUR/t",
+            "desc": "fossil cement"
+        },
+        {
+            "key": "comp_cement",
+            "capex": 210.47,
+            "flh": 0.9,
+            "lifetime":25,
+            "wacc":0.08,
+            "othercosts": 27.0,
+            "elecdemand": 0.131,
+            "fossilcoaldemand": 0.9,
+            "co2em": 0.563,
+            "compensation": true,
+            "unit": "EUR/t",
+            "desc": "DACCS \ncompensation"
+        },
+        {
+            "key": "ccs_cement",
+            "capex": 437.69,
+            "flh": 0.9,
+            "lifetime":25,
+            "wacc":0.08,
+            "othercosts": 41.4,
+            "elecdemand": 0.174,
+            "fossilcoaldemand": 1.51,
+            "co2em": 0.548,
+            "co2capt": 0.997,
+            "unit": "EUR/t",
+            "desc": "CCS"
+        },
+        {
+            "key": "ccu_cement",
+            "capex": 437.69,
+            "flh": 0.9,
+            "lifetime":25,
+            "wacc":0.08,
+            "othercosts": 41.4,
+            "elecdemand": 0.174,
+            "fossilcoaldemand": 1.51,
+            "co2em": 0.548,
+            "co2ccusupply":0.997, 
+            "unit": "EUR/t",
+            "desc": "CCU"
+        }
+    ]
+}
