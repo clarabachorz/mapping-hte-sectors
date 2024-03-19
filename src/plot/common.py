@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib import colors
 from matplotlib.colors import to_rgba
 from matplotlib.ticker import FormatStrFormatter
 import matplotlib.gridspec as gridspec
@@ -491,7 +492,7 @@ def plot_barplotfscp(dfs, dfs_breakdown, sector = "steel", type = "h2",sensitivi
     #             arrowprops=dict(arrowstyle='-',facecolor='black', linestyle = "--"),
     #             annotation_clip=False)
 
-    axes[0].annotate('DRI-EAF with green H2, for different H2 costs',xy=(8.25,-120),xytext=(8.25,-120), color = "black", horizontalalignment = "center",
+    axes[0].annotate('H2-DRI-EAF, for different H2 costs',xy=(8.25,-120),xytext=(8.25,-120), color = "black", horizontalalignment = "center",
                 annotation_clip=False)
 
     #other plot settings
@@ -556,7 +557,7 @@ def plot_barplotfscp(dfs, dfs_breakdown, sector = "steel", type = "h2",sensitivi
     axes[1].set_ylim(0, 255)
     axes[1].set_xlim(0, 255)
     # axes[1].legend([(s1,l1), (s2,l2)],["DRI-EAF replacing BF-BOF steel","BF-BOF-CCS replacing BF-BOF steel"], loc = "lower right")
-    axes[1].legend([(s1,l1), (s2,l2), (l3)],["DRI-EAF replacing BF-BOF steel","BF-BOF-CCS replacing BF-BOF steel", "H2 cost at which BF-BOF-CCS and DRI-EAF-H2\n have the same abatement cost"], loc = "lower right")
+    axes[1].legend([(s1,l1), (s2,l2), (l3)],["H2-DRI-EAF replacing BF-BOF steel","BF-BOF-CCS replacing BF-BOF steel", "H2 cost at which BF-BOF-CCS and H2-DRI-EAF\n have the same abatement cost"], loc = "lower right")
 
     fig.tight_layout()
     plt.show()
@@ -692,6 +693,228 @@ def plot_barplotfuels(dfs, dfs_breakdown, sector = "steel", type = "h2",sensitiv
     # axes[1].set_ylim(0, 200)
     # axes[1].set_xlim(0, 250)
     # axes[1].legend([(s1,l1), (s2,l2)],["DRI-EAF replacing BF-BOF steel","BF-BOF-CCS replacing BF-BOF steel"], loc = "lower right")
+
+    fig.tight_layout()
+    plt.show()
+
+def calculate_em_abated(row, fossil_em, df):
+    if row['type'] == 'comp':
+        try:
+            return df.loc[df['type'] == 'ccs', 'em'].values[0]
+        except IndexError:
+            return df.loc[df['type'] == 'h2', 'em'].values[0]
+    elif row['type'] == 'ccs' or row['type'] == 'ccsretrofit' or row['type'] == 'h2':
+        return fossil_em - row['em']
+    
+def hex_to_rgba(hex_color, alpha):
+    rgb = colors.hex2color(hex_color)  # convert hex to rgb
+    return (*rgb, alpha)  # convert rgb to rgba
+
+def plot_steel_macc(dfs, dfs_retrofit, dfs_comp, dfs_comp_retrofit, sector = "steel", type = "h2",sensitivity = "h2_LCO"):
+    dfs = add_colors_units_rename(dfs)
+    dfs_retrofit = add_colors_units_rename(dfs_retrofit)
+    dfs_comp = add_colors_units_rename(dfs_comp)
+    dfs_comp_retrofit = add_colors_units_rename(dfs_comp_retrofit)
+    
+    #filter df to get relevant LCOs
+    sub_df_LCO = dfs[(dfs["sector"]==sector) & ((dfs["type"]==type) | (dfs["type"]=="comp") | (dfs["type"]=="ccs") )]
+
+    
+    retrofit_rows = dfs_retrofit[(dfs_retrofit["sector"]==sector) &  (dfs_retrofit["type"]=="ccs") ]
+    retrofit_rows["type"] = "ccsretrofit"
+    retrofit_rows["color_type"] = "#46bfeb"
+    retrofit_rows = retrofit_rows.drop([ 'ccs_steel_capex', 'fossil_steel_capex'], axis = 1)
+
+    sub_df_LCO = pd.concat([sub_df_LCO, retrofit_rows], ignore_index=True)
+
+    #filter df to get relevant FSCP with comp, for the big line plot
+    sub_df_FSCP = dfs_comp[(dfs_comp["sector"]==sector) & (dfs_comp["type"]==type) ]
+    sub_df_FSCP2 = dfs_comp[(dfs_comp["sector"]==sector) & (dfs_comp["type"]=="ccs") ]
+    sub_df_FSCP3 = dfs_comp_retrofit[(dfs_comp_retrofit["sector"]==sector) & (dfs_comp_retrofit["type"]=="ccs") ]
+
+    sub_df_FSCP_nocomp = dfs[(dfs["sector"]==sector) & (dfs["type"]==type) ]
+    sub_df_FSCP2_nocomp = dfs[(dfs["sector"]==sector) & (dfs["type"]=="ccs") ]
+    sub_df_FSCP3_nocomp = dfs_retrofit[(dfs_retrofit["sector"]==sector) & (dfs_retrofit["type"]=="ccs") ]
+
+
+    fscp_color = np.unique(sub_df_FSCP["color_type"])[0]
+    fscp_color2 = np.unique(sub_df_FSCP2["color_type"])[0]
+    fscp_color3 = "#46bfeb"
+
+    
+    unit = np.unique(sub_df_LCO["unit"])[0]
+    fossil_em = dfs[(dfs["sector"]==sector) &  (dfs["type"]=="fossil")]["em"].unique()[0]
+    
+    #following line is a bit hacky, will make code break if comparing options with the same cost (eg DRI when choosing DAC Co2 sensitivity)
+    sub_df_LCO.drop_duplicates( "cost", inplace=True)
+    sub_df_LCO.reset_index(inplace=True, drop = True)
+    sub_df_LCO.drop(["elec"], axis = 1, inplace = True)
+    sub_df_LCO = sub_df_LCO.round(2)
+    
+    #merge to make final df
+    sub_df_LCO_merge = sub_df_LCO
+
+    # sub_df_LCO_merge.loc[(sub_df_LCO["type"] != "comp") & (sub_df_LCO["type"] != "ccs"), "code"] = sub_df_LCO["code"] + ",\nH2 cost =\n" +sub_df_LCO["h2_LCO"].astype(str) + " EUR/MWh"
+    sub_df_LCO_merge.loc[(sub_df_LCO["type"] != "comp") & (sub_df_LCO["type"] != "ccs") & (sub_df_LCO["type"] != "ccsretrofit"), "annot"] = "H2 cost: "+sub_df_LCO["h2_LCO"].astype(str) + " EUR/MWh"
+
+    #sort so the comp pathway is first
+    # sub_df_LCO.sort_values(by = ["em", sensitivity], ascending = [False, True], inplace=True)
+    sub_df_LCO_merge.loc[sub_df_LCO["type"]=="comp", "code"] = "DACCS compensation of\nresidual emissions" 
+    sub_df_LCO_merge.sort_values(by = ["em", sensitivity], ascending = [False, True], inplace=True)
+
+    fig, axes = plt.subplots(nrows = 2,ncols=2, figsize=(15,10))
+
+    # make specific filtered dfs for different combinations of mitigation options
+    sub_df_LCO_merge_CCS = sub_df_LCO_merge[(sub_df_LCO_merge["type"]=="ccs") |(sub_df_LCO_merge["type"]=="ccsretrofit") | (sub_df_LCO_merge["type"]=="comp") ]
+    
+    sub_df_LCO_merge_CCS['em_abated'] = sub_df_LCO_merge_CCS.apply(calculate_em_abated, args=(fossil_em, sub_df_LCO_merge_CCS), axis=1)
+    sub_df_LCO_merge_CCS["annot"] = ["New plant", "Retrofit", np.nan]
+
+    #first, plot colorerd layer
+    facecolors = sub_df_LCO_merge_CCS["color_type"].apply(lambda color: hex_to_rgba(color, 0.1))
+    edgecolors = sub_df_LCO_merge_CCS["color_type"].apply(lambda color: hex_to_rgba(color, 1))
+    bars = axes[0,0].bar([0,0,1], sub_df_LCO_merge_CCS["fscp"], color = facecolors, edgecolor = edgecolors, width = sub_df_LCO_merge_CCS["em_abated"])
+
+    # #other plot settings
+    # axes[0,0].set_xticks([0,0,1], sub_df_LCO_merge_CCS["code"])
+    
+    # Set the x-ticks to the right side of the bars
+    xticks = [bar.get_x() + bar.get_width() for bar in bars[1:]]
+    axes[0,0].set_xticks(xticks)
+
+    # Set the x-tick labels to the 'code' values
+    cumulative_em_abated = sub_df_LCO_merge_CCS["em_abated"].unique().cumsum().round(2)
+    cumulative_em_abated = (np.rint(np.array(cumulative_em_abated *100 / cumulative_em_abated.max()))).astype(int)
+    axes[0,0].set_xticklabels(cumulative_em_abated)
+
+    # Add 'code' values under the bars
+    for bar, code in zip(bars, sub_df_LCO_merge_CCS["code"]):
+        axes[0,0].text(bar.get_x()+0.01 , 5, code, ha='left', va='bottom', rotation = 90)
+
+    axes[0,0] = change_spines(axes[0,0])
+
+    for i, (fscp, annot) in enumerate(zip(sub_df_LCO_merge_CCS["fscp"], sub_df_LCO_merge_CCS["annot"])):
+        if pd.isna(annot):
+            continue
+        axes[0,0].text(0, fscp, annot, ha='center', va='bottom', color = "grey")
+
+    axes[0,0].set_title("Marginal abatement cost curve for BF-BOF-CCS and DACCS combination, \nfor a retrofit and a new plant case.", fontweight="bold",loc = "left")
+    axes[0,0].set_ylabel(f"Fuel-switching CO2 price\n(EUR/tCO2)")
+    axes[0,0].set_xlabel(f"% emissions mitigation compared to BF-BOF")
+    
+    sub_df_LCO_merge_h2 = sub_df_LCO_merge[(sub_df_LCO_merge["type"]=="h2") | (sub_df_LCO_merge["type"]=="comp") ]
+    sub_df_LCO_merge_h2['em_abated'] = sub_df_LCO_merge_h2.apply(calculate_em_abated, args=(fossil_em, sub_df_LCO_merge_h2), axis=1)
+    
+    #first, plot colorerd layer
+    facecolors = sub_df_LCO_merge_h2["color_type"].apply(lambda color: hex_to_rgba(color, 0.1))
+    edgecolors = sub_df_LCO_merge_h2["color_type"].apply(lambda color: hex_to_rgba(color, 1))
+
+    bars = axes[0,1].bar([0,0,0,0,1], sub_df_LCO_merge_h2["fscp"], color=facecolors, edgecolor=edgecolors, width=sub_df_LCO_merge_h2["em_abated"])
+    
+    #axes[0,1].bar([0,0,0,0,1], sub_df_LCO_merge_h2["fscp"], color = sub_df_LCO_merge_h2["color_type"],   alpha = 0.2,edgecolor = sub_df_LCO_merge_h2["color_type"], width = sub_df_LCO_merge_h2["em_abated"])
+    ##other plot settings
+    #axes[0,1].set_xticks([0,1], sub_df_LCO_merge_h2["code"].unique())
+    
+    # Set the x-ticks to the right side of the bars
+    xticks = [bar.get_x() + bar.get_width() for bar in bars[3:]]
+    axes[0,1].set_xticks(xticks)
+
+    # Set the x-tick labels to the 'code' values
+    cumulative_em_abated = sub_df_LCO_merge_h2["em_abated"].unique().cumsum().round(2)
+    cumulative_em_abated = (np.rint(np.array(cumulative_em_abated *100 / cumulative_em_abated.max()))).astype(int)
+    axes[0,1].set_xticklabels(cumulative_em_abated)
+
+    # Add 'code' values under the bars
+    for i, (bar, code) in enumerate(zip(bars[3:], sub_df_LCO_merge_h2["code"][3:])):
+        if i == 1:
+            axes[0,1].text(bar.get_x()+0.01, 5, code, ha='left', va='bottom', rotation = 90)
+        else:
+            axes[0,1].text(bar.get_x()+0.01 , 5, code, ha='left', va='bottom', rotation = 90)
+    # bar.get_x() + bar.get_width() / 2
+            
+    axes[0,1] = change_spines(axes[0,1])
+
+    for i, (fscp, annot) in enumerate(zip(sub_df_LCO_merge_h2["fscp"], sub_df_LCO_merge_h2["annot"])):
+        if pd.isna(annot):
+            continue
+        axes[0,1].text(0, fscp, annot, ha='center', va='bottom', color = "grey")
+
+    axes[0,1].set_title("Marginal abatement cost curve for H2-DRI-EAF and DACCS combination,\nwith different H2 cost assumptions", fontweight="bold",loc = "left")
+    axes[0,1].set_ylabel(f"Fuel-switching CO2 price\n(EUR/tCO2)")
+    axes[0,1].set_xlabel(f"% emissions mitigation compared to BF-BOF")
+
+    #now, FSCP figure
+
+    #delete the other axes, that are replaced by FSCP
+    fig.delaxes(axes[1, 0])
+    fig.delaxes(axes[1, 1])
+    #now, FSCP figure
+    FSCP = plt.subplot(2,1,2)
+    #calc best fit linear
+    
+    #find line of best fit
+    a, b = np.polyfit(sub_df_FSCP["h2_LCO"], sub_df_FSCP["fscp"], 1)
+    a2, b2 = np.polyfit(sub_df_FSCP2["h2_LCO"], sub_df_FSCP2["fscp"], 1)
+    a3, b3 = np.polyfit(sub_df_FSCP3["h2_LCO"], sub_df_FSCP3["fscp"], 1)
+    intersection = (b2-b)/(a-a2)
+    a4, b4 = np.polyfit(sub_df_FSCP_nocomp["h2_LCO"], sub_df_FSCP_nocomp["fscp"], 1)
+    a5, b5 = np.polyfit(sub_df_FSCP2_nocomp["h2_LCO"], sub_df_FSCP2_nocomp["fscp"], 1)
+    a6, b6 = np.polyfit(sub_df_FSCP3_nocomp["h2_LCO"], sub_df_FSCP3_nocomp["fscp"], 1)
+
+
+    #s1 = FSCP.scatter(sub_df_FSCP["h2_LCO"], sub_df_FSCP["fscp"], c=sub_df_FSCP["color_type"], edgecolor = "grey", zorder =2)
+    l1, = FSCP.plot(np.linspace(0,250), a*np.linspace(0,250) + b, c = fscp_color, alpha = 1, zorder = 1)
+
+    #s2 = FSCP.scatter(sub_df_FSCP2["h2_LCO"], sub_df_FSCP2["fscp"], c=sub_df_FSCP2["color_type"], edgecolor = "grey", zorder = 1)
+    l2, = FSCP.plot(np.linspace(0,250), a2*np.linspace(0,250) + b2, c = fscp_color2, alpha = 1, zorder = 0)
+
+    #s3 = FSCP.scatter(sub_df_FSCP3["h2_LCO"], sub_df_FSCP3["fscp"], c=fscp_color3, edgecolor = "grey", zorder = 1)
+    l3, = FSCP.plot(np.linspace(0,250), a3*np.linspace(0,250) + b3, c = fscp_color3, alpha = 1, zorder = 0)
+
+    l4, = FSCP.plot(np.linspace(0,250), a4*np.linspace(0,250) + b4, c = fscp_color, alpha = 1, zorder = 1, linestyle='--')
+    l5, = FSCP.plot(np.linspace(0,250), a5*np.linspace(0,250) + b5, c = fscp_color2, alpha = 1, zorder = 0, linestyle='--')
+    l6, = FSCP.plot(np.linspace(0,250), a6*np.linspace(0,250) + b6, c = fscp_color3, alpha = 1, zorder = 0, linestyle='--')
+
+
+    # ## extra vline on bottom pannel at intersection- not sure if needed
+    # FSCP.vlines(intersection, 0,250,ls="--", color = "darkgrey", lw = 1)
+    # #dummy line for legend
+    # ldashed = Line2D([0], [0], color='darkgrey', linewidth=1, linestyle='--')
+    # # Get current xticks and xticklabels
+    # xticks = list(FSCP.get_xticks())
+    # xticklabels = list(FSCP.get_xticklabels())
+
+    # # Add intersection to xticks and its label to xticklabels
+    # xticks.append(intersection)
+    # xticklabels.append(f'{intersection:.0f}')
+
+    # # Set new xticks and xticklabels
+    # FSCP.set_xticks(xticks)
+    # FSCP.set_xticklabels(xticklabels)
+
+    # # Change color of last tick label to grey
+    # for label in FSCP.get_xticklabels():
+    #     if f'{intersection:.0f}' == label.get_text(): 
+    #         label.set_color('darkgrey')
+
+
+    FSCP = change_spines(FSCP)
+    
+    FSCP.set_title("FSCP dependency on assumed H2 cost", fontweight="bold", loc ="left")
+    FSCP.set_ylabel(f"Fuel-switching CO2 price \n(EUR/tCO2)")
+    FSCP.set_xlabel(f"Hydrogen cost (EUR/MWh)")
+    FSCP.set_ylim(0, 255)
+    FSCP.set_xlim(0, 255)
+    # FSCP.legend([(s1,l1), (s2,l2)],["DRI-EAF replacing BF-BOF steel","BF-BOF-CCS replacing BF-BOF steel"], loc = "lower right")
+    FSCP.legend([(l1), (l2), (l3), (l4), (l5), (l6)],
+                ["H2-DRI-EAF + DACCS (full mitigation)",
+                 "BF-BOF-CCS + DACCS (full mitigation, new plant)",
+                 "BF-BOF-CCS + DACCS (full mitigation, retrofit)",
+                 "H2-DRI-EAF (incomplete mitigation)",
+                 "BF-BOF-CCS (incomplete mitigation, new plant)",
+                 "BF-BOF-CCS (incomplete mitigation, retrofit)"],
+                loc = "lower right",
+                ncol = 2)
 
     fig.tight_layout()
     plt.show()

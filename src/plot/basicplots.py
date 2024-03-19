@@ -1,7 +1,12 @@
 import pandas as pd
 from src.plot import common
 from src.calc import calc_costs
+from tools import process_tech_df
 
+# Define constants, default assumptions for these parameters
+H2_COST = 250
+CO2_COST = 1200
+CO2_TRANSPORT_STORAGE = 15
 
 def load_IEA_data(file_paths):
     dataframes = []
@@ -39,7 +44,7 @@ def get_LCOcontributions(df, LCO_comps):
     return merged_df
 
 def get_LCOs(
-    h2_cost=250, co2_cost=1200, co2_transport_storage=15, calc_LCO_comps=False
+    h2_cost=H2_COST, co2_cost=CO2_COST, co2_transport_storage=CO2_TRANSPORT_STORAGE, calc_LCO_comps=False, compensate = False, **kwargs,
 ):
     # run the technoeconomic calculation
     if not calc_LCO_comps:
@@ -49,6 +54,8 @@ def get_LCOs(
             co2_LCO=co2_cost,
             co2ts_LCO=co2_transport_storage,
             co2tax_othercosts=0,
+            compensate_residual_ems=compensate,
+            **kwargs,
         )
     else:
         df_data, LCO_comps = calc_costs.calc_all_LCO_wbreakdown(
@@ -57,6 +64,8 @@ def get_LCOs(
             co2_LCO=co2_cost,
             co2ts_LCO=co2_transport_storage,
             co2tax_othercosts=0,
+            compensate_residual_ems=compensate,
+            **kwargs,
         )
 
     # split tech name into type (ccs, ccu, ..) and actual sector
@@ -82,7 +91,7 @@ def plot_basicfigs():
     # Code starts here
         
     # calculate the df with default co2 and h2 LCOs
-    df_macc, LCO_comps_default = get_LCOs(calc_LCO_comps=True) #h2_cost=250, co2_cost=1200, co2_transport_storage=15
+    df_macc, LCO_comps_default = get_LCOs(calc_LCO_comps=True) 
 
     #then, calculate the LCO breakdown for the LCO_comps_default df
     # the function isolates the total contributions of h2 and co2 to each row of the df
@@ -95,15 +104,29 @@ def plot_basicfigs():
         df_macc_wLCObreakdown,
     )
 
-    #parameters for the bar plots
-    h2_costs = [2 * 30, 4 * 30, 6 * 30, 8 * 30] #in EUR/MWh
+    # h2 parameters for the bar plots
     h2_costs = [100, 150, 200, 250] #in EUR/MWh
+    h2_costs_steel = [50, 100, 150, 200, 250] #in EUR/MWh
+
+    # co2 parameters for the bar plots
     co2_costs = [300, 300, 300, 300] #in EUR/tonne CO2
     co2_costs_fuels = [200, 400, 600, 800] #in EUR/tonne CO2
+    co2_costs_steel = [350, 350, 350, 350]
+
     co2_transport_storage_costs = 15 #in EUR/tonne CO2
 
     LCOs_df = [get_LCOs(h2_cost=h2, co2_cost=co2, co2_transport_storage=co2_transport_storage_costs,calc_LCO_comps=True) for h2, co2 in zip(h2_costs, co2_costs)]
     LCOs_fuels_df = [get_LCOs(h2_cost=h2, co2_cost=co2, co2_transport_storage=co2_transport_storage_costs, calc_LCO_comps=True) for h2, co2 in zip(h2_costs, co2_costs_fuels)]
+
+    #additional set of LCOs for steel FSCP figure
+    LCOs_df_base = [get_LCOs(h2_cost=h2, co2_cost=co2, co2_transport_storage=co2_transport_storage_costs, fossil_steel_capex = 0, comp_steel_capex = 0) for h2, co2 in zip(h2_costs_steel, co2_costs_steel)]
+    #calculate comp LCOS
+    LCOs_df_comp = [get_LCOs(h2_cost=h2, co2_cost=co2, co2_transport_storage=co2_transport_storage_costs, compensate=True,fossil_steel_capex = 0, comp_steel_capex = 0) for h2, co2 in zip(h2_costs_steel, co2_costs_steel)]
+    #calculate retrofit args
+    new_kwargs = process_tech_df.retrofit_params(["ccs_steel"])
+    # calculate retrofit LCOs, AND comp+retrofit LCOs
+    LCOs_df_retrofit = [get_LCOs(h2_cost=h2, co2_cost=co2, co2_transport_storage=co2_transport_storage_costs, compensate=False, **new_kwargs) for h2, co2 in zip(h2_costs_steel, co2_costs_steel)]
+    LCOs_df_comp_retrofit = [get_LCOs(h2_cost=h2, co2_cost=co2, co2_transport_storage=co2_transport_storage_costs, compensate=True, **new_kwargs) for h2, co2 in zip(h2_costs_steel, co2_costs_steel)]
 
     common.plot_barplotfscp(
         pd.concat([LCO_df[0] for LCO_df in LCOs_df]),
@@ -116,5 +139,12 @@ def plot_basicfigs():
         pd.concat([calc_costs.breakdown_LCO_comps(LCO_fuel_df[1])[1] for LCO_fuel_df in LCOs_fuels_df]),
     )
 
+    common.plot_steel_macc(
+        pd.concat([LCO_df for LCO_df in LCOs_df_base]),
+        pd.concat([LCO_df for LCO_df in LCOs_df_retrofit]),
+        pd.concat([LCO_df for LCO_df in LCOs_df_comp]),
+        pd.concat([LCO_df for LCO_df in LCOs_df_comp_retrofit]),
+        sector="steel",
+    )
 
     # df_macc.to_csv("./analysis/fig1_test.csv")
