@@ -762,7 +762,13 @@ def plot_steel_macc(dfs, dfs_retrofit, dfs_comp, dfs_comp_retrofit, sector = "st
     sub_df_LCO_merge.loc[sub_df_LCO["type"]=="comp", "code"] = "DACCS compensation of\nresidual emissions" 
     sub_df_LCO_merge.sort_values(by = ["em", sensitivity], ascending = [False, True], inplace=True)
 
-    fig, axes = plt.subplots(nrows = 2,ncols=2, figsize=(15,10))
+    fig = plt.figure(figsize=(12,10), layout = "constrained")
+    axes = fig.subplot_mosaic(
+        """
+        AABB
+        CCC.
+        """
+    )
 
     # make specific filtered dfs for different combinations of mitigation options
     sub_df_LCO_merge_CCS = sub_df_LCO_merge[(sub_df_LCO_merge["type"]=="ccs") |(sub_df_LCO_merge["type"]=="ccsretrofit") | (sub_df_LCO_merge["type"]=="comp") ]
@@ -773,34 +779,34 @@ def plot_steel_macc(dfs, dfs_retrofit, dfs_comp, dfs_comp_retrofit, sector = "st
     #first, plot colorerd layer
     facecolors = sub_df_LCO_merge_CCS["color_type"].apply(lambda color: hex_to_rgba(color, 0.1))
     edgecolors = sub_df_LCO_merge_CCS["color_type"].apply(lambda color: hex_to_rgba(color, 1))
-    bars = axes[0,0].bar([0,0,1], sub_df_LCO_merge_CCS["fscp"], color = facecolors, edgecolor = edgecolors, width = sub_df_LCO_merge_CCS["em_abated"])
+    bars = axes["A"].bar([0,0,1], sub_df_LCO_merge_CCS["fscp"], color = facecolors, edgecolor = edgecolors, width = sub_df_LCO_merge_CCS["em_abated"])
 
     # #other plot settings
-    # axes[0,0].set_xticks([0,0,1], sub_df_LCO_merge_CCS["code"])
+    # axes["A"].set_xticks([0,0,1], sub_df_LCO_merge_CCS["code"])
     
     # Set the x-ticks to the right side of the bars
     xticks = [bar.get_x() + bar.get_width() for bar in bars[1:]]
-    axes[0,0].set_xticks(xticks)
+    axes["A"].set_xticks(xticks)
 
     # Set the x-tick labels to the 'code' values
     cumulative_em_abated = sub_df_LCO_merge_CCS["em_abated"].unique().cumsum().round(2)
     cumulative_em_abated = (np.rint(np.array(cumulative_em_abated *100 / cumulative_em_abated.max()))).astype(int)
-    axes[0,0].set_xticklabels(cumulative_em_abated)
+    axes["A"].set_xticklabels(cumulative_em_abated)
 
     # Add 'code' values under the bars
     for bar, code in zip(bars, sub_df_LCO_merge_CCS["code"]):
-        axes[0,0].text(bar.get_x()+0.01 , 5, code, ha='left', va='bottom', rotation = 90)
+        axes["A"].text(bar.get_x()+0.01 , 5, code, ha='left', va='bottom', rotation = 90)
 
-    axes[0,0] = change_spines(axes[0,0])
+    axes["A"] = change_spines(axes["A"])
 
     for i, (fscp, annot) in enumerate(zip(sub_df_LCO_merge_CCS["fscp"], sub_df_LCO_merge_CCS["annot"])):
         if pd.isna(annot):
             continue
-        axes[0,0].text(0, fscp, annot, ha='center', va='bottom', color = "grey")
+        axes["A"].text(0, fscp, annot, ha='center', va='bottom', color = "grey")
 
-    axes[0,0].set_title("Marginal abatement cost curve for BF-BOF-CCS and DACCS combination, \nfor a retrofit and a new plant case.", fontweight="bold",loc = "left")
-    axes[0,0].set_ylabel(f"Fuel-switching CO2 price\n(EUR/tCO2)")
-    axes[0,0].set_xlabel(f"% emissions mitigation compared to BF-BOF")
+    axes["A"].set_title("Marginal abatement cost curve for BF-BOF-CCS\nand DACCS combination, for a retrofit and a\nnew plant case.", fontweight="bold",loc = "left")
+    axes["A"].set_ylabel(f"Fuel-switching CO2 price\n(EUR/tCO2)")
+    axes["A"].set_xlabel(f"% emissions mitigation compared to BF-BOF (w/o CCS)")
     
     sub_df_LCO_merge_h2 = sub_df_LCO_merge[(sub_df_LCO_merge["type"]=="h2") | (sub_df_LCO_merge["type"]=="comp") ]
     sub_df_LCO_merge_h2['em_abated'] = sub_df_LCO_merge_h2.apply(calculate_em_abated, args=(fossil_em, sub_df_LCO_merge_h2), axis=1)
@@ -809,47 +815,42 @@ def plot_steel_macc(dfs, dfs_retrofit, dfs_comp, dfs_comp_retrofit, sector = "st
     facecolors = sub_df_LCO_merge_h2["color_type"].apply(lambda color: hex_to_rgba(color, 0.1))
     edgecolors = sub_df_LCO_merge_h2["color_type"].apply(lambda color: hex_to_rgba(color, 1))
 
-    bars = axes[0,1].bar([0,0,0,0,1], sub_df_LCO_merge_h2["fscp"], color=facecolors, edgecolor=edgecolors, width=sub_df_LCO_merge_h2["em_abated"])
+    bars = axes["B"].bar([0,0,0,0,1], sub_df_LCO_merge_h2["fscp"], color=facecolors, edgecolor=edgecolors, width=sub_df_LCO_merge_h2["em_abated"])
     
-    #axes[0,1].bar([0,0,0,0,1], sub_df_LCO_merge_h2["fscp"], color = sub_df_LCO_merge_h2["color_type"],   alpha = 0.2,edgecolor = sub_df_LCO_merge_h2["color_type"], width = sub_df_LCO_merge_h2["em_abated"])
+    #axes["B"].bar([0,0,0,0,1], sub_df_LCO_merge_h2["fscp"], color = sub_df_LCO_merge_h2["color_type"],   alpha = 0.2,edgecolor = sub_df_LCO_merge_h2["color_type"], width = sub_df_LCO_merge_h2["em_abated"])
     ##other plot settings
-    #axes[0,1].set_xticks([0,1], sub_df_LCO_merge_h2["code"].unique())
+    #axes["B"].set_xticks([0,1], sub_df_LCO_merge_h2["code"].unique())
     
     # Set the x-ticks to the right side of the bars
     xticks = [bar.get_x() + bar.get_width() for bar in bars[3:]]
-    axes[0,1].set_xticks(xticks)
+    axes["B"].set_xticks(xticks)
 
     # Set the x-tick labels to the 'code' values
     cumulative_em_abated = sub_df_LCO_merge_h2["em_abated"].unique().cumsum().round(2)
     cumulative_em_abated = (np.rint(np.array(cumulative_em_abated *100 / cumulative_em_abated.max()))).astype(int)
-    axes[0,1].set_xticklabels(cumulative_em_abated)
+    axes["B"].set_xticklabels(cumulative_em_abated)
 
     # Add 'code' values under the bars
     for i, (bar, code) in enumerate(zip(bars[3:], sub_df_LCO_merge_h2["code"][3:])):
         if i == 1:
-            axes[0,1].text(bar.get_x()+0.01, 5, code, ha='left', va='bottom', rotation = 90)
+            axes["B"].text(bar.get_x()+0.01, 5, code, ha='left', va='bottom', rotation = 90)
         else:
-            axes[0,1].text(bar.get_x()+0.01 , 5, code, ha='left', va='bottom', rotation = 90)
+            axes["B"].text(bar.get_x()+0.01 , 5, code, ha='left', va='bottom', rotation = 90)
     # bar.get_x() + bar.get_width() / 2
             
-    axes[0,1] = change_spines(axes[0,1])
+    axes["B"] = change_spines(axes["B"])
 
     for i, (fscp, annot) in enumerate(zip(sub_df_LCO_merge_h2["fscp"], sub_df_LCO_merge_h2["annot"])):
         if pd.isna(annot):
             continue
-        axes[0,1].text(0, fscp, annot, ha='center', va='bottom', color = "grey")
+        axes["B"].text(0, fscp, annot, ha='center', va='bottom', color = "grey")
 
-    axes[0,1].set_title("Marginal abatement cost curve for H2-DRI-EAF and DACCS combination,\nwith different H2 cost assumptions", fontweight="bold",loc = "left")
-    axes[0,1].set_ylabel(f"Fuel-switching CO2 price\n(EUR/tCO2)")
-    axes[0,1].set_xlabel(f"% emissions mitigation compared to BF-BOF")
+    axes["B"].set_title("Marginal abatement cost curve for H2-DRI-EAF\nand DACCS combination, with different H2\ncost assumptions", fontweight="bold",loc = "left")
+    axes["B"].set_ylabel(f"Fuel-switching CO2 price\n(EUR/tCO2)")
+    axes["B"].set_xlabel(f"% emissions mitigation compared to BF-BOF (w/o CCS)")
 
     #now, FSCP figure
-
-    #delete the other axes, that are replaced by FSCP
-    fig.delaxes(axes[1, 0])
-    fig.delaxes(axes[1, 1])
-    #now, FSCP figure
-    FSCP = plt.subplot(2,1,2)
+    FSCP = axes["C"]
     #calc best fit linear
     
     #find line of best fit
@@ -905,16 +906,23 @@ def plot_steel_macc(dfs, dfs_retrofit, dfs_comp, dfs_comp_retrofit, sector = "st
     FSCP.set_xlabel(f"Hydrogen cost (EUR/MWh)")
     FSCP.set_ylim(0, 255)
     FSCP.set_xlim(0, 255)
-    # FSCP.legend([(s1,l1), (s2,l2)],["DRI-EAF replacing BF-BOF steel","BF-BOF-CCS replacing BF-BOF steel"], loc = "lower right")
+    
+    # Get the current position of the subplot
+    box = FSCP.get_position()
+
+    # Adjust the position of the subplot
+    # The values are in fractions of the figure width and height
+    FSCP.set_position([box.x0, box.y0, box.width * 0.7, box.height])
     FSCP.legend([(l1), (l2), (l3), (l4), (l5), (l6)],
-                ["H2-DRI-EAF + DACCS (full mitigation)",
-                 "BF-BOF-CCS + DACCS (full mitigation, new plant)",
-                 "BF-BOF-CCS + DACCS (full mitigation, retrofit)",
-                 "H2-DRI-EAF (incomplete mitigation)",
-                 "BF-BOF-CCS (incomplete mitigation, new plant)",
-                 "BF-BOF-CCS (incomplete mitigation, retrofit)"],
-                loc = "lower right",
-                ncol = 2)
+                ["H2-DRI-EAF + DACCS \n(full mitigation)",
+                 "BF-BOF-CCS + DACCS \n(full mitigation, new plant)",
+                 "BF-BOF-CCS + DACCS \n(full mitigation, retrofit)",
+                 "H2-DRI-EAF \n(incomplete mitigation)",
+                 "BF-BOF-CCS \n(incomplete mitigation, new plant)",
+                 "BF-BOF-CCS \n(incomplete mitigation, retrofit)"],
+                bbox_to_anchor=(1, 0.05), loc="lower left", borderaxespad=0,
+                # bbox_to_anchor=(0.84, 0.05), loc="lower left", borderaxespad=0,
+                ncol = 1)
 
     fig.tight_layout()
     plt.show()
