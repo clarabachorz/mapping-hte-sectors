@@ -9,6 +9,21 @@ from pathlib import Path
 
 from src.plot import common
 
+
+SMALL_SIZE = 12
+MEDIUM_SIZE = 14
+BIGGER_SIZE = 17
+
+plt.rc('font', size=SMALL_SIZE)          # controls default text sizes
+plt.rc('axes', titlesize=SMALL_SIZE)     # fontsize of the axes title
+plt.rc('axes', labelsize=MEDIUM_SIZE)    # fontsize of the x and y labels
+plt.rc('xtick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+plt.rc('ytick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+plt.rc('legend', fontsize=MEDIUM_SIZE)    # legend fontsize
+plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
+
+
+
 def plot_heatmap(data, cmap, ax, cbar, vmin=0, vmax=1, rasterized=True):
     return sns.heatmap(data, cmap=cmap, cbar = cbar, vmin=vmin, vmax=vmax, ax=ax, rasterized=rasterized)
 
@@ -26,7 +41,7 @@ def add_rectangle(ax, xcoord, ycoord, w, h):
     )
 
 def add_annotation(ax, text, xcoord, ycoord):
-    ax.annotate(text, xy=(xcoord, ycoord), fontsize=8, ha='center', va='center_baseline', color="dimgrey")
+    ax.annotate(text, xy=(xcoord, ycoord), fontsize=SMALL_SIZE, ha='center', va='center_baseline', color="dimgrey")
 
 def return_custom_cmap(mapping_dict):
     color_dict = common.color_dict_tech
@@ -59,6 +74,8 @@ def make_multiple_cbars(ax, row, cmap_list, defaultcmap_ticks):
 
         colorbar.set_ticks(ticks)
         colorbar.set_ticklabels(ticklabels)
+        colorbar.ax.tick_params(labelsize=12) 
+
 
 def make_default_cbar(fig, defaultcmap, defaultcmap_ticks):
     #create additional space to the right of the figure
@@ -71,6 +88,7 @@ def make_default_cbar(fig, defaultcmap, defaultcmap_ticks):
 
     colorbar.set_ticks(ticks)
     colorbar.set_ticklabels(defaultcmap_ticks)
+    colorbar.ax.tick_params(labelsize=MEDIUM_SIZE)
 
 def plot_sectoral_hm(path_to_data, rowvar_name, row_vars, row_titles, x_var = "co2_LCO", y_var = "h2_LCO", cmap_list = None):
     """
@@ -94,7 +112,7 @@ def plot_sectoral_hm(path_to_data, rowvar_name, row_vars, row_titles, x_var = "c
     transparent_cmap = return_transparent_cmap()
 
     # define default ticks for the colorbar
-    defaultcmap_ticks = ['H2/NH3', 'E-fuel','DAC \ncompen-\nsation', 'CCU', 'CCS']
+    defaultcmap_ticks = ['H2/NH3', 'E-fuel','DACCS\ncompen-\nsation', 'CCU', 'CCS']
 
     #load data 
     df_fig = pd.read_csv(path_to_data) 
@@ -131,7 +149,7 @@ def plot_sectoral_hm(path_to_data, rowvar_name, row_vars, row_titles, x_var = "c
                 ax.annotate(f'{row_titles[row]}',
                             xy=(0, 0.5), xytext=(-ax.yaxis.labelpad - pad, 0),
                             xycoords=ax.yaxis.label, textcoords='offset points',
-                            size='large', ha='center', va='center', rotation = 90)
+                            ha='center', va='center', rotation = 90, fontsize = BIGGER_SIZE)
 
             #get the correct column variable
             col_var = col_vars[col]
@@ -169,7 +187,7 @@ def plot_sectoral_hm(path_to_data, rowvar_name, row_vars, row_titles, x_var = "c
             contour = ax.contour(np.arange(.5, contour_df.shape[1]), np.arange(.5, contour_df.shape[0]), contour_df, contour_values, colors='dimgrey', alpha=0.8, linewidths=0.8)
 
             #change contour label params
-            ax.clabel(contour, inline=True, fontsize=8)
+            ax.clabel(contour, inline=True, fontsize=10)
 
             #add the rectangles to show the 2022 and 2050 regions
             # our assumptions for 2050: CO2 cost between 100 and 700 EUR/tCO2, h2 cost between 60 and 160 EUR/MWh
@@ -189,8 +207,8 @@ def plot_sectoral_hm(path_to_data, rowvar_name, row_vars, row_titles, x_var = "c
             add_rectangle(ax, co2_2022_xcoord, h2_2022_ycoord, co2_2022_w+1, h2_2022_h+1)
 
             # Add annotations
-            add_annotation(ax, ">2050", co2_2050_xcoord + co2_2050_w/2, h2_2050_ycoord)
-            add_annotation(ax, "2022", co2_2022_xcoord+co2_2022_w/2, h2_2022_ycoord)
+            add_annotation(ax, ">2050", co2_2050_xcoord + co2_2050_w/2, h2_2050_ycoord-5)
+            add_annotation(ax, "2022", co2_2022_xcoord+co2_2022_w/2, h2_2022_ycoord-5)
 
             # change x and y parameter ticks manually
             ax.locator_params(axis='x', nbins=11)
@@ -233,7 +251,7 @@ def plot_sectoral_hm(path_to_data, rowvar_name, row_vars, row_titles, x_var = "c
                 ax2.set_yticklabels([])
             
             if row == 0 :
-                ax.set_title(rename_sectors[col_var])
+                ax.set_title(rename_sectors[col_var], fontsize = BIGGER_SIZE)
                 ax.set_xlabel("")
                 ax.set_xticklabels([])
             elif row == rows-1:
@@ -253,7 +271,7 @@ def plot_sectoral_hm(path_to_data, rowvar_name, row_vars, row_titles, x_var = "c
 
 def plot_mainfig():
     row_vars = ["normal","ccu", "comp"]
-    row_titles = ["Case 1: all options allowed\n\n\n", "Case 2: CCU source required\n\n\n", "Case 3: CCU source required +\nfull climate neutrality +\nno full DACCS allowed\n"]
+    row_titles = ["i) No conditions\n\n\n\n", "ii) Fossil CCU: CO2\nutilization requires\nCO2 source\n\n\n\n", "iii) Compatibility with climate\nneutrality (No full DACCS,\nbut DACCS compensation \nof residual emissions)\n\n\n\n"]
 
     dict_type_ID_noDACCS = {"h2": 0, "efuel": 0.33,  "ccu":0.66, "ccs":1}
     mycmap_noDACCS = return_custom_cmap(dict_type_ID_noDACCS)
@@ -269,7 +287,7 @@ def plot_mainfig():
 
 def plot_supfig():
     row_vars = [8,30,100,200]
-    row_titles = [f'CO2 transport and \nstorage cost:\n {num} EUR/tCO2' for num in row_vars]
+    row_titles = [f'CO2 transport and \nstorage cost:\n {num} EUR/tCO2\n\n' for num in row_vars]
 
     plot_sectoral_hm(#path_to_data='code_figS3/figS2_rawdata.csv',
                     path_to_data = str(Path(__file__).parent.parent / '../data/sup_rawdata.csv'),

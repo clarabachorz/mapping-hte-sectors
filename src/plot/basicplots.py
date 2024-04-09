@@ -4,8 +4,8 @@ from src.calc import calc_costs
 from tools import process_tech_df
 
 # Define constants, default assumptions for these parameters
-H2_COST = 250
-CO2_COST = 1200
+H2_COST = 70
+CO2_COST = 300
 CO2_TRANSPORT_STORAGE = 15
 
 def load_IEA_data(file_paths):

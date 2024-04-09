@@ -9,6 +9,8 @@ from  matplotlib.cm import ScalarMappable
 from pathlib import Path
 from src.plot import common
 
+matplotlib.rcParams.update(matplotlib.rcParamsDefault)
+
 def plot_heatmap(data, cmap, ax, cbar, vmin=0, vmax=1, rasterized=True):
     return sns.heatmap(data, cmap=cmap, cbar = cbar, vmin=vmin, vmax=vmax, ax=ax, rasterized=rasterized)
 
@@ -58,7 +60,7 @@ def plot_hm_figS3(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
     transparent_cmap = return_transparent_cmap()
 
     # define default ticks for the colorbar
-    defaultcmap_ticks = ['H2/NH3','DAC \ncompen-\nsation', 'CCU', 'CCS']
+    defaultcmap_ticks = ['H2/NH3','DACCS \ncompen-\nsation', 'CCU', 'CCS']
     #load data calculated by calc_data_figS3
     df_fig = pd.read_csv(path_to_data)
     #remove the first two columns, which are just old indice
@@ -73,7 +75,7 @@ def plot_hm_figS3(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
     row_vars = ["", "_comp"]
     sector_var = "steel"
 
-    scenario_name = ["Steel sector:\ngreenfield case", "Steel sector:\nbrownfield case"]
+    scenario_name = ["Steel sector:\ngreenfield case", "Steel sector:\nretrofit case"]
 
     rows = len(row_vars)
     cols = len(col_vars)

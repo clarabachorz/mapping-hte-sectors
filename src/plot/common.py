@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib import colors
 from matplotlib.colors import to_rgba
@@ -15,6 +16,8 @@ from matplotlib.lines import Line2D
 #     "text.usetex": True,
 #     "font.family": "Helvetica"
 # })
+
+matplotlib.rcParams.update(matplotlib.rcParamsDefault)
 
 #plot parameters, colors, text
 rename_sectors = {"cement": "Cement", "steel" : "Steel", "ship" : "Maritime", "plane" : "Aviation", "chem" : "Chemical feedstocks (CF)" }
@@ -379,7 +382,7 @@ def plot_large_panel(dfs):
     colbar = fig.colorbar(ScalarMappable( cmap=cmap), cax = cbar_ax)
 
     colbar.set_ticks([0.1, 0.3, 0.5, 0.7, 0.9])
-    colbar.set_ticklabels(['H2/NH3', 'E-fuel','DAC \ncompen-\nsation', 'CCU', 'CCS'])
+    colbar.set_ticklabels(['H2/NH3', 'E-fuel','DACCS\ncompen-\nsation', 'CCU', 'CCS'])
 
 
     h2_patch = Patch(facecolor='white', edgecolor='grey', label='Green H2', hatch='+++')
@@ -389,8 +392,7 @@ def plot_large_panel(dfs):
     ### PLOT FULL FIGURE ###
     h2_LCO = dfs["h2_LCO"].unique()[0]
     co2_LCO = dfs["co2_LCO"].unique()[0]
-    fig.suptitle(f"Parameters projection for 2050: $c_{{h2}} = {h2_LCO}$ EUR/MWh, $c_{{DAC}} = {co2_LCO:.0f}$ EUR/tCO2. \n Abatement options for:")
-
+    fig.suptitle(f"Abatement cost for the HTE sectors, based on optimistic parameter projection for 2050.\nCost of green H2: {h2_LCO} EUR/MWh, cost of CO2 from DAC: {co2_LCO:.0f} EUR/tCO2.")
     #fig.tight_layout()
     plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.55, hspace=0.2)
     plt.show()
@@ -600,7 +602,7 @@ def plot_barplotfuels(dfs, dfs_breakdown, sector = "steel", type = "h2",sensitiv
     # color_dict = {"cement":"#EABE7C", "steel":"#8c6570","ship":"#0471A6","plane":"#61E8E1", "chem":"#AFB3F7"}
     # color_dict_tech = {"fossil":"#31393C",
 
-    fig, axes = plt.subplots(nrows = 2,ncols=1, figsize=(11,10))
+    fig, axes = plt.subplots(nrows = 1,ncols=1, figsize=(11,10))
 
     x_pos = [2,4,6,8,10]
 
@@ -612,52 +614,52 @@ def plot_barplotfuels(dfs, dfs_breakdown, sector = "steel", type = "h2",sensitiv
                   "h2":"Green H2 (methanol-to-jetfuel)", "ch3oh_h2":"Green H2 (h2-to-methanol)", "ch3oh_co2":"DAC CO2 (h2-to-methanol)"}
 
     #first, plot colorerd layer
-    axes[0].bar(x_pos, sub_df_LCO_merge["cost"], color = sub_df_LCO_merge["color_type"],  edgecolor = "grey")
+    axes.bar(x_pos, sub_df_LCO_merge["cost"], color = sub_df_LCO_merge["color_type"],  edgecolor = "grey")
 
     #then, transparent stacked bars
     for i, comp in enumerate(selected_comps[1:]):
 
         column = sub_df_LCO_merge[comp].fillna(0)
 
-        axes[0].bar(x_pos, column, bottom = height, edgecolor = "dimgrey", color = color[i], alpha = alpha_list[i])
+        axes.bar(x_pos, column, bottom = height, edgecolor = "dimgrey", color = color[i], alpha = alpha_list[i])
 
         annot_height = height + column/2
         height += column
         
         #here, add any annotation needed
         if column[0] > 0:
-            axes[0].hlines(annot_height[0], 0.4, 0.55, colors = "darkgrey", linewidth = 1)
+            axes.hlines(annot_height[0], 0.4, 0.55, colors = "darkgrey", linewidth = 1)
             if comp != "elec":
-                axes[0].text(x=0.6,y= annot_height[0], s=labels[comp], verticalalignment='center', c= "grey")
+                axes.text(x=0.6,y= annot_height[0], s=labels[comp], verticalalignment='center', c= "grey")
             else:
-                axes[0].text(x=0.6, y= annot_height[0]-20, s=labels[comp], verticalalignment='center', c= "grey")
+                axes.text(x=0.6, y= annot_height[0]-20, s=labels[comp], verticalalignment='center', c= "grey")
 
         if column[4] > 0:
             
             if comp in ["capex","ch3oh_h2","ch3oh_co2"]:
-                axes[0].text(x=10.6,y= annot_height[4], s=labels[comp], verticalalignment='center', c= "grey")
-                axes[0].hlines(annot_height[4], 10.4, 10.55, colors = "darkgrey", linewidth = 1)
+                axes.text(x=10.6,y= annot_height[4], s=labels[comp], verticalalignment='center', c= "grey")
+                axes.hlines(annot_height[4], 10.4, 10.55, colors = "darkgrey", linewidth = 1)
             else:
-                axes[0].annotate(labels[comp],(10.4, annot_height[4]), xytext = (10.55, annot_height[4]+15*i),c= "grey",
+                axes.annotate(labels[comp],(10.4, annot_height[4]), xytext = (10.55, annot_height[4]+15*i),c= "grey",
                                       arrowprops=dict(color='darkgrey', width = 0.05, headwidth = 0))
-                # axes[0].text(x=11.1,y= annot_height[4]+15*i, s=labels[comp], verticalalignment='center', c= "grey")
+                # axes.text(x=11.1,y= annot_height[4]+15*i, s=labels[comp], verticalalignment='center', c= "grey")
         
     #add annotation to xaxis
 
-    # axes[0].annotate('', xy=(5.2, -100),xytext=(11.2,-100),       
+    # axes.annotate('', xy=(5.2, -100),xytext=(11.2,-100),       
     #             arrowprops=dict(arrowstyle='-',facecolor='black', linestyle = "--"),
     #             annotation_clip=False)
 
-    axes[0].annotate('E-jet fuel, for different H2 and CO2 costs',xy=(8.25,-120),xytext=(8.25,-120), color = "black", horizontalalignment = "center",
+    axes.annotate('E-jet fuel, for different H2 and CO2 costs',xy=(8.25,-120),xytext=(8.25,-120), color = "black", horizontalalignment = "center",
                 annotation_clip=False)
 
     #other plot settings
-    axes[0].set_xticks(x_pos, sub_df_LCO_merge["code"])
+    axes.set_xticks(x_pos, sub_df_LCO_merge["code"])
     
-    axes[0] = change_spines(axes[0])
+    axes = change_spines(axes)
     
-    axes[0].set_title("Levelized cost comparison based on different H2 cost assumptions", fontweight="bold",loc = "left")
-    axes[0].set_ylabel(f"Levelized cost \n(EUR{unit})")
+    axes.set_title("Levelized cost comparison based on different H2 cost assumptions", fontweight="bold",loc = "left")
+    axes.set_ylabel(f"Levelized cost \n(EUR{unit})")
 
 
 
