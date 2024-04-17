@@ -1,6 +1,6 @@
-# Research software for mapping the techno-economic landscape for the carbon abatement of hard-to-electrify sectors.
+# Research software for exploring techno-economic landscapes of abatement options for hard-to-electrify sectors.
 ## Overview
-This research software was used to obtain results for the article **Mapping the techno-economic landscape for the carbon abatement of hard-to-electrify sectors** (link and DOI TBC).
+This research software was used to obtain results for the article **Exploring techno-economic landscapes of abatement options for hard-to-electrify sectors** (link and DOI TBC).
 
 It performs a techno-economic analysis of different abatement options for the hard-to-electrify (HTE) sectors: steel, cement, chemical feedstocks, international aviation and international transport. The levelized cost of different products (LCOPs) and the fuel-switching CO2 price (FSCP) are then obtained, and plotted in different figures.
 
@@ -36,11 +36,11 @@ This script takes between 2 minutes and 20 minutes to run, dependent on the para
 
 ### Interactive webapp
 
-A webapp associated with this work can be found [here](https://github.com/clarabachorz/abating-hte-sectors-webapp), to interactively view the detail of the technoeconomic assumptions taken, and the different levelized cost components.
+A webapp associated with this work can be found [here](https://github.com/clarabachorz/mapping-hte-sectors-webapp), to interactively view the detail of the technoeconomic assumptions taken, and the different levelized cost components.
 
 ## How to cite this work
 
-Bachorz, Clara Z.; Verpoort, Philipp C.; Ueckerdt, Falko: Research software for mapping the techno-economic landscape for the carbon abatement of hard-to-electrify sectors.
+Bachorz, Clara; Verpoort, Philipp C.; Ueckerdt, Falko; Luderer, Gunnar: Research software for exploring techno-economic landscapes of abatement options for hard-to-electrify sectors.
 
 ## License
 The code contained in this repository is available for use under an [MIT license](https://opensource.org/license/mit).
