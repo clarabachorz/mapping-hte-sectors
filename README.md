@@ -10,7 +10,7 @@ All assumptions used for the calculations are contained in the src/calc folder, 
 
 ### Installing dependencies
 
-In order to execute this software, the corresponding python dependencies have to be installed. The use of poetry is here recommended, using:
+In order to execute this software, the corresponding python dependencies have to be installed. The use of poetry is recommended here, using:
 
 ```
 poetry install
