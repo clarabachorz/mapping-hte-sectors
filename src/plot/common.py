@@ -411,7 +411,6 @@ def plot_barplotfscp(dfs, dfs_breakdown, sector = "steel", type = "h2",sensitivi
     sub_df_FSCP2 = dfs[(dfs["sector"]==sector) & (dfs["type"]=="ccs") ]
 
 
-    
     unit = np.unique(sub_df_LCO["unit"])[0]
     fscp_color = np.unique(sub_df_FSCP["color_type"])[0]
     fscp_color2 = np.unique(sub_df_FSCP2["color_type"])[0]
@@ -468,18 +467,18 @@ def plot_barplotfscp(dfs, dfs_breakdown, sector = "steel", type = "h2",sensitivi
             else:
                 axes[0].text(x=0.6, y= annot_height[0]-20, s=labels[comp], verticalalignment='center', c= "grey")
 
-        if column[2] > 0:
+        if column[1] > 0:
             if comp != "elec":
                 if comp != "co2 transport and storage":
-                    axes[0].text(x=3.6,y= annot_height[2], s=labels[comp], verticalalignment='center', c= "grey")
-                    axes[0].hlines(annot_height[2], 3.4, 3.55, colors = "darkgrey", linewidth = 1)
+                    axes[0].text(x=3.6,y= annot_height[1], s=labels[comp], verticalalignment='center', c= "grey")
+                    axes[0].hlines(annot_height[1], 3.4, 3.55, colors = "darkgrey", linewidth = 1)
                 else:
-                    axes[0].annotate(labels[comp],(3.4, annot_height[2]), xytext = (3.6, annot_height[2]+20),c= "grey",
+                    axes[0].annotate(labels[comp],(3.4, annot_height[1]), xytext = (3.6, annot_height[1]+20),c= "grey",
                                      arrowprops=dict(color='darkgrey', width = 0.05, headwidth = 0))
                     #texts.append(axes[0].text(x=3.6,y= annot_height[2]+20, s=labels[comp]))
             else:
-                axes[0].text(x=3.6,y= annot_height[2]-20, s=labels[comp], verticalalignment='center', c= "grey")
-                axes[0].hlines(annot_height[2], 3.4, 3.55, colors = "darkgrey", linewidth = 1)
+                axes[0].text(x=3.6,y= annot_height[1]-20, s=labels[comp], verticalalignment='center', c= "grey")
+                axes[0].hlines(annot_height[1], 3.4, 3.55, colors = "darkgrey", linewidth = 1)
 
         if column[5] > 0:
             axes[0].hlines(annot_height[5], 10.9, 11.05, colors = "darkgrey", linewidth = 1)
