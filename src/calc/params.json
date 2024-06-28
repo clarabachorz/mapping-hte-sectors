@@ -135,7 +135,7 @@
         },
         {
             "key": "nh3",
-            "capex": 148.4,
+            "capex": 161.0,
             "opex": 4,
             "lifetime": 25,
             "elecdemand ": 0.089,
@@ -149,7 +149,6 @@
             "opex": 4,
             "lifetime": 25,
             "elecdemand ": 0.067,
-            "heatdemand ": 0.086,
             "h2demand ": 1.23,
             "co2demand ": 0.27,
             "unit": "EUR/MWh",
@@ -209,14 +208,14 @@
             "othercosts": 3.28e-2,
             "MtJdemand": 2.47e-4,
             "unit": "EUR/PAX/km",
-            "desc": "e-kerosene \n(DAC)"
+            "desc": "e-kerosene (DAC)"
         },
         {
             "key": "ccu_plane",
             "othercosts": 3.28e-2,
             "MtJccudemand": 2.47e-4,
             "unit": "EUR/PAX/km",
-            "desc": "e-kerosene \n(PSco2)"
+            "desc": "syn-kerosene \n(fossil CCU)"
         },
         {
             "key": "h2_plane",
@@ -233,7 +232,7 @@
             "wacc": 0.07,
             "fossilhfodemand": 2.22222,
             "unit": "EUR/MWh",
-            "desc": "fossil \ndiesel"
+            "desc": "fossil HFO"
         },
         {
             "key": "comp_ship",
@@ -254,7 +253,7 @@
             "wacc": 0.09,
             "ch3ohdemand": 2.22222,
             "unit": "EUR/MWh",
-            "desc": "e-methanol \n(DAC)"
+            "desc": "e-methanol (DAC)"
         },
         {
             "key": "ccu_ship",
@@ -264,7 +263,7 @@
             "wacc": 0.09,
             "ch3ohccudemand": 2.22222,
             "unit": "EUR/MWh",
-            "desc": "e-methanol \n(PSco2)"
+            "desc": "syn-methanol \n(Fossil CCU)"
         },
         {
             "key": "h2_ship",
@@ -380,7 +379,7 @@
             "ch3ohdemand": 16.41,
             "recycledco2": 0.314,
             "unit": "EUR/t",
-            "desc": "MTO \nusing DAC"
+            "desc": "MTO using DAC"
         },
         {
             "key": "ccu_chem",
@@ -392,7 +391,7 @@
             "ch3ohccudemand": 16.41,
             "recycledco2": 0.314,
             "unit": "EUR/t",
-            "desc": "MTO \nusing PSco2"
+            "desc": "MTO using\nfossil CCU"
         },
         {
             "key": "fossil_cement",

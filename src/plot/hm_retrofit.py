@@ -5,11 +5,25 @@ import seaborn as sns
 import matplotlib.colors
 import matplotlib.patches as patches
 from  matplotlib.cm import ScalarMappable
+import string
 
 from pathlib import Path
 from src.plot import common
 
-matplotlib.rcParams.update(matplotlib.rcParamsDefault)
+# matplotlib.rcParams.update(matplotlib.rcParamsDefault)
+
+SMALL_SIZE = 13
+MEDIUM_SIZE = 15
+BIGGER_SIZE = 17
+
+plt.rc('font', size=MEDIUM_SIZE)          # controls default text sizes
+plt.rc('axes', titlesize=SMALL_SIZE)     # fontsize of the axes title
+plt.rc('axes', labelsize=MEDIUM_SIZE)    # fontsize of the x and y labels
+plt.rc('xtick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+plt.rc('ytick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+plt.rc('legend', fontsize=MEDIUM_SIZE)    # legend fontsize
+plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
+
 
 def plot_heatmap(data, cmap, ax, cbar, vmin=0, vmax=1, rasterized=True):
     return sns.heatmap(data, cmap=cmap, cbar = cbar, vmin=vmin, vmax=vmax, ax=ax, rasterized=rasterized)
@@ -20,15 +34,16 @@ def add_rectangle(ax, xcoord, ycoord, w, h):
             (xcoord, ycoord),
             w,
             h,
-            edgecolor='darkgrey',
+            edgecolor='#3b3b3b',
             fill=True,
-            fc=(0.7, 0.7, 0.7, 0.15),
-            lw=1,
+            # fc=(0.7, 0.7, 0.7, 0.15),
+            fc=(0.7, 0.7, 0.7, 0.2),
+            lw=1.5,
         )
     )
 
 def add_annotation(ax, text, xcoord, ycoord):
-    ax.annotate(text, xy=(xcoord, ycoord), fontsize=8, ha='center', va='center_baseline', color="dimgrey")
+    ax.annotate(text, xy=(xcoord, ycoord), fontsize=SMALL_SIZE, ha='center', va='center_baseline', color="#3b3b3b")
 
 def return_custom_cmap(mapping_dict):
     color_dict = common.color_dict_tech
@@ -81,7 +96,7 @@ def plot_hm_figS3(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
     cols = len(col_vars)
 
     # define figure size
-    fig, axs = plt.subplots(nrows=len(row_vars), ncols=len(col_vars), figsize=(4*len(col_vars),4*len(row_vars)), constrained_layout=True)
+    fig, axs = plt.subplots(nrows=len(row_vars), ncols=len(col_vars), figsize=(5*len(col_vars),4*len(row_vars)), constrained_layout=True)
 
     for row in range(len(row_vars)):
         #select the appropriate row var
@@ -97,7 +112,9 @@ def plot_hm_figS3(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
                 ax.annotate(f'{row_titles[row]}',
                             xy=(0, 0.5), xytext=(-ax.yaxis.labelpad - pad, 0),
                             xycoords=ax.yaxis.label, textcoords='offset points',
-                            size='large', ha='center', va='center', rotation = 90)
+                            ha='center', va='center', rotation = 90, fontsize=BIGGER_SIZE)
+                # ax.text(-0.2, 1.05, string.ascii_lowercase[row], transform=ax.transAxes, 
+                #     size=BIGGER_SIZE, weight='bold')
 
             #get the correct column variable
             col_var = col_vars[col] + row_var
@@ -136,19 +153,19 @@ def plot_hm_figS3(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
             # add the additional transparent layer to show the fscp difference between the first and second minima
             heatmap_diff = plot_heatmap(sns_diff_df, transparent_cmap, ax, cbar = False, vmin=0, vmax=100)
             # and the contour line
-            contour_values = {"steel": [0, 50, 100, 150, 200,250], "cement": [0,50, 100, 150, 200, 250]}.get(col_var, [0, 400, 800, 1200, 1600])
-            contour = ax.contour(np.arange(.5, contour_df.shape[1]), np.arange(.5, contour_df.shape[0]), contour_df, contour_values, colors='dimgrey', alpha=0.8, linewidths=0.8)
+            contour_values = {"steel": [0, 50, 100, 150, 200,250], "cement": [0,50, 100, 150, 200, 250]}.get(col_var, [0, 50, 100, 150, 200, 250])
+            contour = ax.contour(np.arange(.5, contour_df.shape[1]), np.arange(.5, contour_df.shape[0]), contour_df, contour_values, colors='#3b3b3b', alpha=0.8, linewidths=0.8)
 
             #change contour label params
-            ax.clabel(contour, inline=True, fontsize=8)
+            ax.clabel(contour, inline=True, fontsize=SMALL_SIZE)
 
             #add the rectangles to show the 2022 and 2050 regions
-            # our assumptions for 2050: CO2 cost between 100 and 700 EUR/tCO2, h2 cost between 60 and 160 EUR/MWh
+            # our assumptions for 2050: CO2 cost between 200 and 800 EUR/tCO2, h2 cost between 60 and 180 EUR/MWh
             # our assumptions for 2022: CO2 cost between 900 and 1200 EUR/tCO2, h2 cost between 120 and 240 EUR/MWh
-            co2_2050_xcoord = (np.abs(sns_df.columns.to_numpy() - 100)).argmin()
+            co2_2050_xcoord = (np.abs(sns_df.columns.to_numpy() - 200)).argmin()
             h2_2050_ycoord = (np.abs(sns_df.index.to_numpy() - 60)).argmin()
-            co2_2050_w = (np.abs(sns_df.columns.to_numpy() - 700)).argmin() - co2_2050_xcoord
-            h2_2050_h = (np.abs(sns_df.index.to_numpy() - 160)).argmin() - h2_2050_ycoord
+            co2_2050_w = (np.abs(sns_df.columns.to_numpy() - 800)).argmin() - co2_2050_xcoord
+            h2_2050_h = (np.abs(sns_df.index.to_numpy() - 180)).argmin() - h2_2050_ycoord
 
             co2_2022_xcoord = (np.abs(sns_df.columns.to_numpy() - 900)).argmin()
             h2_2022_ycoord = (np.abs(sns_df.index.to_numpy() - 120)).argmin()
@@ -160,8 +177,8 @@ def plot_hm_figS3(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
             add_rectangle(ax, co2_2022_xcoord, h2_2022_ycoord, co2_2022_w+1, h2_2022_h+1)
 
             # Add annotations
-            add_annotation(ax, ">2050", co2_2050_xcoord + co2_2050_w/2, h2_2050_ycoord)
-            add_annotation(ax, "2022", co2_2022_xcoord+co2_2022_w/2, h2_2022_ycoord)
+            add_annotation(ax, ">2050", co2_2050_xcoord + co2_2050_w/2, h2_2050_ycoord-5)
+            add_annotation(ax, "2022", co2_2022_xcoord+co2_2022_w/2, h2_2022_ycoord-5)
 
             # change x and y parameter ticks manually
             ax.locator_params(axis='x', nbins=11)
@@ -187,15 +204,15 @@ def plot_hm_figS3(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
 
                 ax2.set_yticks(ax.get_yticks())
                 ax2_yticklabels = np.round(np.linspace(min(h2tck), max(h2tck), len(ax.get_yticks())),1)
-                ax2.set_yticklabels(ax2_yticklabels)
+                ax2.set_yticklabels(ax2_yticklabels, fontsize=SMALL_SIZE)
 
             
             # Additional aesthetics: labels, titles, etc.
             if col == 0:
-                ax.set_ylabel('Green H2 cost (EUR/MWh)')
+                ax.set_ylabel('Green H2 cost (EUR/MWh)', fontsize=SMALL_SIZE)
                 ax2.set_yticklabels([])
             elif col == cols-1:
-                ax2.set_ylabel("Green H2 cost (EUR/kg)\n")
+                ax2.set_ylabel("Green H2 cost (EUR/kg)\n", fontsize=SMALL_SIZE)
                 ax.set_ylabel("")
                 ax.set_yticklabels([])
             else:
@@ -204,16 +221,21 @@ def plot_hm_figS3(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
                 ax2.set_yticklabels([])
             
             if row == 0 :
-                ax.set_title(scenario_name[col])
+                ax.set_title(scenario_name[col], fontsize = BIGGER_SIZE)
+                ax.text(-0.2, 1.05, string.ascii_lowercase[row*2+col], transform=ax.transAxes, 
+                    size=BIGGER_SIZE, weight='bold')
                 ax.set_xlabel("")
                 ax.set_xticklabels([])
             elif row == rows-1:
-                ax.set_xlabel('CO2 from DAC cost (EUR/tCO2)')
+                ax.text(-0.2, 1.05, string.ascii_lowercase[row*2+col], transform=ax.transAxes, 
+                    size=BIGGER_SIZE, weight='bold')
+                ax.set_xlabel('CO2 from DAC cost\n(EUR/tCO2)', fontsize=SMALL_SIZE)
             else: 
                 ax.set_xlabel("")
                 ax.set_xticklabels([])
 
     fig.get_layout_engine().set(w_pad=4 / 72, h_pad=4 / 72, hspace=0, wspace=0, rect=[0, 0, .9, 1])
+    # fig.savefig('./././myimage.png', format='png', dpi=600, bbox_inches='tight')
 
 def plot_supretrofit():
     row_titles = ["Standard case", "Climate neutrality case"]

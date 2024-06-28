@@ -65,7 +65,7 @@ def calc_all_LCO(
         if type == "h2":
             type = "h2/nh3"
 
-        final_dict[i] = [np.nan, np.nan, np.nan, "no " + type, np.nan, np.nan]
+        final_dict[i] = [np.nan, np.nan, np.nan, "No " + type+" option", np.nan, np.nan]
     #function below takes roughly 1/2 or 1/3 of total task time
     df = to_df_fmt(final_dict)
     
@@ -135,7 +135,7 @@ def calc_all_LCO_wbreakdown(
         if type == "h2":
             type = "h2/nh3"
 
-        final_dict[i] = [np.nan, np.nan, np.nan, "no " + type, np.nan, np.nan]
+        final_dict[i] = [np.nan, np.nan, np.nan, "No " + type+" option", np.nan, np.nan]
     #function below takes roughly 1/2 or 1/3 of total task time
     df = to_df_fmt(final_dict)
     
