@@ -462,7 +462,7 @@ def plot_barplotfscp(dfs, dfs_breakdown, sector = "steel", type = "h2",sensitivi
     sub_df_LCO_breakdown = sub_df_LCO_breakdown.drop_duplicates("LCO").dropna(axis=1, how='all').reset_index(drop = True).apply(pd.to_numeric, errors='ignore').round(2)
     sub_df_LCO_breakdown.rename(columns = {"LCO": "cost"}, inplace = True)
     sub_df_LCO_breakdown.drop(["type", "sector", "tech"], axis =1, inplace = True)
-    sub_df_LCO_breakdown = sub_df_LCO_breakdown[[ "cost", "capex", "other costs", "elec","fossilng", "h2", "fossilccoal", "fossilpci", "co2 transport and storage"]]
+    sub_df_LCO_breakdown = sub_df_LCO_breakdown[[ "cost", "capex", "opex", "other costs","ironore","scrap", "elec","fossilng", "h2", "fossilccoal", "fossilpci", "co2 transport and storage"]]
     
     #merge to make final df
     sub_df_LCO_merge = sub_df_LCO.merge(sub_df_LCO_breakdown,how ="left",  on =[ "cost"],validate = "1:1")
@@ -492,15 +492,15 @@ def plot_barplotfscp(dfs, dfs_breakdown, sector = "steel", type = "h2",sensitivi
 
     x_pos = [0,3,6,7.5,9,10.5]
     height = 0
-    alpha_list = [0.75, 0.6, 0.45, 0.3, 0.2, 0.1, 0, 0.5]
-    color = ["white", "white", "white", "white", "white", "white","white", "darkgrey"]
-    labels = {"capex":"CAPEX", "other costs":"other OPEX\n(O&M, iron ore,\nscrap,\nferroalloys)", "elec":"Electricity","fossilng": "Natural gas", "h2":"Green H2", "fossilccoal":"Coking coal", "fossilpci":"PCI coal","co2 transport and storage": "CO2 transport\n& storage"}
+    alpha_list = [0.8, 0.7, 0.6, 0.5,0.4, 0.3, 0.2, 0.1, 0, 0.2, 0.5]
+    color = ["white", "white", "white", "white", "white", "white","white","white","white", "darkgrey","darkgrey"]
+    labels = {"capex":"CAPEX", "opex":"O&M", "other costs":"other OPEX", "ironore":"Iron ore", "scrap":"Scrap,\nferroalloys","elec":"Electricity","fossilng": "Natural gas", "h2":"Green H2", "fossilccoal":"Coking coal", "fossilpci":"PCI coal","co2 transport and storage": "CO2 transport\n& storage"}
 
     #first, plot colorerd layer
     axes[0].bar(x_pos, sub_df_LCO_merge["cost"], color = sub_df_LCO_merge["color_type"],  edgecolor = "grey")
 
     #then, transparent stacked bars
-    for i, comp in enumerate(["capex", "other costs", "elec", "fossilng", "h2", "fossilccoal", "fossilpci", "co2 transport and storage"]):
+    for i, comp in enumerate(["capex","opex", "other costs","ironore","scrap", "elec", "fossilng", "h2", "fossilccoal", "fossilpci", "co2 transport and storage"]):
 
         column = sub_df_LCO_merge[comp].fillna(0)
 
@@ -512,13 +512,13 @@ def plot_barplotfscp(dfs, dfs_breakdown, sector = "steel", type = "h2",sensitivi
         #here, add any annotation needed
         if column[0] > 0:
             axes[0].hlines(annot_height[0], 0.4, 0.55, colors = "darkgrey", linewidth = 1)
-            if comp != "elec":
+            if comp != "scrap":
                 axes[0].text(x=0.6,y= annot_height[0], s=labels[comp], verticalalignment='center', c= "grey")
             else:
-                axes[0].text(x=0.6, y= annot_height[0]-20, s=labels[comp], verticalalignment='center', c= "grey")
+                axes[0].text(x=0.6, y= annot_height[0]-25, s=labels[comp], verticalalignment='center', c= "grey")
 
         if column[1] > 0:
-            if comp != "elec":
+            if comp != "scrap":
                 if comp != "co2 transport and storage":
                     axes[0].text(x=3.6,y= annot_height[1], s=labels[comp], verticalalignment='center', c= "grey")
                     axes[0].hlines(annot_height[1], 3.4, 3.55, colors = "darkgrey", linewidth = 1)
@@ -532,10 +532,12 @@ def plot_barplotfscp(dfs, dfs_breakdown, sector = "steel", type = "h2",sensitivi
 
         if column[5] > 0:
             axes[0].hlines(annot_height[5], 10.9, 11.05, colors = "darkgrey", linewidth = 1)
-            if comp != "elec":
+            if comp != "scrap" and comp != "fossilng":
                 axes[0].text(x=11.1,y= annot_height[5], s=labels[comp], verticalalignment='center', c= "grey")
-            else:
+            elif comp == "scrap":
                 axes[0].text(x=11.1,y= annot_height[5]-20, s=labels[comp], verticalalignment='center', c= "grey")
+            else:
+                axes[0].text(x=11.1,y= annot_height[5]+20, s=labels[comp], verticalalignment='center', c= "grey")
         
     #add annotation to xaxis
 
@@ -649,7 +651,7 @@ def plot_barplotfuels(dfs, dfs_breakdown, sector = "steel", type = "h2",sensitiv
     sub_df_LCO_breakdown = sub_df_LCO_breakdown.drop_duplicates("LCO").dropna(axis=1, how='all').reset_index(drop = True).apply(pd.to_numeric, errors='ignore').round(2)
     sub_df_LCO_breakdown.rename(columns = {"LCO": "cost"}, inplace = True)
     sub_df_LCO_breakdown.drop(["tech"], axis =1, inplace = True)
-    selected_comps = [ "cost", "capex","ch3oh_capex", "opex", "ch3oh_opex","elec","ch3oh_elec","ch3oh_heat", "h2","ch3oh_h2","ch3oh_co2" ]
+    selected_comps = [ "cost", "capex","ch3oh_capex", "opex", "ch3oh_opex","elec","ch3oh_elec", "h2","ch3oh_h2","ch3oh_co2" ]
     sub_df_LCO_breakdown = sub_df_LCO_breakdown[selected_comps]
     
     #merge to make final df
