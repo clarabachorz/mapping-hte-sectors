@@ -334,7 +334,7 @@
             "fossilngdemand":1.06,
             "ironoredemand":1.58,
             "scrapdemand":0.17,
-            "co2capt": 1.53,
+            "co2capt": 1.24,
             "unit": "EUR/t",
             "desc": "BF-BOF + CCS"
         },
@@ -350,7 +350,7 @@
             "fossilngdemand":1.06,
             "ironoredemand":1.58,
             "scrapdemand":0.17,
-            "co2ccusupply": 1.53,
+            "co2ccusupply": 1.24,
             "unit": "EUR/t",
             "desc": "BF-BOF + CCU"
         },
