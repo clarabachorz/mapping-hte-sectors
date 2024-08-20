@@ -162,6 +162,10 @@ def get_df(scenario = None, DACCS = True, CCU_coupling = False, compensate = Fal
         "comp_chem",
         "comp_steel",
         "comp_cement",
+        "blueh2_steel",
+        "blueh2_chem",
+        "blueh2_ship",
+        "blueh2_plane"
     ]
 
     #define calc_LCO args

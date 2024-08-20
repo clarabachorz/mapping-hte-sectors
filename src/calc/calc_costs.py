@@ -30,6 +30,10 @@ def calc_all_LCO(
             "h2_chem",
             "efuel_cement",
             "h2_cement",
+            "blueh2_steel",
+            "blueh2_chem",
+            "blueh2_ship",
+            "blueh2_plane"
         ]
 
     user_params = kwargs
@@ -96,6 +100,10 @@ def calc_all_LCO_wbreakdown(
             "h2_chem",
             "efuel_cement",
             "h2_cement",
+            "blueh2_steel",
+            "blueh2_chem",
+            "blueh2_ship",
+            "blueh2_plane"
         ]
 
     user_params = kwargs
