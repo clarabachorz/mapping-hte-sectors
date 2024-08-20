@@ -10,9 +10,9 @@ import string
 
 from src.plot import common
 
-SMALL_SIZE = 13
-MEDIUM_SIZE = 15
-BIGGER_SIZE = 17
+SMALL_SIZE = 17
+MEDIUM_SIZE = 19
+BIGGER_SIZE = 21
 
 plt.rc('font', size=MEDIUM_SIZE)          # controls default text sizes
 plt.rc('axes', titlesize=SMALL_SIZE)     # fontsize of the axes title
@@ -67,7 +67,7 @@ def make_multiple_cbars(ax, row, cmap_list, defaultcmap_ticks):
     # so all options are complemented with DACCS
     colorbar = ax.collections[0].colorbar
     if colorbar is not None:
-        ticklabels = ['H2/NH3\n+ DACCS', 'E-fuel\n+ DACCS', 'CCU\n+ DACCS', 'CCS\n+ DACCS'] if cmap_list[row] is not None else defaultcmap_ticks
+        ticklabels = ['H2/NH3\n+ CDR', 'E-fuel\n+ CDR', 'CCU\n+ CDR', 'CCS\n+ CDR'] if cmap_list[row] is not None else defaultcmap_ticks
 
         # Calculate tick positions
         step = 1.0 / (len(ticklabels))
@@ -75,13 +75,15 @@ def make_multiple_cbars(ax, row, cmap_list, defaultcmap_ticks):
 
         colorbar.set_ticks(ticks)
         colorbar.set_ticklabels(ticklabels)
-        colorbar.ax.tick_params(labelsize=12) 
+        colorbar.ax.tick_params(labelsize=MEDIUM_SIZE) 
 
 
 def make_default_cbar(fig, defaultcmap, defaultcmap_ticks):
     #create additional space to the right of the figure
-    cbar_ax = fig.add_axes([0.92, 0.2, 0.02, 0.5])
-    colorbar = fig.colorbar(ScalarMappable( cmap=defaultcmap), cax = cbar_ax)
+    #cbar_ax = fig.add_axes([0.92, 0.2, 0.02, 0.5])
+    #or at the bottom of the figure (need to then add orientation = "horizontal")
+    cbar_ax = fig.add_axes([0.28, -0.03, 0.5, 0.02])
+    colorbar = fig.colorbar(ScalarMappable( cmap=defaultcmap), cax = cbar_ax, orientation = "horizontal")
 
     # Calculate tick positions
     step = 1.0 / (len(defaultcmap_ticks))
@@ -107,13 +109,15 @@ def plot_sectoral_hm(path_to_data, rowvar_name, row_vars, row_titles, x_var = "c
 
     #associate type of technology to discrete value
     dict_type_ID = {"h2": 0, "efuel": 0.25, "comp":0.5, "ccu":0.75, "ccs":1}
+    #dict_type_ID = {"h2": 0, "blueh2":0.2, "efuel": 0.4, "comp":0.6, "ccu":0.8, "ccs":1}
 
     #make custom heatmaps based on the technologies available
     defaultcmap = return_custom_cmap(dict_type_ID)
     transparent_cmap = return_transparent_cmap()
 
     # define default ticks for the colorbar
-    defaultcmap_ticks = ['H2/NH3', 'E-fuel','DACCS\ncompen-\nsation', 'CCU', 'CCS']
+    # defaultcmap_ticks = ['H2/NH3', 'Blue\nH2/NH3', 'E-fuel','DACCS\ncompen-\nsation', 'CCU', 'CCS']
+    defaultcmap_ticks = ['H2/NH3', 'E-fuel','Compen-\nsation', 'CCU', 'CCS']
 
     #load data 
     df_fig = pd.read_csv(path_to_data) 
@@ -135,7 +139,10 @@ def plot_sectoral_hm(path_to_data, rowvar_name, row_vars, row_titles, x_var = "c
 
     # define figure size
     #fig, axs = plt.subplots(nrows=len(row_vars), ncols=len(col_vars), figsize=(4*len(col_vars),4*len(row_vars)), constrained_layout=True)
-    fig, axs = plt.subplots(nrows=len(row_vars), ncols=len(col_vars), figsize=(16,12), constrained_layout=True)
+    ## for main text figure
+    fig, axs = plt.subplots(nrows=len(row_vars), ncols=len(col_vars), figsize=(20,17), constrained_layout=True)
+    # for supplementary figure
+    #fig, axs = plt.subplots(nrows=len(row_vars), ncols=len(col_vars), figsize=(20,25), constrained_layout=True)
     for row in range(len(row_vars)):
         #select the appropriate row var
         row_var = row_vars[row]
@@ -150,8 +157,8 @@ def plot_sectoral_hm(path_to_data, rowvar_name, row_vars, row_titles, x_var = "c
                 ax.annotate(f'{row_titles[row]}',
                             xy=(0, 0.5), xytext=(-ax.yaxis.labelpad - pad, 0),
                             xycoords=ax.yaxis.label, textcoords='offset points',
-                            ha='center', va='center', ma= "left", rotation = 90, fontsize = BIGGER_SIZE)
-                ax.text(-0.9, 0.95, string.ascii_lowercase[row], transform=ax.transAxes, 
+                            ha='center', va='center', ma= "center", rotation = 90, fontsize = BIGGER_SIZE)
+                ax.text(-0.3, 1, string.ascii_lowercase[row], transform=ax.transAxes, 
                     size=18, weight='bold')
 
             #get the correct column variable
@@ -193,10 +200,10 @@ def plot_sectoral_hm(path_to_data, rowvar_name, row_vars, row_titles, x_var = "c
             ax.clabel(contour, inline=True, fontsize=SMALL_SIZE)
 
             #add the rectangles to show the 2022 and 2050 regions
-            # our assumptions for 2050: CO2 cost between 200 and 800 EUR/tCO2, h2 cost between 60 and 180 EUR/MWh
+            # our assumptions for 2050: CO2 cost between 80 (used to be 200 for DAC) and 800 EUR/tCO2, h2 cost between 57 and 180 EUR/MWh
             # our assumptions for 2022: CO2 cost between 900 and 1200 EUR/tCO2, h2 cost between 120 and 240 EUR/MWh
-            co2_2050_xcoord = (np.abs(sns_df.columns.to_numpy() - 200)).argmin()
-            h2_2050_ycoord = (np.abs(sns_df.index.to_numpy() - 60)).argmin()
+            co2_2050_xcoord = (np.abs(sns_df.columns.to_numpy() - 80)).argmin()
+            h2_2050_ycoord = (np.abs(sns_df.index.to_numpy() - 57)).argmin()
             co2_2050_w = (np.abs(sns_df.columns.to_numpy() - 800)).argmin() - co2_2050_xcoord
             h2_2050_h = (np.abs(sns_df.index.to_numpy() - 180)).argmin() - h2_2050_ycoord
 
@@ -207,11 +214,11 @@ def plot_sectoral_hm(path_to_data, rowvar_name, row_vars, row_titles, x_var = "c
 
             # Draw the rectangle patches
             add_rectangle(ax, co2_2050_xcoord, h2_2050_ycoord, co2_2050_w, h2_2050_h)
-            add_rectangle(ax, co2_2022_xcoord, h2_2022_ycoord, co2_2022_w+1, h2_2022_h+1)
+            # add_rectangle(ax, co2_2022_xcoord, h2_2022_ycoord, co2_2022_w+1, h2_2022_h+1)
 
             # Add annotations
             add_annotation(ax, ">2050", co2_2050_xcoord + co2_2050_w/2 +5, h2_2050_ycoord-5)
-            add_annotation(ax, "2022", co2_2022_xcoord+co2_2022_w/2, h2_2022_ycoord-5)
+            # add_annotation(ax, "2022", co2_2022_xcoord+co2_2022_w/2, h2_2022_ycoord-5)
 
             # change x and y parameter ticks manually
             ax.locator_params(axis='x', nbins=11)
@@ -242,10 +249,10 @@ def plot_sectoral_hm(path_to_data, rowvar_name, row_vars, row_titles, x_var = "c
             
             # Additional aesthetics: labels, titles, etc.
             if col == 0:
-                ax.set_ylabel('Green H2 cost (EUR/MWh)', fontsize = SMALL_SIZE)
+                ax.set_ylabel('Low-emission H2 cost (EUR/MWh)', fontsize = SMALL_SIZE)
                 ax2.set_yticklabels([])
             elif col == cols-1:
-                ax2.set_ylabel("Green H2 cost (EUR/kg)\n", fontsize = SMALL_SIZE)
+                ax2.set_ylabel("Low-emission H2 cost (EUR/kg)\n", fontsize = SMALL_SIZE)
                 ax.set_ylabel("")
                 ax.set_yticklabels([])
             else:
@@ -258,14 +265,15 @@ def plot_sectoral_hm(path_to_data, rowvar_name, row_vars, row_titles, x_var = "c
                 ax.set_xlabel("")
                 ax.set_xticklabels([])
             elif row == rows-1:
-                ax.set_xlabel('CO2 from DAC cost\n(EUR/tCO2)', fontsize = SMALL_SIZE)
+                ax.set_xlabel('Non-fossil CO2 cost\n(EUR/tCO2)', fontsize = SMALL_SIZE)
             else: 
                 ax.set_xlabel("")
                 ax.set_xticklabels([])
 
     # tight layout needs to be adjusted depending on whether we have one big colorbar, or multiple small ones
     if cmap_list is None:
-        fig.get_layout_engine().set(w_pad=4 / 72, h_pad=4 / 72, hspace=0, wspace=0, rect=[0, 0, .9, 1])
+        #fig.get_layout_engine().set(w_pad=4 / 72, h_pad=4 / 72, hspace=0, wspace=0, rect=[0, 0, .9, 1])
+        fig.get_layout_engine().set(w_pad=4 / 72, h_pad=4 / 72, hspace=0, wspace=0, rect=[0, 0, 1, .9])
     else:
         fig.get_layout_engine().set(w_pad=4 / 72, h_pad=4 / 72, hspace=0, wspace=0)
 
@@ -279,16 +287,20 @@ def plot_sectoral_hm(path_to_data, rowvar_name, row_vars, row_titles, x_var = "c
         plt.setp(ax.get_yticklabels(), fontsize=SMALL_SIZE)
         plt.setp(ax.get_xticklabels(), fontsize=SMALL_SIZE)
         #fig.savefig('./analysis/fig/fscp_hm.svg', format='svg', dpi=1200)
-    # fig.savefig('./././myimage.png', format='png', dpi=600, bbox_inches='tight')
+    fig.savefig('./././myimage.png', format='png', dpi=600, bbox_inches='tight')
 
 
 def plot_mainfig():
     row_vars = ["normal","ccu", "comp"]
-    row_titles = ["No conditions\n\n\n", "Fossil CCU: CO2\nutilization requires\nCO2 source\n\n\n", "Compatibility with\nclimate neutrality\n(DACCS compensation \nof residual emissions)\n\n\n"]
+    row_titles = ["No conditions\n", "Fossil CCU: CO2 utilization\nrequires CO2 source\n", "Compatibility with climate\nneutrality (compensation\nof residual emissions)\n\n"]
 
     dict_type_ID_noDACCS = {"h2": 0, "efuel": 0.33,  "ccu":0.66, "ccs":1}
+    #dict_type_ID_noDACCS = {"h2": 0,"blueh2":0.25, "efuel": 0.5,  "ccu":0.75, "ccs":1}
     mycmap_noDACCS = return_custom_cmap(dict_type_ID_noDACCS)
-    cmap_list = [None, None, mycmap_noDACCS]
+    ## use below to make 3 different colorbars
+    # cmap_list = [None, None, mycmap_noDACCS]
+    
+    cmap_list = None
     plot_sectoral_hm(#path_to_data='./data/figfscp_rawdata.csv',
                     path_to_data = str(Path(__file__).parent.parent / '../data/mainfig_rawdata.csv'),
                     rowvar_name="scenario", 
@@ -299,7 +311,7 @@ def plot_mainfig():
 
 def plot_supfig():
     row_vars = [8,30,100,200]
-    row_titles = [f'CO2 transport and \nstorage cost:\n {num} EUR/tCO2\n\n' for num in row_vars]
+    row_titles = [f'CO2 transport and storage cost:\n {num} EUR/tCO2\n\n' for num in row_vars]
 
     plot_sectoral_hm(#path_to_data='code_figS3/figS2_rawdata.csv',
                     path_to_data = str(Path(__file__).parent.parent / '../data/sup_rawdata.csv'),

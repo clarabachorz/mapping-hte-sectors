@@ -105,7 +105,7 @@ def plot_basicfigs():
     )
 
     # h2 parameters for the bar plots
-    h2_costs = [80, 120, 160, 200] #in EUR/MWh
+    h2_costs = [50, 100, 150, 200] #in EUR/MWh
     h2_costs_steel = [100,  200] #in EUR/MWh
 
     # co2 parameters for the bar plots
