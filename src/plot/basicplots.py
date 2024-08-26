@@ -99,10 +99,10 @@ def plot_basicfigs():
 
     ### UNCOMMENT BELOW TO DO SOME PLOTTING (FIGURE 1)###
 
-    # line below: full panel plotting, with no MAC, but instead LCO breakdown
-    common.plot_large_panel(
-        df_macc_wLCObreakdown,
-    )
+    # # line below: full panel plotting, with no MAC, but instead LCO breakdown
+    # common.plot_large_panel(
+    #     df_macc_wLCObreakdown,
+    # )
 
     # h2 parameters for the bar plots
     h2_costs = [50, 100, 150, 200] #in EUR/MWh
@@ -128,23 +128,36 @@ def plot_basicfigs():
     LCOs_df_retrofit = [get_LCOs(h2_cost=h2, co2_cost=co2, co2_transport_storage=co2_transport_storage_costs, compensate=False, **new_kwargs) for h2, co2 in zip(h2_costs_steel, co2_costs_steel)]
     LCOs_df_comp_retrofit = [get_LCOs(h2_cost=h2, co2_cost=co2, co2_transport_storage=co2_transport_storage_costs, compensate=True, **new_kwargs) for h2, co2 in zip(h2_costs_steel, co2_costs_steel)]
 
-    common.plot_barplotfscp(
-        pd.concat([LCO_df[0] for LCO_df in LCOs_df]),
-        pd.concat([calc_costs.breakdown_LCO_comps(LCO_df[1])[0] for LCO_df in LCOs_df]),
-        sector="steel",
-    )
+    #calculate LCOs for different attributions (CCU)
+    LCOs_df_ccu = [get_LCOs(h2_cost=70, co2_cost=800, co2_transport_storage=co2_transport_storage_costs, co2ccu_co2em = attr, calc_LCO_comps=False) for attr in [0.25,0.5,0.8]]
 
-    common.plot_barplotfuels(
-        pd.concat([LCO_fuel_df[0] for LCO_fuel_df in LCOs_fuels_df]),
-        pd.concat([calc_costs.breakdown_LCO_comps(LCO_fuel_df[1])[1] for LCO_fuel_df in LCOs_fuels_df]),
-    )
+    #calculate LCOs for different gas prices
+    #calculate LCOs for different attributions (CCU)
+    LCOs_df_blueh2 = [get_LCOs(h2_cost=70, co2_cost=800, co2_transport_storage=co2_transport_storage_costs, fossilng_LCO = fossilng_LCO, calc_LCO_comps=False) for fossilng_LCO in [10,20,30,40]]
 
-    common.plot_steel_macc(
-        pd.concat([LCO_df for LCO_df in LCOs_df_base]),
-        pd.concat([LCO_df for LCO_df in LCOs_df_retrofit]),
-        pd.concat([LCO_df for LCO_df in LCOs_df_comp]),
-        pd.concat([LCO_df for LCO_df in LCOs_df_comp_retrofit]),
-        sector="steel",
-    )
+    # common.plot_barplotfscp(
+    #     pd.concat([LCO_df[0] for LCO_df in LCOs_df]),
+    #     pd.concat([calc_costs.breakdown_LCO_comps(LCO_df[1])[0] for LCO_df in LCOs_df]),
+    #     sector="steel",
+    # )
+
+    # common.plot_barplotfuels(
+    #     pd.concat([LCO_fuel_df[0] for LCO_fuel_df in LCOs_fuels_df]),
+    #     pd.concat([calc_costs.breakdown_LCO_comps(LCO_fuel_df[1])[1] for LCO_fuel_df in LCOs_fuels_df]),
+    # )
+
+    # common.plot_steel_macc(
+    #     pd.concat([LCO_df for LCO_df in LCOs_df_base]),
+    #     pd.concat([LCO_df for LCO_df in LCOs_df_retrofit]),
+    #     pd.concat([LCO_df for LCO_df in LCOs_df_comp]),
+    #     pd.concat([LCO_df for LCO_df in LCOs_df_comp_retrofit]),
+    #     sector="steel",
+    # )
+
+    #common.plot_large_panel_ccuattr(LCOs_df_ccu)
+
+    common.blueh2_costanalysis(LCOs_df_blueh2)
+
+    #common.nonfossilco2_supplycurve()
 
     # df_macc.to_csv("./analysis/fig1_test.csv")
