@@ -221,6 +221,7 @@
             "lifetime": 25,
             "elecdemand ": 0.016,
             "h2demand ": 0.024,
+            "co2demand": 0.037,
             "ch3ohdemand ": 1.048,
             "unit": "EUR/MWh",
             "desc": "power-to-jetfuel using /bec"
