@@ -140,6 +140,12 @@ def plot_basicfigs():
         pd.concat([calc_costs.breakdown_LCO_comps(LCO_df[1])[0] for LCO_df in LCOs_df]),
         sector="steel",
     )
+    
+    common.plot_barplotaviation(
+        LCOs_df[0][0],
+        calc_costs.breakdown_LCO_comps(LCOs_df[0][1])[0],
+        sector="plane",
+    )
 
     common.plot_barplotfuels(
         pd.concat([LCO_fuel_df[0] for LCO_fuel_df in LCOs_fuels_df]),

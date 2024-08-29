@@ -107,17 +107,46 @@ def plot_large_panel_ccuattr(dfs):
 
             #plot fscp
             #axes[idx,sub_idx].bar(sub_df["code"], sub_df["fscp"], color = sub_df["color_sector"] ,edgecolor = "grey") 
-            axes[idx,sub_idx].bar(sub_df["code"], sub_df["fscp"], color = sub_df["color_type"] ,edgecolor = "grey")
+            bars = axes[idx,sub_idx].bar(sub_df["code"], sub_df["fscp"], color = sub_df["color_type"] ,edgecolor = "grey")
             axes[idx,sub_idx] = change_spines(axes[idx,sub_idx])
 
             max_fscp = np.nanmax(df["fscp"].to_numpy())
             
-            # #look for nans (ie missing technologies)
-            # nan_idx = np.where(sub_df['fscp'].isnull())[0]
-            # axes[idx,sub_idx].bar(sub_df["code"][nan_idx], max_fscp * 1.3, facecolor='white', hatch='/', edgecolor = "lightgrey")
-            
-            # #index = 0 corresponds to the fossil option
-            # axes[idx,sub_idx].bar(sub_df["code"][0], max_fscp * 1.3, facecolor='white', hatch='/', edgecolor = "black")  
+            # Add annotations to bars
+            for bar, value in zip(bars, sub_df["fscp"]):
+                axes[idx, sub_idx].text(
+                    bar.get_x() + bar.get_width() / 2,
+                    bar.get_height() + 0.1,
+                    f'{value:.2f}',
+                    ha='center', va='bottom', fontsize=8
+                )
+
+            #highlight bar with lowest fscp
+            if not sub_df["fscp"].empty:
+                fscp_series = sub_df['fscp']
+                fscp_series_reset = fscp_series.reset_index(drop=True)
+
+                min_value_index = fscp_series_reset.idxmin()
+                min_bar = bars[min_value_index]
+
+                # Get bar's dimensions for the rectangle
+                x = min_bar.get_x()
+                y = min_bar.get_height()
+                width = min_bar.get_width()
+                height = y
+
+                # Create a red rectangle around the bar with the lowest value
+                rect = Rectangle(
+                    (x - width * 0.05, 0),  # Position the rectangle slightly to the left of the bar
+                    width * 1.1,  # Make the rectangle slightly wider than the bar
+                    height+100,  # Height of the rectangle matches the bar height
+                    fill=False,  # No fill for the rectangle
+                    edgecolor='indianred',
+                    linewidth=2,
+                    linestyle='--'
+                )
+                axes[idx, sub_idx].add_patch(rect)
+
             
             #axes[idx,sub_idx].set_ylim(0, np.nanmax(df["fscp"])*1.05)
             if sub_idx == 0:
@@ -146,9 +175,20 @@ def plot_large_panel_ccuattr(dfs):
             #step to next iteration
             sub_idx += 1
 
+    # row_titles = ["Title for Row 1", "Title for Row 2", "Title for Row 3"]
+    # for i, title in enumerate(row_titles):
+    # Use fig.text to place text at the top of each row
+    ccu_atrs = []
+    for df in dfs:
+        ccu_atr = df["co2ccu_co2em"].unique()[0]
+        ccu_atrs.append(ccu_atr)
 
-    fig.tight_layout()
-    plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.4, hspace=0.2)
+    fig.text(0.5, 0.94, "CCU attribution of %.1f. No CCU agreement."%ccu_atrs[0], ha='center', va='center', fontsize=14, fontweight = "bold")
+    fig.text(0.5, 0.94 - 1 * 0.26, f"CCU attribution of %.1f. No CCU agreement."%ccu_atrs[1], ha='center', va='center', fontsize=14, fontweight = "bold")
+    fig.text(0.5, 0.94 - 2 * 0.23, f"CCU attribution of %.1f. CCU agreement between cement and CF."%ccu_atrs[2], ha='center', va='center', fontsize=14, fontweight = "bold")
+
+    fig.tight_layout(rect=[0, 0, 1, 0.94])
+    plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.3, hspace=0.6)
     plt.show()
 
 def plot_large_panel(dfs):
@@ -500,6 +540,165 @@ def plot_barplotfscp(dfs, dfs_breakdown, sector = "steel", type = "h2",sensitivi
     for n, ax in enumerate(axes):   
         ax.text(-0.1, 1.05, string.ascii_lowercase[n], transform=ax.transAxes, 
                 size=18, weight='bold')
+
+    fig.tight_layout()
+    plt.show()
+    #fig.savefig('./././myimage.png', format='png', dpi=600, bbox_inches='tight')
+
+def plot_barplotaviation(dfs, dfs_breakdown, sector = "plane", type = "efuel",sensitivity = "h2_LCO"):
+
+    dfs = add_colors_units_rename(dfs)
+    dfs_breakdown[["type", "sector"]] = dfs_breakdown["tech"].str.split("_", expand=True)
+
+    #filter df to get relevant LCOs
+    sub_df_LCO = dfs[(dfs["sector"]==sector) & ((dfs["type"]==type) | (dfs["type"]=="fossil") | (dfs["type"]=="comp") )]
+    sub_df_LCO_breakdown = dfs_breakdown[(dfs_breakdown["sector"]==sector) & ((dfs_breakdown["type"]==type) | (dfs_breakdown["type"]=="fossil") | (dfs_breakdown["type"]=="comp") )]
+
+    #filter df to get relevant FSCP
+    sub_df_FSCP = dfs[(dfs["sector"]==sector) & (dfs["type"]==type) ]
+    sub_df_FSCP2 = dfs[(dfs["sector"]==sector) & (dfs["type"]=="comp") ]
+
+
+    unit = np.unique(sub_df_LCO["unit"])[0]
+    fscp_color = np.unique(sub_df_FSCP["color_type"])[0]
+    fscp_color2 = np.unique(sub_df_FSCP2["color_type"])[0]
+    
+    #following line is a bit hacky, will make code break if comparing options with the same cost (eg DRI when choosing DAC Co2 sensitivity)
+    sub_df_LCO.drop_duplicates( "cost", inplace=True)
+    sub_df_LCO.reset_index(inplace=True, drop = True)
+    sub_df_LCO.drop(["elec"], axis = 1, inplace = True)
+    sub_df_LCO = sub_df_LCO.round(5)
+    
+    #more hacky stuff for the steel LCO breakdown in particular
+    sub_df_LCO_breakdown = sub_df_LCO_breakdown.drop_duplicates("LCO").dropna(axis=1, how='all').reset_index(drop = True).apply(pd.to_numeric, errors='ignore').round(5)
+    sub_df_LCO_breakdown.rename(columns = {"LCO": "cost"}, inplace = True)
+    sub_df_LCO_breakdown.drop(["type", "sector", "tech"], axis =1, inplace = True)
+
+    sub_df_LCO_breakdown["compco2"] = sub_df_LCO_breakdown["co2"]
+    print(sub_df_LCO_breakdown)
+    sub_df_LCO_breakdown = sub_df_LCO_breakdown[[ "cost", "other costs","MtJ_capex", "MtJ_opex","MtJ_elec","MtJ_h2","MtJ_co2", "MtJ_ch3oh_capex","MtJ_ch3oh_co2","MtJ_ch3oh_elec","MtJ_ch3oh_h2","MtJ_ch3oh_opex","compco2","co2 transport and storage","fossilJ"]]
+
+    #merge to make final df
+    sub_df_LCO_merge = sub_df_LCO.merge(sub_df_LCO_breakdown,how ="left",  on =[ "cost"],validate = "1:1")
+    
+    # sub_df_LCO_merge.loc[(sub_df_LCO["type"] != "fossil") & (sub_df_LCO["type"] != "comp"), "code"] = sub_df_LCO["code"] + ",\nH2 cost =\n" +sub_df_LCO["h2_LCO"].astype(str) + " EUR/MWh"
+    sub_df_LCO_merge.loc[(sub_df_LCO["type"] != "fossil") & (sub_df_LCO["type"] != "comp"), "code"] = "E-fuel"#sub_df_LCO["h2_LCO"].astype(str) + " \nEUR/MWh"
+
+    #sort so the fossil pathway is first
+    sub_df_LCO.sort_values(by = ["em", sensitivity], ascending = [False, True], inplace=True)
+    sub_df_LCO_merge.sort_values(by = ["em", sensitivity], ascending = [False, True], inplace=True)
+
+    fig, axes = plt.subplots(nrows = 1,ncols=1, figsize=(11,8))
+
+    #set font size
+    SMALL_SIZE = 12
+    MEDIUM_SIZE = 14
+    BIGGER_SIZE = 16
+
+    plt.rc('font', size=SMALL_SIZE)          # controls default text sizes
+    plt.rc('axes', labelsize=MEDIUM_SIZE)    # fontsize of the x and y labels
+    plt.rc('xtick', labelsize=MEDIUM_SIZE)    # fontsize of the tick labels
+    plt.rc('ytick', labelsize=MEDIUM_SIZE)    # fontsize of the tick labels
+    plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
+    plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
+    plt.rc('axes', titlesize=BIGGER_SIZE)
+
+
+    #x_pos = [0,3,6,7.5,9,10.5]
+    x_pos = [0,3,6]
+    height = 0
+    alpha_list = [0.8, 0.6, 0.4, 0.2,0.3, 0.5, 0.7, 0.9, 0.4, 0.2,0.3, 0.5,0.6, 0.7]
+    color = ["white", "white", "white", "white", "white", "white","white","white","white", "darkgrey","darkgrey","darkgrey","darkgrey","darkgrey"]
+    labels = {"MtJ_capex":"MtJ CAPEX", "MtJ_opex":"MtJ O&M","MtJ_elec":"MtJ Electricity","MtJ_h2":"MtJ Hydrogen","MtJ_co2":"MtJ CO2 losses", "other costs":"Engine and fees", "MtJ_ch3oh_capex":"Methanol synthesis CAPEX","MtJ_ch3oh_co2":"Methanol synthesis CO2",
+            "MtJ_ch3oh_elec":"Methanol synthesis electricity","MtJ_ch3oh_h2":"Methanol synthesis hydrogen","MtJ_ch3oh_opex":"Methanol synthesis O&M",
+            "compco2":"CDR CO2 cost","elec":"Electricity","fossilJ":"Fossil jet fuel","co2 transport and storage": "CO2 transport\n& storage", "MtJ_allopex":"MtJ all OPEX "}
+    
+
+    sub_df_LCO_merge["MtJ_allopex"] = sub_df_LCO_merge["MtJ_opex"] + sub_df_LCO_merge["MtJ_elec"] + sub_df_LCO_merge["MtJ_h2"]
+
+    #first, plot colorerd layer
+    axes.bar(x_pos, sub_df_LCO_merge["cost"], color = sub_df_LCO_merge["color_type"],  edgecolor = "grey")
+    j=0
+    #then, transparent stacked bars
+    for i, comp in enumerate(["other costs","compco2","MtJ_ch3oh_co2","MtJ_co2","MtJ_capex","MtJ_ch3oh_capex", "MtJ_allopex", "MtJ_ch3oh_opex","MtJ_ch3oh_elec","MtJ_ch3oh_h2","fossilJ","co2 transport and storage"]):
+        column = sub_df_LCO_merge[comp].fillna(0)
+
+        bars = axes.bar(x_pos, column, bottom = height, edgecolor = "dimgrey", color = color[i], alpha = alpha_list[i])
+
+        annot_height = height + column/2
+        height += column
+        
+        #here, add any annotation needed
+        if column[0] > 0:
+            axes.hlines(annot_height[0], 0.4, 0.55, colors = "darkgrey", linewidth = 1)
+            if comp != "scrap":
+                axes.text(x=0.6,y= annot_height[0], s=labels[comp], verticalalignment='center', c= "grey")
+            else:
+                axes.text(x=0.6, y= annot_height[0], s=labels[comp], verticalalignment='center', c= "grey")
+
+        if column[1] > 0:
+
+            axes.text(x=3.6,y= annot_height[1], s=labels[comp], verticalalignment='center', c= "grey", zorder=2)
+            axes.hlines(annot_height[1], 3.4, 3.55, colors = "darkgrey", linewidth = 1, zorder=2)
+
+        if column[2] > 0:
+            if comp not in ["MtJ_allopex", "MtJ_ch3oh_capex","MtJ_ch3oh_opex","MtJ_ch3oh_elec","MtJ_ch3oh_h2"]:
+                axes.text(x=6.6,y= annot_height[2], s=labels[comp], verticalalignment='center', c= "grey", zorder=2)
+                axes.hlines(annot_height[2], 6.4, 6.55, colors = "darkgrey", linewidth = 1, zorder=2)
+
+            elif comp in ["MtJ_allopex", "MtJ_ch3oh_capex","MtJ_ch3oh_opex","MtJ_ch3oh_elec"]:
+                axes.annotate(labels[comp],(6.4, annot_height[2]), xytext = (6.55, annot_height[2]+0.0009+j*0.0022),c= "grey",
+                                      arrowprops=dict(color='darkgrey', width = 0.05, headwidth = 0), zorder=2)
+
+
+                j+=1
+            # elif comp == "MtJ_h2":
+            #     axes.text(x=7.6,y= annot_height[2], s=labels[comp], verticalalignment='center', c= "grey")
+            #     axes.hlines(annot_height[2], 6.4, 6.55, colors = "darkgrey", linewidth = 1)
+            else:
+                axes.text(x=6.6,y= annot_height[2]+0.006, s=labels[comp], verticalalignment='center', c= "grey")
+                axes.hlines(annot_height[2]+0.006, 6.4, 6.55, colors = "darkgrey", linewidth = 1)
+        
+    #add annotation to xaxis
+
+
+        # Find the index of "MtJ_co2"
+        if comp == "MtJ_co2":
+            mtj_co2_bottom = height - column  # This is the bottom position of the "MtJ_co2" section
+            mtj_co2_height = column  # This is the height of the "MtJ_co2" section
+
+            # Draw a grey rectangle highlighting "MtJ_co2"
+            rect = Rectangle(
+                (bars[1].get_x() - bars[0].get_width() * 0.1, 0),  # x, y position (left edge of the rectangle)
+                (bars[2].get_x()-bars[1].get_x()) * 2.2 ,  # width spans all bars + some padding
+                mtj_co2_bottom[2]+mtj_co2_height[2],  # height
+                fc=(0.7,0.7,0.7,0.2), ec=(0,0,0,0.7), zorder=1  # semi-transparent grey rectangle
+            )
+            axes.add_patch(rect)
+
+            # Draw a dashed line at the top of the "MtJ_co2" section
+            #axes.axhline(y=mtj_co2_bottom[2]+mtj_co2_height[2], xmin = 0.5, xmax = 8,color='grey', linestyle='--', linewidth=1.5, label='common costs')
+
+            # Add label "common costs" on the rightmost edge of the rectangle
+            axes.text(
+                bars[-1].get_x() + bars[-1].get_width() + 2.8,  # position x
+                mtj_co2_bottom[0] + mtj_co2_height[0] / 2,  # position y (center of the rectangle)
+                'CDR and e-fuels:\ncommon costs', 
+                va='center', ha='left', fontsize=12, color='black'
+            )
+
+    #other plot settings
+    axes.set_xticks(x_pos, sub_df_LCO_merge["code"])
+    
+    axes = change_spines(axes)
+    
+    axes.set_title("Aviation: Levelized cost comparison between CDR compensation and e-fuels", fontweight="bold",loc = "left")
+    axes.set_ylabel(f"Levelized cost \n(EUR{unit})", fontsize = 14)
+
+    #axes size
+    plt.setp(axes.get_yticklabels(), fontsize=12)
+    plt.setp(axes.get_xticklabels(), fontsize=12)
+
 
     fig.tight_layout()
     plt.show()
