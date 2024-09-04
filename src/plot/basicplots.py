@@ -89,7 +89,7 @@ def get_LCOs(
 
 def plot_basicfigs():
     # Code starts here
-        
+
     # calculate the df with default co2 and h2 LCOs
     df_macc, LCO_comps_default = get_LCOs(calc_LCO_comps=True) 
 
@@ -116,6 +116,7 @@ def plot_basicfigs():
     co2_transport_storage_costs = 15 #in EUR/tonne CO2
 
     LCOs_df = [get_LCOs(h2_cost=h2, co2_cost=co2, co2_transport_storage=co2_transport_storage_costs,calc_LCO_comps=True) for h2, co2 in zip(h2_costs, co2_costs)]
+    
     LCOs_fuels_df = [get_LCOs(h2_cost=h2, co2_cost=co2, co2_transport_storage=co2_transport_storage_costs, calc_LCO_comps=True) for h2, co2 in zip(h2_costs, co2_costs_fuels)]
 
     #additional set of LCOs for steel FSCP figure
@@ -129,7 +130,7 @@ def plot_basicfigs():
     LCOs_df_comp_retrofit = [get_LCOs(h2_cost=h2, co2_cost=co2, co2_transport_storage=co2_transport_storage_costs, compensate=True, **new_kwargs) for h2, co2 in zip(h2_costs_steel, co2_costs_steel)]
 
     #calculate LCOs for different attributions (CCU)
-    LCOs_df_ccu = [get_LCOs(h2_cost=70, co2_cost=800, co2_transport_storage=co2_transport_storage_costs, co2ccu_co2em = attr, calc_LCO_comps=False) for attr in [0.25,0.5,0.8]]
+    LCOs_df_ccu = [get_LCOs(h2_cost=70, co2_cost=800, co2_transport_storage=co2_transport_storage_costs, co2ccu_co2em = attr, calc_LCO_comps=False) for attr in [0.3,0.5,0.7,0.9]]
 
     #calculate LCOs for different gas prices
     #calculate LCOs for different attributions (CCU)
@@ -140,11 +141,12 @@ def plot_basicfigs():
         pd.concat([calc_costs.breakdown_LCO_comps(LCO_df[1])[0] for LCO_df in LCOs_df]),
         sector="steel",
     )
-    
+    concat =pd.concat([calc_costs.breakdown_LCO_comps(LCO_df[1])[0] for LCO_df in LCOs_df])
+    print(concat)
     common.plot_barplotaviation(
         LCOs_df[0][0],
         calc_costs.breakdown_LCO_comps(LCOs_df[0][1])[0],
-        sector="plane",
+        concat,
     )
 
     common.plot_barplotfuels(

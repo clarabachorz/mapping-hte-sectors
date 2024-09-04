@@ -13,6 +13,7 @@ from matplotlib.patches import Patch
 from matplotlib.patches import Rectangle
 from matplotlib.patches import FancyArrow, FancyArrowPatch
 from matplotlib.lines import Line2D
+from matplotlib.text import Text
 
 # plt.rcParams["font.family"] = "Calibri"
 # plt.rcParams.update({
@@ -71,124 +72,95 @@ def plot_large_panel_ccuattr(dfs):
     rows = 3
     cols =4
     ## 3 rows: subplots with different attr
-    fig, axes = plt.subplots(nrows = rows,ncols=cols, figsize=(3*cols,3*rows))
-
+    filtered_dfs = []
     for idx, df in enumerate(dfs):
         df = add_colors_units_rename(df)
         df = sort_data(df)
         #quick fix: remove blue H2
         df = df[df["type"] != "blueh2"]
-        #maritime not as impacted by CCU: we ignore it here
-        df = df[df["sector"]!="ship"]
-        df = df.reset_index(drop = True)
+        #We pick two sectors: here plane and cement
+        df = df[df["sector"].str.contains("plane|cement") == True]
+        df = df[df["type"].str.contains("ccu|ccs|comp") == True]
+        #df = df.reset_index(drop = True)
+        filtered_dfs.append(df)
 
-        sub_idx = 0
-        custom_sector_order = {"cement": 0, "steel": 1, "ship": 2, "plane": 3, "chem": 4}
-        custom_tech_order = {"fossil": 0, "h2": 1, "efuel": 2, "ccu": 3, "ccs": 4, "comp": 5}
-        for name, sub_df in df.sort_values(by = "sector", key = lambda x: x.map(custom_sector_order)).groupby("sector", sort = False):
-            unit = np.unique(sub_df["unit"])[0]
-            color_sector = np.unique(sub_df["color_sector"])[0]
+    df_filtered = pd.concat([LCO_df for LCO_df in filtered_dfs]).drop_duplicates("fscp").reset_index(drop = True)
+    df_filtered = df_filtered[df_filtered['fscp'].notna()]
+    df_filtered = df_filtered[~((df_filtered['sector'] == 'cement') & (df_filtered['type'] == 'comp'))]
 
-            axes[0,sub_idx].set_title(rename_sectors[name])
-            
-            sub_df = sub_df.sort_values(by = "type", key = lambda x: x.map(custom_tech_order)).reset_index(drop = True)
-            sub_df = sub_df[sub_df['fscp'].notna()]
+    
+    custom_tech_order = {"ccs": 0, "ccu": 1, "comp": 2}
+    df_filtered = df_filtered.sort_values(by = "co2ccu_co2em").sort_values(by = "type", key = lambda x: x.map(custom_tech_order)).reset_index(drop = True)
 
-            # if sub_idx == 2:
-            #     axes[idx,2].annotate(f'test',
-            #                 xy=(0, 2), xytext=(0, 2),
-            #                 #xycoords=axes[idx,0].yaxis.label, textcoords='offset points',
-            #                 ha='center', va='center', ma= "center", rotation = 0, fontsize = 12)
+    df_filtered.loc[(df_filtered["type"] == "ccu")&(df_filtered["sector"] == "cement"), "info"] ="Cement\nCCU attr"+ df_filtered["co2ccu_co2em"].astype(str)
+    df_filtered.loc[(df_filtered["type"] == "ccu")&(df_filtered["sector"] == "plane"), "info"] ="Aviation\nCCU attr"+ df_filtered["co2ccu_co2em"].astype(str)
+    df_filtered.loc[df_filtered["type"] == "ccs", "info"] = "CCS"
+    df_filtered.loc[df_filtered["type"] == "comp", "info"] = "CDR Compensation"
+    print(df_filtered)
 
-            # #share axis between line 1 & 2
-            # axes[1,sub_idx].sharex(axes[0,sub_idx])
-            # #extra line that goes toogether with sharex to remove the x labels for the first row
-            # plt.setp(axes[0,sub_idx].get_xticklabels(), visible=False)
+    cementccs_fscp = df_filtered[df_filtered["sector"] == "cement"].loc[df_filtered["type"] == "ccs", "fscp"].values[0]
+    aviationcomp_fscp = df_filtered[df_filtered["sector"] == "plane"].loc[df_filtered["type"] == "comp", "fscp"].values[0]
 
-            #plot fscp
-            #axes[idx,sub_idx].bar(sub_df["code"], sub_df["fscp"], color = sub_df["color_sector"] ,edgecolor = "grey") 
-            bars = axes[idx,sub_idx].bar(sub_df["code"], sub_df["fscp"], color = sub_df["color_type"] ,edgecolor = "grey")
-            axes[idx,sub_idx] = change_spines(axes[idx,sub_idx])
+    fig, ax = plt.subplots(figsize=(10, 8))
+    widths = [0.8,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.8]
+    x_positions = [0,1.5,1.9,2.5,2.9,3.5,3.9,4.5,4.9,6.5]
+    attrs = df_filtered["co2ccu_co2em"].unique() *100
+    attrs = attrs.astype(int).astype(str)
 
-            max_fscp = np.nanmax(df["fscp"].to_numpy())
-            
-            # Add annotations to bars
-            for bar, value in zip(bars, sub_df["fscp"]):
-                axes[idx, sub_idx].text(
-                    bar.get_x() + bar.get_width() / 2,
-                    bar.get_height() + 0.1,
-                    f'{value:.2f}',
-                    ha='center', va='bottom', fontsize=8
-                )
+    # Plotting each row as a bar with adjustable width
+    bars = ax.bar(x_positions, df_filtered["fscp"] , width=widths, color= df_filtered["color_sector"], edgecolor='grey')
 
-            #highlight bar with lowest fscp
-            if not sub_df["fscp"].empty:
-                fscp_series = sub_df['fscp']
-                fscp_series_reset = fscp_series.reset_index(drop=True)
 
-                min_value_index = fscp_series_reset.idxmin()
-                min_bar = bars[min_value_index]
+    for i, bar in enumerate(bars):
+        if df_filtered.loc[i, 'sector'] == 'cement' and df_filtered.loc[i, 'type'] == 'ccu':
+            if df_filtered.loc[i, 'fscp'] < cementccs_fscp:
+                symbol = '✔'  # Green tick
+                color = 'green'
+            else:
+                symbol = '✘'  # Red cross
+                color = 'red'
+                #ax.bar(bar.get_x()+ bar.get_width() / 2, bar.get_height(), bar.get_width(), color='white',alpha = 0.7, edgecolor='grey')
+            ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 1,
+                    symbol, ha='center', va='bottom', fontsize=14, color=color)
+        elif df_filtered.loc[i, 'sector'] == 'plane' and df_filtered.loc[i, 'type'] == 'ccu':
+            if df_filtered.loc[i, 'fscp'] < aviationcomp_fscp:
+                symbol = '✔'
+                color = 'green'
+            else:
+                symbol = '✘'
+                color = 'red'
+                #ax.bar(bar.get_x()+ bar.get_width() / 2, bar.get_height(), bar.get_width(), color='white',alpha = 0.7, edgecolor='grey')
+        # Place the symbol at the top of the bar
+            ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 1,
+                    symbol, ha='center', va='bottom', fontsize=14, color=color)
+        
+    # Add a horizontal line at y=0
+    ax.axhline(y=cementccs_fscp, xmin = 0.1, xmax = 0.7, color=color_dict["cement"], linewidth=1.5, linestyle='--', zorder = 0)
+    ax.axhline(y=aviationcomp_fscp, xmin = 0.3, xmax = 0.9, color=color_dict["plane"], linewidth=1.5, linestyle='--', zorder = 0)
 
-                # Get bar's dimensions for the rectangle
-                x = min_bar.get_x()
-                y = min_bar.get_height()
-                width = min_bar.get_width()
-                height = y
+    #main legend
+    ax.legend(handles=[Patch(facecolor=color_dict["cement"]), Patch(facecolor=color_dict["plane"])], edgecolor='grey', labels=['Cement', "Aviation"], fontsize = 12, bbox_to_anchor=(0, 0.85),loc='lower left')
+    
+    #secondary legend
 
-                # Create a red rectangle around the bar with the lowest value
-                rect = Rectangle(
-                    (x - width * 0.05, 0),  # Position the rectangle slightly to the left of the bar
-                    width * 1.1,  # Make the rectangle slightly wider than the bar
-                    height+100,  # Height of the rectangle matches the bar height
-                    fill=False,  # No fill for the rectangle
-                    edgecolor='indianred',
-                    linewidth=2,
-                    linestyle='--'
-                )
-                axes[idx, sub_idx].add_patch(rect)
+    na_patch = Line2D([0], [0], marker=r'$\checkmark$', color='w', label='CCU is the cheapest abatement\noption',
+             markerfacecolor='green', markersize=10, markeredgewidth=0, markeredgecolor='green')
+    fossil_patch = Line2D([0], [0], marker=r'$\times$', color='w', label='CCU more costly than alternative\noption (CCS or CDR)',
+             markerfacecolor='red', markersize=10, markeredgewidth=0, markeredgecolor='red')
+    leg2 = fig.legend(handles=[na_patch,fossil_patch], bbox_to_anchor=(0.1, 0.68),loc='lower left', fontsize = 12)
+    ax.add_artist(leg2)
 
-            
-            #axes[idx,sub_idx].set_ylim(0, np.nanmax(df["fscp"])*1.05)
-            if sub_idx == 0:
-                axes[idx,sub_idx].set_ylabel(f"FSCP\n(EUR/tCO2)")
-            
-            if idx > 0:
-                #share x-axis between rows
-                axes[idx,sub_idx].sharex(axes[idx-1,sub_idx])
-                
-            if idx != rows-1:
-                plt.setp(axes[idx,sub_idx].get_xticklabels(), visible=False)
-                
-            # # Use this to share y axis
-            # if sub_idx > 0:
-            #     axes[idx,sub_idx].sharey(axes[idx,0])
-            #     axes[idx,sub_idx].set_ylabel(None)
-            axes[idx,sub_idx].tick_params(rotation=90)
 
-            #extra line that goes toogether with sharex to remove the x labels for the first row
-            #plt.setp(axes[1,sub_idx].get_xticklabels(), visible=False)
-            
-            #hacky way to remove plots not required
-            # fig.delaxes(axes[3, idx]) 
-            # fig.delaxes(axes[4, idx])
-            # fig.delaxes(axes[5, idx])         
-            #step to next iteration
-            sub_idx += 1
+    ax.text(3, -0.1, "CCU for cement and aviation,\nfor varying emission attributions\n(to the user sector)", ha='center', va='center', fontsize=12,transform=ax.get_xaxis_transform())
+    # add delimiation line for cement ccs and aviation comp
+    ax.set_xticks([0,1.7,2.7,3.7,4.7,6.5])
+    ax.set_xticklabels(["CCS\n(cement)",attrs[0]+"%", attrs[1]+"%", attrs[2]+"%", attrs[3]+"%","CDR\n(aviation)"])
 
-    # row_titles = ["Title for Row 1", "Title for Row 2", "Title for Row 3"]
-    # for i, title in enumerate(row_titles):
-    # Use fig.text to place text at the top of each row
-    ccu_atrs = []
-    for df in dfs:
-        ccu_atr = df["co2ccu_co2em"].unique()[0]
-        ccu_atrs.append(ccu_atr)
+    ax = change_spines(ax)
+    ax.set_ylabel("Abatement cost (EUR/tCO2)")
+    ax.set_title("Abatement cost for different CCU attributions", fontweight="bold",loc = "left")
 
-    fig.text(0.5, 0.94, "CCU attribution of %.1f. No CCU agreement."%ccu_atrs[0], ha='center', va='center', fontsize=14, fontweight = "bold")
-    fig.text(0.5, 0.94 - 1 * 0.26, f"CCU attribution of %.1f. No CCU agreement."%ccu_atrs[1], ha='center', va='center', fontsize=14, fontweight = "bold")
-    fig.text(0.5, 0.94 - 2 * 0.23, f"CCU attribution of %.1f. CCU agreement between cement and CF."%ccu_atrs[2], ha='center', va='center', fontsize=14, fontweight = "bold")
-
-    fig.tight_layout(rect=[0, 0, 1, 0.94])
-    plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.3, hspace=0.6)
+    fig.tight_layout()
     plt.show()
 
 def plot_large_panel(dfs):
@@ -545,8 +517,7 @@ def plot_barplotfscp(dfs, dfs_breakdown, sector = "steel", type = "h2",sensitivi
     plt.show()
     #fig.savefig('./././myimage.png', format='png', dpi=600, bbox_inches='tight')
 
-def plot_barplotaviation(dfs, dfs_breakdown, sector = "plane", type = "efuel",sensitivity = "h2_LCO"):
-
+def plot_barplotaviation(dfs, dfs_breakdown, all_dfs_breakdown, sector = "plane", type = "efuel",sensitivity = "h2_LCO"):
     dfs = add_colors_units_rename(dfs)
     dfs_breakdown[["type", "sector"]] = dfs_breakdown["tech"].str.split("_", expand=True)
 
@@ -575,7 +546,7 @@ def plot_barplotaviation(dfs, dfs_breakdown, sector = "plane", type = "efuel",se
     sub_df_LCO_breakdown.drop(["type", "sector", "tech"], axis =1, inplace = True)
 
     sub_df_LCO_breakdown["compco2"] = sub_df_LCO_breakdown["co2"]
-    print(sub_df_LCO_breakdown)
+
     sub_df_LCO_breakdown = sub_df_LCO_breakdown[[ "cost", "other costs","MtJ_capex", "MtJ_opex","MtJ_elec","MtJ_h2","MtJ_co2", "MtJ_ch3oh_capex","MtJ_ch3oh_co2","MtJ_ch3oh_elec","MtJ_ch3oh_h2","MtJ_ch3oh_opex","compco2","co2 transport and storage","fossilJ"]]
 
     #merge to make final df
@@ -609,9 +580,9 @@ def plot_barplotaviation(dfs, dfs_breakdown, sector = "plane", type = "efuel",se
     height = 0
     alpha_list = [0.8, 0.6, 0.4, 0.2,0.3, 0.5, 0.7, 0.9, 0.4, 0.2,0.3, 0.5,0.6, 0.7]
     color = ["white", "white", "white", "white", "white", "white","white","white","white", "darkgrey","darkgrey","darkgrey","darkgrey","darkgrey"]
-    labels = {"MtJ_capex":"MtJ CAPEX", "MtJ_opex":"MtJ O&M","MtJ_elec":"MtJ Electricity","MtJ_h2":"MtJ Hydrogen","MtJ_co2":"MtJ CO2 losses", "other costs":"Engine and fees", "MtJ_ch3oh_capex":"Methanol synthesis CAPEX","MtJ_ch3oh_co2":"Methanol synthesis CO2",
-            "MtJ_ch3oh_elec":"Methanol synthesis electricity","MtJ_ch3oh_h2":"Methanol synthesis hydrogen","MtJ_ch3oh_opex":"Methanol synthesis O&M",
-            "compco2":"CDR CO2 cost","elec":"Electricity","fossilJ":"Fossil jet fuel","co2 transport and storage": "CO2 transport\n& storage", "MtJ_allopex":"MtJ all OPEX "}
+    labels = {"MtJ_capex":"CAPEX: MtJ", "MtJ_opex":"O&M: MtJ","MtJ_elec":"Electricity: MtJ ","MtJ_h2":"Hydrogen: MtJ ","MtJ_co2":"CO2 losses: MtJ", "other costs":"Aircraft cost and\noperating fees", "MtJ_ch3oh_capex":"CAPEX: Methanol synthesis","MtJ_ch3oh_co2":"CO2: Methanol synthesis",
+            "MtJ_ch3oh_elec":"Electricity: Methanol synthesis","MtJ_ch3oh_h2":"Hydrogen: Methanol synthesis","MtJ_ch3oh_opex":"O&M: Methanol synthesis",
+            "compco2":"CO2: CDR ","elec":"Electricity","fossilJ":"Fossil jet fuel","co2 transport and storage": "CO2 transport\n& storage", "MtJ_allopex":"All OPEX: MtJ"}
     
 
     sub_df_LCO_merge["MtJ_allopex"] = sub_df_LCO_merge["MtJ_opex"] + sub_df_LCO_merge["MtJ_elec"] + sub_df_LCO_merge["MtJ_h2"]
@@ -1189,12 +1160,12 @@ def blueh2_costanalysis(dfs):
     blueh2_df = pd.concat(blueh2_rows, ignore_index=True)
     
     co2cost = 200 #EUR/tCO2
-    GWP20 = 34 #CO2 equivalent
+    GWP100 = 34 #CO2 equivalent
     NG_lhv = 13.1 #kWh/kg or MWh/ton
 
     #calculate extra cost from 0.1% leakage:
-    low_leakage_cost = 0.001*(1/NG_lhv)*co2cost*GWP20
-    high_leakage_cost = 0.03*(1/NG_lhv)*co2cost*GWP20
+    low_leakage_cost = 0.001*(1/NG_lhv)*co2cost*GWP100
+    high_leakage_cost = 0.03*(1/NG_lhv)*co2cost*GWP100
     
     blueh2_lowleakage = blueh2_df["cost"] + low_leakage_cost
     blueh2_highleakage = blueh2_df["cost"] + high_leakage_cost
