@@ -34,7 +34,9 @@ def get_LCOcontributions(df, LCO_comps):
         ],
         axis=1,
         keys=["co2_cost", "h2_cost", "lco"],
-    ).fillna(0)
+    )
+    with pd.option_context("future.no_silent_downcasting", True):
+        costs_breakdown = costs_breakdown.fillna(0).infer_objects(copy=False)
 
     # calculate LCO without co2 and h2 costs
     costs_breakdown["lco_noh2co2"] = costs_breakdown["lco"] - (costs_breakdown["co2_cost"] + costs_breakdown["h2_cost"])
@@ -97,15 +99,9 @@ def plot_basicfigs():
     # the function isolates the total contributions of h2 and co2 to each row of the df
     df_macc_wLCObreakdown = get_LCOcontributions(df_macc, LCO_comps_default)
 
-    ### UNCOMMENT BELOW TO DO SOME PLOTTING (FIGURE 1)###
-
-    # line below: full panel plotting, with no MAC, but instead LCO breakdown
-    common.plot_large_panel(
-        df_macc_wLCObreakdown,
-    )
-
     # h2 parameters for the bar plots
     h2_costs = [50, 100, 150, 200] #in EUR/MWh
+    h2_costs_aviationfig = [25,50,75,100]
     h2_costs_steel = [100,  200] #in EUR/MWh
 
     # co2 parameters for the bar plots
@@ -116,7 +112,10 @@ def plot_basicfigs():
     co2_transport_storage_costs = 15 #in EUR/tonne CO2
 
     LCOs_df = [get_LCOs(h2_cost=h2, co2_cost=co2, co2_transport_storage=co2_transport_storage_costs,calc_LCO_comps=True) for h2, co2 in zip(h2_costs, co2_costs)]
+    LCOs_df_breakdown = pd.concat([calc_costs.breakdown_LCO_comps(LCO_df[1])[0] for LCO_df in LCOs_df])
     
+    LCOs_df_aviation = [get_LCOs(h2_cost=h2, co2_cost=co2, co2_transport_storage=co2_transport_storage_costs, calc_LCO_comps=True) for h2, co2 in zip(h2_costs_aviationfig, co2_costs)]
+
     LCOs_fuels_df = [get_LCOs(h2_cost=h2, co2_cost=co2, co2_transport_storage=co2_transport_storage_costs, calc_LCO_comps=True) for h2, co2 in zip(h2_costs, co2_costs_fuels)]
 
     #additional set of LCOs for steel FSCP figure
@@ -135,18 +134,24 @@ def plot_basicfigs():
     #calculate LCOs for different gas prices
     #calculate LCOs for different attributions (CCU)
     LCOs_df_blueh2 = [get_LCOs(h2_cost=70, co2_cost=800, co2_transport_storage=co2_transport_storage_costs, fossilng_LCO = fossilng_LCO, calc_LCO_comps=False) for fossilng_LCO in [10,20,30,40]]
+    
+    ### UNCOMMENT BELOW TO DO SOME PLOTTING (FIGURE 1)###
+
+    # line below: full panel plotting, with no MAC, but instead LCO breakdown
+    common.plot_large_panel(
+        df_macc_wLCObreakdown,
+    )
 
     common.plot_barplotfscp(
         pd.concat([LCO_df[0] for LCO_df in LCOs_df]),
-        pd.concat([calc_costs.breakdown_LCO_comps(LCO_df[1])[0] for LCO_df in LCOs_df]),
+        LCOs_df_breakdown,
         sector="steel",
     )
-    concat =pd.concat([calc_costs.breakdown_LCO_comps(LCO_df[1])[0] for LCO_df in LCOs_df])
-    print(concat)
+
     common.plot_barplotaviation(
-        LCOs_df[0][0],
-        calc_costs.breakdown_LCO_comps(LCOs_df[0][1])[0],
-        concat,
+        LCOs_df_aviation[0][0],
+        pd.concat([calc_costs.breakdown_LCO_comps(LCO_df[1])[0] for LCO_df in LCOs_df_aviation]),
+        h2costs=h2_costs_aviationfig,
     )
 
     common.plot_barplotfuels(
@@ -168,4 +173,3 @@ def plot_basicfigs():
 
     common.nonfossilco2_supplycurve()
 
-    # df_macc.to_csv("./analysis/fig1_test.csv")

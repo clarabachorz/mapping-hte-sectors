@@ -96,12 +96,25 @@ def plot_large_panel_ccuattr(dfs):
     df_filtered.loc[(df_filtered["type"] == "ccu")&(df_filtered["sector"] == "plane"), "info"] ="Aviation\nCCU attr"+ df_filtered["co2ccu_co2em"].astype(str)
     df_filtered.loc[df_filtered["type"] == "ccs", "info"] = "CCS"
     df_filtered.loc[df_filtered["type"] == "comp", "info"] = "CDR Compensation"
-    print(df_filtered)
 
     cementccs_fscp = df_filtered[df_filtered["sector"] == "cement"].loc[df_filtered["type"] == "ccs", "fscp"].values[0]
     aviationcomp_fscp = df_filtered[df_filtered["sector"] == "plane"].loc[df_filtered["type"] == "comp", "fscp"].values[0]
 
     fig, ax = plt.subplots(figsize=(10, 8))
+
+    SMALL_SIZE = 12
+    MEDIUM_SIZE = 14
+    BIGGER_SIZE = 16
+
+    plt.rc('font', size=SMALL_SIZE)          # controls default text sizes
+    plt.rc('axes', labelsize=MEDIUM_SIZE)    # fontsize of the x and y labels
+    plt.rc('xtick', labelsize=MEDIUM_SIZE)    # fontsize of the tick labels
+    plt.rc('ytick', labelsize=MEDIUM_SIZE)    # fontsize of the tick labels
+    plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
+    plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
+    plt.rc('axes', titlesize=BIGGER_SIZE)
+
+
     widths = [0.8,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.8]
     x_positions = [0,1.5,1.9,2.5,2.9,3.5,3.9,4.5,4.9,6.5]
     attrs = df_filtered["co2ccu_co2em"].unique() *100
@@ -156,12 +169,17 @@ def plot_large_panel_ccuattr(dfs):
     ax.set_xticks([0,1.7,2.7,3.7,4.7,6.5])
     ax.set_xticklabels(["CCS\n(cement)",attrs[0]+"%", attrs[1]+"%", attrs[2]+"%", attrs[3]+"%","CDR\n(aviation)"])
 
+    #axes size
+    plt.setp(ax.get_yticklabels(), fontsize=12)
+    plt.setp(ax.get_xticklabels(), fontsize=12)
+
     ax = change_spines(ax)
-    ax.set_ylabel("Abatement cost (EUR/tCO2)")
+    ax.set_ylabel("Abatement cost (EUR/tCO2)", fontsize = 12)
     ax.set_title("Abatement cost for different CCU attributions", fontweight="bold",loc = "left")
 
     fig.tight_layout()
-    plt.show()
+    fig.savefig('././figs/main_CementaviationCCUAttributin.png', format='png', dpi = 200)
+    #plt.show()
 
 def plot_large_panel(dfs):
     dfs = add_colors_units_rename(dfs)
@@ -185,7 +203,7 @@ def plot_large_panel(dfs):
     plt.rcParams['legend.title_fontsize'] = MEDIUM_SIZE
 
     ## First 3 rows: subplots
-    fig, axes = plt.subplots(nrows = 3,ncols=5, figsize=(19,20))
+    fig, axes = plt.subplots(nrows = 3,ncols=5, figsize=(21,20))
 
     idx = 0
     for name, df in dfs.groupby("sector", sort = False):
@@ -318,8 +336,8 @@ def plot_large_panel(dfs):
     #fig.tight_layout()
     plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.45, hspace=0.1)
     #fig.savefig('./././myimage.png', format='png', dpi=600, bbox_inches='tight')
-    plt.show()
-
+    fig.savefig('././figs/supp_FSCPcalcbreakdown.png', format='png', dpi = 300, bbox_inches='tight')
+    #plt.show()
 
 def plot_barplotfscp(dfs, dfs_breakdown, sector = "steel", type = "h2",sensitivity = "h2_LCO"):
     dfs = add_colors_units_rename(dfs)
@@ -345,7 +363,8 @@ def plot_barplotfscp(dfs, dfs_breakdown, sector = "steel", type = "h2",sensitivi
     sub_df_LCO = sub_df_LCO.round(2)
     
     #more hacky stuff for the steel LCO breakdown in particular
-    sub_df_LCO_breakdown = sub_df_LCO_breakdown.drop_duplicates("LCO").dropna(axis=1, how='all').reset_index(drop = True).apply(pd.to_numeric, errors='ignore').round(2)
+    sub_df_LCO_breakdown = sub_df_LCO_breakdown.drop_duplicates("LCO").dropna(axis=1, how='all').reset_index(drop = True)
+    sub_df_LCO_breakdown = (sub_df_LCO_breakdown.apply(pd.to_numeric, errors="coerce").round(2).fillna(sub_df_LCO_breakdown)) #make sure all columns with numbers are numeric
     sub_df_LCO_breakdown.rename(columns = {"LCO": "cost"}, inplace = True)
     sub_df_LCO_breakdown.drop(["type", "sector", "tech"], axis =1, inplace = True)
     sub_df_LCO_breakdown = sub_df_LCO_breakdown[[ "cost", "capex", "opex", "other costs","ironore","scrap", "elec","fossilng", "h2", "fossilccoal", "fossilpci", "co2 transport and storage"]]
@@ -387,9 +406,8 @@ def plot_barplotfscp(dfs, dfs_breakdown, sector = "steel", type = "h2",sensitivi
 
     #then, transparent stacked bars
     for i, comp in enumerate(["capex","opex", "other costs","ironore","scrap", "elec", "fossilng", "h2", "fossilccoal", "fossilpci", "co2 transport and storage"]):
-
-        column = sub_df_LCO_merge[comp].fillna(0)
-
+        with pd.option_context("future.no_silent_downcasting", True):
+            column = sub_df_LCO_merge[comp].fillna(0).infer_objects(copy=False)
         axes[0].bar(x_pos, column, bottom = height, edgecolor = "dimgrey", color = color[i], alpha = alpha_list[i])
 
         annot_height = height + column/2
@@ -514,10 +532,11 @@ def plot_barplotfscp(dfs, dfs_breakdown, sector = "steel", type = "h2",sensitivi
                 size=18, weight='bold')
 
     fig.tight_layout()
-    plt.show()
+    #plt.show()
     #fig.savefig('./././myimage.png', format='png', dpi=600, bbox_inches='tight')
+    fig.savefig('././figs/main_steelLCObreakdown.png', format='png', dpi = 200)
 
-def plot_barplotaviation(dfs, dfs_breakdown, all_dfs_breakdown, sector = "plane", type = "efuel",sensitivity = "h2_LCO"):
+def plot_barplotaviation(dfs, dfs_breakdown, h2costs, sector = "plane", type = "efuel",sensitivity = "h2_LCO"):
     dfs = add_colors_units_rename(dfs)
     dfs_breakdown[["type", "sector"]] = dfs_breakdown["tech"].str.split("_", expand=True)
 
@@ -525,14 +544,7 @@ def plot_barplotaviation(dfs, dfs_breakdown, all_dfs_breakdown, sector = "plane"
     sub_df_LCO = dfs[(dfs["sector"]==sector) & ((dfs["type"]==type) | (dfs["type"]=="fossil") | (dfs["type"]=="comp") )]
     sub_df_LCO_breakdown = dfs_breakdown[(dfs_breakdown["sector"]==sector) & ((dfs_breakdown["type"]==type) | (dfs_breakdown["type"]=="fossil") | (dfs_breakdown["type"]=="comp") )]
 
-    #filter df to get relevant FSCP
-    sub_df_FSCP = dfs[(dfs["sector"]==sector) & (dfs["type"]==type) ]
-    sub_df_FSCP2 = dfs[(dfs["sector"]==sector) & (dfs["type"]=="comp") ]
-
-
     unit = np.unique(sub_df_LCO["unit"])[0]
-    fscp_color = np.unique(sub_df_FSCP["color_type"])[0]
-    fscp_color2 = np.unique(sub_df_FSCP2["color_type"])[0]
     
     #following line is a bit hacky, will make code break if comparing options with the same cost (eg DRI when choosing DAC Co2 sensitivity)
     sub_df_LCO.drop_duplicates( "cost", inplace=True)
@@ -541,12 +553,16 @@ def plot_barplotaviation(dfs, dfs_breakdown, all_dfs_breakdown, sector = "plane"
     sub_df_LCO = sub_df_LCO.round(5)
     
     #more hacky stuff for the steel LCO breakdown in particular
-    sub_df_LCO_breakdown = sub_df_LCO_breakdown.drop_duplicates("LCO").dropna(axis=1, how='all').reset_index(drop = True).apply(pd.to_numeric, errors='ignore').round(5)
+    sub_df_LCO_breakdown = sub_df_LCO_breakdown.drop_duplicates("LCO").dropna(axis=1, how='all').reset_index(drop = True)
+    sub_df_LCO_breakdown = (sub_df_LCO_breakdown.apply(pd.to_numeric, errors="coerce").round(5).fillna(sub_df_LCO_breakdown))
     sub_df_LCO_breakdown.rename(columns = {"LCO": "cost"}, inplace = True)
     sub_df_LCO_breakdown.drop(["type", "sector", "tech"], axis =1, inplace = True)
 
     sub_df_LCO_breakdown["compco2"] = sub_df_LCO_breakdown["co2"]
 
+    with pd.option_context("future.no_silent_downcasting", True):
+        MtJ_ch3oh_h2_costs = sub_df_LCO_breakdown["MtJ_ch3oh_h2"].dropna().diff().fillna(0).infer_objects(copy=False)
+    
     sub_df_LCO_breakdown = sub_df_LCO_breakdown[[ "cost", "other costs","MtJ_capex", "MtJ_opex","MtJ_elec","MtJ_h2","MtJ_co2", "MtJ_ch3oh_capex","MtJ_ch3oh_co2","MtJ_ch3oh_elec","MtJ_ch3oh_h2","MtJ_ch3oh_opex","compco2","co2 transport and storage","fossilJ"]]
 
     #merge to make final df
@@ -559,7 +575,7 @@ def plot_barplotaviation(dfs, dfs_breakdown, all_dfs_breakdown, sector = "plane"
     sub_df_LCO.sort_values(by = ["em", sensitivity], ascending = [False, True], inplace=True)
     sub_df_LCO_merge.sort_values(by = ["em", sensitivity], ascending = [False, True], inplace=True)
 
-    fig, axes = plt.subplots(nrows = 1,ncols=1, figsize=(11,8))
+    fig, axes = plt.subplots(nrows = 1,ncols=1, figsize=(14,8))
 
     #set font size
     SMALL_SIZE = 12
@@ -576,10 +592,10 @@ def plot_barplotaviation(dfs, dfs_breakdown, all_dfs_breakdown, sector = "plane"
 
 
     #x_pos = [0,3,6,7.5,9,10.5]
-    x_pos = [0,3,6]
+    x_pos = [0,3,7]
     height = 0
-    alpha_list = [0.8, 0.6, 0.4, 0.2,0.3, 0.5, 0.7, 0.9, 0.4, 0.2,0.3, 0.5,0.6, 0.7]
-    color = ["white", "white", "white", "white", "white", "white","white","white","white", "darkgrey","darkgrey","darkgrey","darkgrey","darkgrey"]
+    alpha_list = [0.8, 0.6, 0.4, 0.2,0.3, 0.5, 0.7, 0.9, 0.4, 0.2,0.5, 0.8]
+    color = ["white", "white", "white", "white", "white", "white","white","white","white", "darkgrey","darkgrey","white"]
     labels = {"MtJ_capex":"CAPEX: MtJ", "MtJ_opex":"O&M: MtJ","MtJ_elec":"Electricity: MtJ ","MtJ_h2":"Hydrogen: MtJ ","MtJ_co2":"CO2 losses: MtJ", "other costs":"Aircraft cost and\noperating fees", "MtJ_ch3oh_capex":"CAPEX: Methanol synthesis","MtJ_ch3oh_co2":"CO2: Methanol synthesis",
             "MtJ_ch3oh_elec":"Electricity: Methanol synthesis","MtJ_ch3oh_h2":"Hydrogen: Methanol synthesis","MtJ_ch3oh_opex":"O&M: Methanol synthesis",
             "compco2":"CO2: CDR ","elec":"Electricity","fossilJ":"Fossil jet fuel","co2 transport and storage": "CO2 transport\n& storage", "MtJ_allopex":"All OPEX: MtJ"}
@@ -587,50 +603,66 @@ def plot_barplotaviation(dfs, dfs_breakdown, all_dfs_breakdown, sector = "plane"
 
     sub_df_LCO_merge["MtJ_allopex"] = sub_df_LCO_merge["MtJ_opex"] + sub_df_LCO_merge["MtJ_elec"] + sub_df_LCO_merge["MtJ_h2"]
 
+    #small change to total cost of efuel option: we account for uncertainty in the cost of H2.
+    # this means adding the costs of different h2 assumptions to make the main bar bigger.
+    sub_df_LCO_merge.loc[2, "cost"] = sub_df_LCO_merge.loc[2, "cost"] + MtJ_ch3oh_h2_costs.sum()
+    
     #first, plot colorerd layer
     axes.bar(x_pos, sub_df_LCO_merge["cost"], color = sub_df_LCO_merge["color_type"],  edgecolor = "grey")
     j=0
     #then, transparent stacked bars
     for i, comp in enumerate(["other costs","compco2","MtJ_ch3oh_co2","MtJ_co2","MtJ_capex","MtJ_ch3oh_capex", "MtJ_allopex", "MtJ_ch3oh_opex","MtJ_ch3oh_elec","MtJ_ch3oh_h2","fossilJ","co2 transport and storage"]):
-        column = sub_df_LCO_merge[comp].fillna(0)
+        with pd.option_context("future.no_silent_downcasting", True):
+            column = sub_df_LCO_merge[comp].fillna(0).infer_objects(copy=False)
+        #find h2 cost for MtJ
+        if comp == "MtJ_ch3oh_h2":
+            bars = axes.bar(x_pos, column, bottom = height, edgecolor = None, color = color[i], alpha = alpha_list[i])
+            axes.text(x = x_pos[2]- 1.5, y= height[2] + column[2], s="Hydrogen cost:\n"+str(h2costs[0])+"EUR/MWh", verticalalignment='center', c= "darkgrey", fontsize = 10)
 
-        bars = axes.bar(x_pos, column, bottom = height, edgecolor = "dimgrey", color = color[i], alpha = alpha_list[i])
-
-        annot_height = height + column/2
-        height += column
+            annot_height = height + column/2
+            height += column
+            temp_height = height[2]
+            for j, val in enumerate(MtJ_ch3oh_h2_costs):
+                if j ==1 or j == 3:
+                    axes.bar(x_pos[2], val, bottom = temp_height, edgecolor = "dimgrey", color = color[i], alpha = alpha_list[i],linestyle="--")
+                else:
+                    axes.bar(x_pos[2], val, bottom = temp_height, edgecolor = None, color = color[i], alpha = alpha_list[i])
+                axes.text(x = x_pos[2]- 1.5, y= temp_height+val, s="Hydrogen cost:\n"+str(h2costs[j])+"EUR/MWh", verticalalignment='center', c= "darkgrey", fontsize = 10)
+                temp_height += val
+        else:
+            bars = axes.bar(x_pos, column, bottom = height, edgecolor = None, color = color[i], alpha = alpha_list[i])
+            annot_height = height + column/2
+            height += column
+            
         
         #here, add any annotation needed
         if column[0] > 0:
             axes.hlines(annot_height[0], 0.4, 0.55, colors = "darkgrey", linewidth = 1)
             if comp != "scrap":
-                axes.text(x=0.6,y= annot_height[0], s=labels[comp], verticalalignment='center', c= "grey")
+                axes.text(x=0.6,y= annot_height[0], s=labels[comp], verticalalignment='center', c= "dimgrey")
             else:
-                axes.text(x=0.6, y= annot_height[0], s=labels[comp], verticalalignment='center', c= "grey")
+                axes.text(x=0.6, y= annot_height[0], s=labels[comp], verticalalignment='center', c= "dimgrey")
 
         if column[1] > 0:
 
-            axes.text(x=3.6,y= annot_height[1], s=labels[comp], verticalalignment='center', c= "grey", zorder=2)
+            axes.text(x=3.6,y= annot_height[1], s=labels[comp], verticalalignment='center', c= "dimgrey", zorder=2)
             axes.hlines(annot_height[1], 3.4, 3.55, colors = "darkgrey", linewidth = 1, zorder=2)
 
         if column[2] > 0:
             if comp not in ["MtJ_allopex", "MtJ_ch3oh_capex","MtJ_ch3oh_opex","MtJ_ch3oh_elec","MtJ_ch3oh_h2"]:
-                axes.text(x=6.6,y= annot_height[2], s=labels[comp], verticalalignment='center', c= "grey", zorder=2)
-                axes.hlines(annot_height[2], 6.4, 6.55, colors = "darkgrey", linewidth = 1, zorder=2)
+                axes.text(x=7.6,y= annot_height[2], s=labels[comp], verticalalignment='center', c= "dimgrey", zorder=2)
+                axes.hlines(annot_height[2], 7.4, 7.55, colors = "darkgrey", linewidth = 1, zorder=2)
 
             elif comp in ["MtJ_allopex", "MtJ_ch3oh_capex","MtJ_ch3oh_opex","MtJ_ch3oh_elec"]:
-                axes.annotate(labels[comp],(6.4, annot_height[2]), xytext = (6.55, annot_height[2]+0.0009+j*0.0022),c= "grey",
+                axes.annotate(labels[comp],(7.4, annot_height[2]), xytext = (7.55, annot_height[2]+0.0009+j*0.0022),c= "dimgrey",
                                       arrowprops=dict(color='darkgrey', width = 0.05, headwidth = 0), zorder=2)
 
 
                 j+=1
-            # elif comp == "MtJ_h2":
-            #     axes.text(x=7.6,y= annot_height[2], s=labels[comp], verticalalignment='center', c= "grey")
-            #     axes.hlines(annot_height[2], 6.4, 6.55, colors = "darkgrey", linewidth = 1)
+ 
             else:
-                axes.text(x=6.6,y= annot_height[2]+0.006, s=labels[comp], verticalalignment='center', c= "grey")
-                axes.hlines(annot_height[2]+0.006, 6.4, 6.55, colors = "darkgrey", linewidth = 1)
-        
-    #add annotation to xaxis
+                axes.text(x=7.6,y= annot_height[2]+0.006, s=labels[comp], verticalalignment='center', c= "dimgrey")
+                axes.hlines(annot_height[2]+0.006, 7.4, 7.55, colors = "darkgrey", linewidth = 1)
 
 
         # Find the index of "MtJ_co2"
@@ -641,7 +673,7 @@ def plot_barplotaviation(dfs, dfs_breakdown, all_dfs_breakdown, sector = "plane"
             # Draw a grey rectangle highlighting "MtJ_co2"
             rect = Rectangle(
                 (bars[1].get_x() - bars[0].get_width() * 0.1, 0),  # x, y position (left edge of the rectangle)
-                (bars[2].get_x()-bars[1].get_x()) * 2.2 ,  # width spans all bars + some padding
+                (bars[2].get_x()-bars[1].get_x()) * 1.9 ,  # width spans all bars + some padding
                 mtj_co2_bottom[2]+mtj_co2_height[2],  # height
                 fc=(0.7,0.7,0.7,0.2), ec=(0,0,0,0.7), zorder=1  # semi-transparent grey rectangle
             )
@@ -672,8 +704,8 @@ def plot_barplotaviation(dfs, dfs_breakdown, all_dfs_breakdown, sector = "plane"
 
 
     fig.tight_layout()
-    plt.show()
-    #fig.savefig('./././myimage.png', format='png', dpi=600, bbox_inches='tight')
+    fig.savefig('././figs/main_aviationCDRefuels.png', format='png', dpi = 200)
+    #plt.show()
 
 def plot_barplotfuels(dfs, dfs_breakdown, sector = "steel", type = "h2",sensitivity = "h2_LCO"):
     dfs = add_colors_units_rename(dfs)
@@ -693,7 +725,8 @@ def plot_barplotfuels(dfs, dfs_breakdown, sector = "steel", type = "h2",sensitiv
     sub_df_LCO = sub_df_LCO.round(2)
 
     #more hacky stuff for the steel LCO breakdown in particular
-    sub_df_LCO_breakdown = sub_df_LCO_breakdown.drop_duplicates("LCO").dropna(axis=1, how='all').reset_index(drop = True).apply(pd.to_numeric, errors='ignore').round(2)
+    sub_df_LCO_breakdown = sub_df_LCO_breakdown.drop_duplicates("LCO").dropna(axis=1, how='all').reset_index(drop = True)
+    sub_df_LCO_breakdown = (sub_df_LCO_breakdown.apply(pd.to_numeric, errors="coerce").round(2).fillna(sub_df_LCO_breakdown))
     sub_df_LCO_breakdown.rename(columns = {"LCO": "cost"}, inplace = True)
     sub_df_LCO_breakdown.drop(["tech"], axis =1, inplace = True)
     selected_comps = [ "cost", "capex","ch3oh_capex", "opex", "ch3oh_opex","elec","ch3oh_elec", "h2","ch3oh_h2","ch3oh_co2" ]
@@ -713,7 +746,7 @@ def plot_barplotfuels(dfs, dfs_breakdown, sector = "steel", type = "h2",sensitiv
     # color_dict = {"cement":"#EABE7C", "steel":"#8c6570","ship":"#0471A6","plane":"#61E8E1", "chem":"#AFB3F7"}
     # color_dict_tech = {"fossil":"#31393C",
 
-    fig, axes = plt.subplots(nrows = 1,ncols=1, figsize=(11,10))
+    fig, axes = plt.subplots(nrows = 1,ncols=1, figsize=(14,10))
 
     x_pos = [2,4,6,8,10]
 
@@ -729,8 +762,8 @@ def plot_barplotfuels(dfs, dfs_breakdown, sector = "steel", type = "h2",sensitiv
 
     #then, transparent stacked bars
     for i, comp in enumerate(selected_comps[1:]):
-
-        column = sub_df_LCO_merge[comp].fillna(0)
+        with pd.option_context("future.no_silent_downcasting", True):
+            column = sub_df_LCO_merge[comp].fillna(0).infer_objects(copy=False)
 
         axes.bar(x_pos, column, bottom = height, edgecolor = "dimgrey", color = color[i], alpha = alpha_list[i])
 
@@ -761,11 +794,11 @@ def plot_barplotfuels(dfs, dfs_breakdown, sector = "steel", type = "h2",sensitiv
     #             arrowprops=dict(arrowstyle='-',facecolor='black', linestyle = "--"),
     #             annotation_clip=False)
 
-    axes.annotate('E-jet fuel, for different H2 and CO2 costs',xy=(8.25,-120),xytext=(8.25,-120), color = "black", horizontalalignment = "center",
+    axes.annotate('E-jet fuel, for different H2 and CO2 costs',xy=(6.8,-80),xytext=(6.8,-60), color = "black", horizontalalignment = "center",
                 annotation_clip=False)
 
     #other plot settings
-    axes.set_xticks(x_pos, sub_df_LCO_merge["code"])
+    axes.set_xticks(x_pos, sub_df_LCO_merge["code"], fontsize = 10)
     
     axes = change_spines(axes)
     
@@ -808,7 +841,8 @@ def plot_barplotfuels(dfs, dfs_breakdown, sector = "steel", type = "h2",sensitiv
     # axes[1].legend([(s1,l1), (s2,l2)],["DRI-EAF replacing BF-BOF steel","BF-BOF-CCS replacing BF-BOF steel"], loc = "lower right")
 
     fig.tight_layout()
-    plt.show()
+    fig.savefig('././figs/supp_aviationfuelLCObreakdown.png', format='png', dpi = 200)
+    #plt.show()
 
 def calculate_em_abated(row, fossil_em, df):
     if row['type'] == 'comp':
@@ -1148,9 +1182,9 @@ def plot_steel_macc(dfs, dfs_retrofit, dfs_comp, dfs_comp_retrofit, sector = "st
                     size=20, weight='bold')
 
     #fig.tight_layout()
-    plt.show()
+    #plt.show()
     # fig.savefig('././myimage.svg', format='svg', dpi=1200)
-    # fig.savefig('././myimage.png', format='png')
+    fig.savefig('././figs/main_steelFSCP.png', format='png', dpi = 200)
     
 def blueh2_costanalysis(dfs):
     blueh2_rows = []
@@ -1174,7 +1208,7 @@ def blueh2_costanalysis(dfs):
     #other source: 1.3 - 3.3 USD/kg (https://www.iea.org/data-and-statistics/charts/global-average-levelised-cost-of-hydrogen-production-by-energy-source-and-technology-2019-and-2050)
     greenh2_cost = np.array([26.7,34.71,66.75,88.11]) 
     
-    plt.figure(figsize=(8, 6))
+    fig = plt.figure(figsize=(8, 6))
     box_plot = plt.boxplot([greenh2_cost,blueh2_df["cost"], blueh2_lowleakage, blueh2_highleakage ], patch_artist=True)#, boxprops=dict(facecolor=['skyblue', color='black'), whiskerprops=dict(color='black'), capprops=dict(color='black'), flierprops=dict(marker='o', markerfacecolor='r', markersize=8, linestyle='none'))
     
     colors = ['lightgreen', 'skyblue','royalblue','darkblue' ]
@@ -1188,8 +1222,8 @@ def blueh2_costanalysis(dfs):
     plt.ylim(0, 120)
     plt.ylabel("Low-emission H2 cost\n(EUR/MWh)")
     plt.xticks([1, 2,3,4], ["Green H2\n(IEA NZE 2050)", "Blue H2", "Blue H2, \n0.1"+'%'+" leakage", "Blue H2, \n3"+'%'+" leakage"])
-    plt.title('Cost of various low-emission hydrogen production pathways')
-    plt.show()
+    plt.title('Cost of various low-emission hydrogen production pathways',fontsize = 14, fontweight='bold', loc='left')
+    fig.savefig('././figs/supp_blueH2cost.png', format='png', dpi = 200)
 
 def nonfossilco2_supplycurve():
     CO2_source = np.array(["Bioethanol", "Biogas", "Pulp and paper", "Waste-to-energy", "Biomass\nheat and power", "Direct-air capture"])
@@ -1310,6 +1344,5 @@ def nonfossilco2_supplycurve():
     ax = change_spines(ax)
     plt.xlabel('Theoretical quantity availably by 2050 (GtCO2/yr)')
     plt.ylabel('Cost (EUR/tCO2)')
-    plt.title('Non-fossil CO2 Supply Curve', fontsize=16)
-
-    plt.show()
+    plt.title('Non-fossil CO2 Supply Curve', fontsize=14,fontweight='bold', loc='left')
+    fig.savefig('././figs/supp_nonfossilCO2supplycurve.png', format='png', dpi = 200)

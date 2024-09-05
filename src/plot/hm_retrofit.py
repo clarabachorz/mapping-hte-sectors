@@ -236,6 +236,8 @@ def plot_hm_figS3(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
                 ax.set_xticklabels([])
 
     fig.get_layout_engine().set(w_pad=4 / 72, h_pad=4 / 72, hspace=0, wspace=0, rect=[0, 0, .9, 1])
+    figpath = "././figs/" + "supp_steelretrofit" + ".png"
+    fig.savefig(figpath, format='png', dpi=600, bbox_inches='tight')
     # fig.savefig('./././myimage.png', format='png', dpi=600, bbox_inches='tight')
 
 def plot_hm_figS4(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_var = "h2_LCO"):
@@ -412,6 +414,8 @@ def plot_hm_figS4(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
                 ax.set_xticklabels([])
 
     fig.get_layout_engine().set(w_pad=4 / 72, h_pad=4 / 72, hspace=0, wspace=0, rect=[0, 0, .9, 1])
+    figpath = "././figs/" + "supp_BFCCSsensitivity" + ".png"
+    fig.savefig(figpath, format='png', dpi=600, bbox_inches='tight')
     # fig.savefig('./././myimage.png', format='png', dpi=600, bbox_inches='tight')
 
 def plot_hm_figS5(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_var = "h2_LCO"):
@@ -588,6 +592,8 @@ def plot_hm_figS5(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
                 ax.set_xticklabels([])
 
     fig.get_layout_engine().set(w_pad=4 / 72, h_pad=4 / 72, hspace=0, wspace=0, rect=[0, 0, .9, 1])
+    figpath = "././figs/" + "supp_CFretrofit" + ".png"
+    fig.savefig(figpath, format='png', dpi=600, bbox_inches='tight')
     # fig.savefig('./././myimage.png', format='png', dpi=600, bbox_inches='tight')
 
 def plot_hm_figS6(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_var = "h2_LCO"):
@@ -763,6 +769,8 @@ def plot_hm_figS6(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
                 ax.set_xticklabels([])
 
     fig.get_layout_engine().set(w_pad=4 / 72, h_pad=4 / 72, hspace=0, wspace=0, rect=[0, 0, .9, 1])
+    figpath = "././figs/" + "supp_fossiljetfuelcosts" + ".png"
+    fig.savefig(figpath, format='png', dpi=600, bbox_inches='tight')
     # fig.savefig('./././myimage.png', format='png', dpi=600, bbox_inches='tight')
 
 def plot_hm_figS7(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_var = "h2_LCO"):
@@ -945,34 +953,31 @@ def plot_hm_figS7(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
                 ax.set_xticklabels([])
 
     fig.get_layout_engine().set(w_pad=4 / 72, h_pad=4 / 72, hspace=0, wspace=0, rect=[0, 0, .9, 1])
+    figpath = "././figs/" + "supp_blueH2steel" + ".png"
+    fig.savefig(figpath, format='png', dpi=600, bbox_inches='tight')
     # fig.savefig('./././myimage.png', format='png', dpi=600, bbox_inches='tight')
 def plot_supretrofit():
     row_titles = ["Standard case", "Climate neutrality case"]
-    # plot_hm_figS3(#'code_figS3/figS3_rawdata.csv',
-    #             path_to_data = str(Path(__file__).parent.parent / '../data/supretrofit_rawdata.csv'),
-    #             rowvar_name= "scenario",
-    #             row_titles=row_titles)
-    # plt.show()
-    # plot_hm_figS4(
-    #     path_to_data = str(Path(__file__).parent.parent / '../data/supBFCCS_rawdata.csv'),
-    #     rowvar_name= "scenario",
-    #     row_titles=row_titles)
-    # plt.show()
-    # plot_hm_figS5(
-    #             path_to_data = str(Path(__file__).parent.parent / '../data/supretrofit_rawdata.csv'),
-    #             rowvar_name= "scenario",
-    #             row_titles=row_titles)
-    # plt.show()
-    # plot_hm_figS6(
-    #             path_to_data = str(Path(__file__).parent.parent / '../data/supfossilcost_rawdata.csv'),
-    #             rowvar_name= "scenario",
-    #             row_titles=row_titles)
+    plot_hm_figS3(path_to_data = str(Path(__file__).parent.parent / '../data/supretrofit_rawdata.csv'),
+                rowvar_name= "scenario",
+                row_titles=row_titles)
+    plot_hm_figS4(
+        path_to_data = str(Path(__file__).parent.parent / '../data/supBFCCS_rawdata.csv'),
+        rowvar_name= "scenario",
+        row_titles=row_titles)
+    plot_hm_figS5(
+                path_to_data = str(Path(__file__).parent.parent / '../data/supretrofit_rawdata.csv'),
+                rowvar_name= "scenario",
+                row_titles=row_titles)
+    plot_hm_figS6(
+                path_to_data = str(Path(__file__).parent.parent / '../data/supfossilcost_rawdata.csv'),
+                rowvar_name= "scenario",
+                row_titles=row_titles)
     row_titlesblue = ["Standard case\n\n", "Climate neutrality case\n(GWP100)\n\n", "Climate neutrality case\n(GWP20)\n\n"]
     plot_hm_figS7(
                 path_to_data = str(Path(__file__).parent.parent / '../data/supblueh2_rawdata.csv'),
                 rowvar_name= "scenario",
                 row_titles=row_titlesblue)
-    plt.show()
 
 
 

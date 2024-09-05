@@ -93,7 +93,7 @@ def make_default_cbar(fig, defaultcmap, defaultcmap_ticks):
     colorbar.set_ticklabels(defaultcmap_ticks)
     colorbar.ax.tick_params(labelsize=MEDIUM_SIZE)
 
-def plot_sectoral_hm(path_to_data, rowvar_name, row_vars, row_titles, x_var = "co2_LCO", y_var = "h2_LCO", cmap_list = None):
+def plot_sectoral_hm(path_to_data, rowvar_name, row_vars, row_titles, x_var = "co2_LCO", y_var = "h2_LCO", cmap_list = None, fig_title = '', figsize=(20,17)):
     """
     rowvar_name: name of the variable that will be used to create the different rows
     row_vars: list of the different values that the rowvar_name can take (defines the number of rows)
@@ -102,6 +102,7 @@ def plot_sectoral_hm(path_to_data, rowvar_name, row_vars, row_titles, x_var = "c
     cmap_list: list of custom color maps to be used for each row of the heatmaps. 
                 If None, the default color map will be used, with only one color bar
                 on the right hand side of the plot.
+    fig_title: name of the figure that will be saved
     """
     # import plotting parameters from common
     # color_dict_tech = common.color_dict_tech
@@ -139,10 +140,7 @@ def plot_sectoral_hm(path_to_data, rowvar_name, row_vars, row_titles, x_var = "c
 
     # define figure size
     #fig, axs = plt.subplots(nrows=len(row_vars), ncols=len(col_vars), figsize=(4*len(col_vars),4*len(row_vars)), constrained_layout=True)
-    ## for main text figure
-    fig, axs = plt.subplots(nrows=len(row_vars), ncols=len(col_vars), figsize=(20,17), constrained_layout=True)
-    # for supplementary figure
-    #fig, axs = plt.subplots(nrows=len(row_vars), ncols=len(col_vars), figsize=(20,25), constrained_layout=True)
+    fig, axs = plt.subplots(nrows=len(row_vars), ncols=len(col_vars), figsize=figsize, constrained_layout=True)
     for row in range(len(row_vars)):
         #select the appropriate row var
         row_var = row_vars[row]
@@ -287,7 +285,8 @@ def plot_sectoral_hm(path_to_data, rowvar_name, row_vars, row_titles, x_var = "c
         plt.setp(ax.get_yticklabels(), fontsize=SMALL_SIZE)
         plt.setp(ax.get_xticklabels(), fontsize=SMALL_SIZE)
         #fig.savefig('./analysis/fig/fscp_hm.svg', format='svg', dpi=1200)
-    fig.savefig('./././myimage.png', format='png', dpi=600, bbox_inches='tight')
+    figpath = "././figs/" + fig_title + ".png"
+    fig.savefig(figpath, format='png', dpi=600, bbox_inches='tight')
 
 
 def plot_mainfig():
@@ -306,8 +305,9 @@ def plot_mainfig():
                     rowvar_name="scenario", 
                     row_vars = row_vars, 
                     row_titles= row_titles,
-                    cmap_list = cmap_list)
-    plt.show()
+                    cmap_list = cmap_list,
+                    fig_title = 'main_HTElandscapes')
+    #plt.show()
 
 def plot_supfig():
     row_vars = [8,30,100,200]
@@ -317,5 +317,7 @@ def plot_supfig():
                     path_to_data = str(Path(__file__).parent.parent / '../data/sup_rawdata.csv'),
                     rowvar_name="co2ts_LCO", 
                     row_vars = row_vars, 
-                    row_titles= row_titles)
-    plt.show()
+                    row_titles= row_titles,
+                    fig_title = 'supp_HTElandscapesCO2ts',
+                    figsize=(20,25))
+    #plt.show()
