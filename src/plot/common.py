@@ -158,7 +158,7 @@ def plot_large_panel_ccuattr(dfs):
 
     na_patch = Line2D([0], [0], marker=r'$\checkmark$', color='w', label='CCU is the cheapest abatement\noption',
              markerfacecolor='green', markersize=10, markeredgewidth=0, markeredgecolor='green')
-    fossil_patch = Line2D([0], [0], marker=r'$\times$', color='w', label='CCU more costly than alternative\noption (CCS or CDR)',
+    fossil_patch = Line2D([0], [0], marker=r'$\times$', color='w', label='CCU more costly than alternative\noption (CCS or compensation)',
              markerfacecolor='red', markersize=10, markeredgewidth=0, markeredgecolor='red')
     leg2 = fig.legend(handles=[na_patch,fossil_patch], bbox_to_anchor=(0.1, 0.68),loc='lower left', fontsize = 12)
     ax.add_artist(leg2)
@@ -167,7 +167,7 @@ def plot_large_panel_ccuattr(dfs):
     ax.text(3, -0.1, "CCU for cement and aviation,\nfor varying emission attributions\n(to the user sector)", ha='center', va='center', fontsize=12,transform=ax.get_xaxis_transform())
     # add delimiation line for cement ccs and aviation comp
     ax.set_xticks([0,1.7,2.7,3.7,4.7,6.5])
-    ax.set_xticklabels(["CCS\n(cement)",attrs[0]+"%", attrs[1]+"%", attrs[2]+"%", attrs[3]+"%","CDR\n(aviation)"])
+    ax.set_xticklabels(["CCS\n(cement)",attrs[0]+"%", attrs[1]+"%", attrs[2]+"%", attrs[3]+"%","Compensation\n(aviation)"])
 
     #axes size
     plt.setp(ax.get_yticklabels(), fontsize=12)
