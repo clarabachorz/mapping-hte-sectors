@@ -10,9 +10,9 @@ import string
 
 from src.plot import common
 
-SMALL_SIZE = 17
-MEDIUM_SIZE = 19
-BIGGER_SIZE = 21
+SMALL_SIZE = 18
+MEDIUM_SIZE = 20
+BIGGER_SIZE = 22
 
 plt.rc('font', size=MEDIUM_SIZE)          # controls default text sizes
 plt.rc('axes', titlesize=SMALL_SIZE)     # fontsize of the axes title
@@ -93,7 +93,7 @@ def make_default_cbar(fig, defaultcmap, defaultcmap_ticks):
     colorbar.set_ticklabels(defaultcmap_ticks)
     colorbar.ax.tick_params(labelsize=MEDIUM_SIZE)
 
-def plot_sectoral_hm(path_to_data, rowvar_name, row_vars, row_titles, x_var = "co2_LCO", y_var = "h2_LCO", cmap_list = None, fig_title = '', figsize=(20,17)):
+def plot_sectoral_hm(path_to_data, rowvar_name, row_vars, row_titles, x_var = "co2_LCO", y_var = "h2_LCO", cmap_list = None, vmax_hmdiff=100, fig_title = '', figsize=(20,20)):
     """
     rowvar_name: name of the variable that will be used to create the different rows
     row_vars: list of the different values that the rowvar_name can take (defines the number of rows)
@@ -189,7 +189,9 @@ def plot_sectoral_hm(path_to_data, rowvar_name, row_vars, row_titles, x_var = "c
                 make_multiple_cbars(ax, row, cmap_list, defaultcmap_ticks)
 
             # add the additional transparent layer to show the fscp difference between the first and second minima
-            heatmap_diff = plot_heatmap(sns_diff_df, transparent_cmap, ax, cbar = False, vmin=0, vmax=100)
+            # the default heatmap only shows this difference, with a white shading, up to an FSCP diff of 100.
+            # this can be changed directly in the function parameter
+            heatmap_diff = plot_heatmap(sns_diff_df, transparent_cmap, ax, cbar = False, vmin=0, vmax=vmax_hmdiff)
             # and the contour line
             contour_values = {"steel": [0, 50, 100, 150, 200,250], "cement": [0,50, 100, 150, 200, 250], "plane":[0, 500, 1000, 1500, 2000]}.get(col_var, [0, 400, 800, 1200, 1600])
             contour = ax.contour(np.arange(.5, contour_df.shape[1]), np.arange(.5, contour_df.shape[0]), contour_df, contour_values, colors='#3b3b3b', alpha=0.8, linewidths=0.8)
@@ -292,12 +294,6 @@ def plot_sectoral_hm(path_to_data, rowvar_name, row_vars, row_titles, x_var = "c
 def plot_mainfig():
     row_vars = ["normal","ccu", "comp"]
     row_titles = ["No conditions\n", "Fossil CCU: CO2 utilization\nrequires CO2 source\n", "Compatibility with climate\nneutrality (compensation\nof residual emissions)\n\n"]
-
-    dict_type_ID_noDACCS = {"h2": 0, "efuel": 0.33,  "ccu":0.66, "ccs":1}
-    #dict_type_ID_noDACCS = {"h2": 0,"blueh2":0.25, "efuel": 0.5,  "ccu":0.75, "ccs":1}
-    mycmap_noDACCS = return_custom_cmap(dict_type_ID_noDACCS)
-    ## use below to make 3 different colorbars
-    # cmap_list = [None, None, mycmap_noDACCS]
     
     cmap_list = None
     plot_sectoral_hm(#path_to_data='./data/figfscp_rawdata.csv',
@@ -307,7 +303,14 @@ def plot_mainfig():
                     row_titles= row_titles,
                     cmap_list = cmap_list,
                     fig_title = 'main_HTElandscapes')
-    #plt.show()
+    
+    plot_sectoral_hm(path_to_data = str(Path(__file__).parent.parent / '../data/supCCUattrib_rawdata.csv'),
+                    rowvar_name="scenario", 
+                    row_vars = row_vars, 
+                    row_titles= row_titles,
+                    cmap_list = cmap_list,
+                    vmax_hmdiff=20,
+                    fig_title = 'supp_HTElandscapeshighCCUattrib')
 
 def plot_supfig():
     row_vars = [8,30,100,200]

@@ -119,6 +119,15 @@ def sup5_calc_dfs(param_set, param_dict):
 
     return [df_normal, df_lowleakage, df_highleakage, df_normalcomp, df_lowleakagecomp, df_highleakagecomp, df_normalcomp20, df_lowleakagecomp20, df_highleakagecomp20]
 
+def sup6_calc_dfs(param_set, param_dict):
+    temp_dict = dict(zip(param_dict.keys(), param_set))
+    load_json = True
+
+    df_normal = process_tech_df.get_df(scenario = "normal", load_json = load_json, co2ccu_co2em = 0.85, **temp_dict)
+    df_ccu = process_tech_df.get_df(scenario = "ccu", CCU_coupling=True, DACCS = True, compensate=False, load_json= load_json, co2ccu_co2em = 0.85, **temp_dict)
+    df_comp = process_tech_df.get_df(scenario = "comp", CCU_coupling=True, DACCS=False, compensate=True, load_json=load_json, co2ccu_co2em = 0.85, **temp_dict)
+
+    return [df_normal, df_ccu, df_comp]
 
 def save_mainfigdata(mainfig_list_of_dfs):
     list_of_dfs = [df for sublist in mainfig_list_of_dfs for df in sublist]  # Flatten the list
@@ -149,6 +158,11 @@ def save_sup5data(sub5_list_of_dfs):
     df_final = pd.concat(list_of_dfs, ignore_index=True)
     df_final.to_csv(str(Path(__file__).parent / 'data/supblueh2_rawdata.csv'))
 
+def save_sup6data(sub6_list_of_dfs):
+    list_of_dfs = [df for sublist in sub6_list_of_dfs for df in sublist]  # Flatten the list
+    df_final = pd.concat(list_of_dfs, ignore_index=True)
+    df_final.to_csv(str(Path(__file__).parent / 'data/supCCUattrib_rawdata.csv'))
+
 if __name__ == "__main__":
     # calculates data for 3 heatmap figures: the main figure, supplementary figure with CO2 transport and storage sensitivity,
     # and supplementary with retrofit sensitivity
@@ -161,6 +175,7 @@ if __name__ == "__main__":
         sup3_list_of_dfs = pool.starmap(sup3_calc_dfs, [(param_set, mainfig_params()[0]) for param_set in mainfig_params()[1]])
         sup4_list_of_dfs = pool.starmap(sup4_calc_dfs, [(param_set, mainfig_params()[0]) for param_set in mainfig_params()[1]])
         sup5_list_of_dfs = pool.starmap(sup5_calc_dfs, [(param_set, mainfig_params()[0]) for param_set in mainfig_params()[1]])
+        sup6_list_of_dfs = pool.starmap(sup6_calc_dfs, [(param_set, mainfig_params()[0]) for param_set in mainfig_params()[1]])
 
     save_mainfigdata(mainfig_list_of_dfs)
     save_supdata(sup_list_of_dfs)
@@ -168,5 +183,6 @@ if __name__ == "__main__":
     save_sup3data(sup3_list_of_dfs)
     save_sup4data(sup4_list_of_dfs)
     save_sup5data(sup5_list_of_dfs)
+    save_sup6data(sup6_list_of_dfs)
 
 
