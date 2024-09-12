@@ -115,8 +115,8 @@ def plot_large_panel_ccuattr(dfs):
     plt.rc('axes', titlesize=BIGGER_SIZE)
 
 
-    widths = [0.8,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.8]
-    x_positions = [0,1.5,1.9,2.5,2.9,3.5,3.9,4.5,4.9,6.5]
+    widths = [0.8,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.8]
+    x_positions = [0,1.5,1.9,2.5,2.9,3.5,3.9,4.5,4.9,5.5,5.9,7.5]
     attrs = df_filtered["co2ccu_co2em"].unique() *100
     attrs = attrs.astype(int).astype(str)
 
@@ -166,8 +166,8 @@ def plot_large_panel_ccuattr(dfs):
 
     ax.text(3, -0.1, "CCU for cement and aviation,\nfor varying emission attributions\n(to the user sector)", ha='center', va='center', fontsize=12,transform=ax.get_xaxis_transform())
     # add delimiation line for cement ccs and aviation comp
-    ax.set_xticks([0,1.7,2.7,3.7,4.7,6.5])
-    ax.set_xticklabels(["CCS\n(cement)",attrs[0]+"%", attrs[1]+"%", attrs[2]+"%", attrs[3]+"%","Compensation\n(aviation)"])
+    ax.set_xticks([0,1.7,2.7,3.7,4.7,5.7,7.5])
+    ax.set_xticklabels(["CCS\n(cement)",attrs[0]+"%", attrs[1]+"%", attrs[2]+"%", attrs[3]+"%",attrs[4]+"%","Compensation\n(aviation)"])
 
     #axes size
     plt.setp(ax.get_yticklabels(), fontsize=12)
@@ -575,12 +575,12 @@ def plot_barplotaviation(dfs, dfs_breakdown, h2costs, sector = "plane", type = "
     sub_df_LCO.sort_values(by = ["em", sensitivity], ascending = [False, True], inplace=True)
     sub_df_LCO_merge.sort_values(by = ["em", sensitivity], ascending = [False, True], inplace=True)
 
-    fig, axes = plt.subplots(nrows = 1,ncols=1, figsize=(14,8))
+    fig, axes = plt.subplots(nrows = 1,ncols=1, figsize=(14,12))
 
     #set font size
-    SMALL_SIZE = 12
-    MEDIUM_SIZE = 14
-    BIGGER_SIZE = 16
+    SMALL_SIZE = 14
+    MEDIUM_SIZE = 16
+    BIGGER_SIZE = 18
 
     plt.rc('font', size=SMALL_SIZE)          # controls default text sizes
     plt.rc('axes', labelsize=MEDIUM_SIZE)    # fontsize of the x and y labels
@@ -617,17 +617,17 @@ def plot_barplotaviation(dfs, dfs_breakdown, h2costs, sector = "plane", type = "
         #find h2 cost for MtJ
         if comp == "MtJ_ch3oh_h2":
             bars = axes.bar(x_pos, column, bottom = height, edgecolor = None, color = color[i], alpha = alpha_list[i])
-            axes.text(x = x_pos[2]- 1.5, y= height[2] + column[2], s="Hydrogen cost:\n"+str(h2costs[0])+"EUR/MWh", verticalalignment='center', c= "darkgrey", fontsize = 10)
+            #axes.text(x = x_pos[2]- 1.5, y= height[2] + column[2], s="Hydrogen cost:\n"+str(h2costs[0])+"EUR/MWh", verticalalignment='center', c= "darkgrey", fontsize = 12)
 
             annot_height = height + column/2
             height += column
             temp_height = height[2]
             for j, val in enumerate(MtJ_ch3oh_h2_costs):
                 if j ==1 or j == 3:
-                    axes.bar(x_pos[2], val, bottom = temp_height, edgecolor = "dimgrey", color = color[i], alpha = alpha_list[i],linestyle="--")
+                    axes.bar(x_pos[2], val, bottom = temp_height, edgecolor = "black", color = color[i], alpha = alpha_list[i],linestyle="--", lw =1)
                 else:
                     axes.bar(x_pos[2], val, bottom = temp_height, edgecolor = None, color = color[i], alpha = alpha_list[i])
-                axes.text(x = x_pos[2]- 1.5, y= temp_height+val, s="Hydrogen cost:\n"+str(h2costs[j])+"EUR/MWh", verticalalignment='center', c= "darkgrey", fontsize = 10)
+                axes.text(x = x_pos[2]- 1.7, y= temp_height+val, s="Hydrogen cost:\n"+str(h2costs[j])+"EUR/MWh", verticalalignment='center', c= "darkgrey", fontsize = 12)
                 temp_height += val
         else:
             bars = axes.bar(x_pos, column, bottom = height, edgecolor = None, color = color[i], alpha = alpha_list[i])
@@ -696,11 +696,11 @@ def plot_barplotaviation(dfs, dfs_breakdown, h2costs, sector = "plane", type = "
     axes = change_spines(axes)
     
     axes.set_title("Aviation: Levelized cost comparison between CDR compensation and e-fuels", fontweight="bold",loc = "left")
-    axes.set_ylabel(f"Levelized cost \n(EUR{unit})", fontsize = 14)
+    axes.set_ylabel(f"Levelized cost \n(EUR{unit})", fontsize = 16)
 
     #axes size
-    plt.setp(axes.get_yticklabels(), fontsize=12)
-    plt.setp(axes.get_xticklabels(), fontsize=12)
+    plt.setp(axes.get_yticklabels(), fontsize=14)
+    plt.setp(axes.get_xticklabels(), fontsize=14)
 
 
     fig.tight_layout()
