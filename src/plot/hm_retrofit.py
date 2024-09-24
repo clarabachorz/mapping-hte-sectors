@@ -624,7 +624,7 @@ def plot_hm_figS6(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
     row_vars = [""]
     sector_var = "plane"
 
-    scenario_name = ["Low jet fuel cost:\n25 EUR/MWh", "Base assumption", "High jet fuel cost:\n75 EUR/MWh"]
+    scenario_name = ["Low fossil jet fuel cost:\n25 EUR/MWh", "Base assumption", "High fossil jet fuel cost:\n75 EUR/MWh"]
 
     rows = len(row_vars)
     cols = len(col_vars)
@@ -803,7 +803,7 @@ def plot_hm_figS7(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
     row_vars = ["", "_compgwp100", "_compgwp20"]
     sector_var = "steel"
 
-    scenario_name = ["Steel sector\nNo leakage", "Steel sector\nLow leakage (0.1%)", "Steel sector\nHigh leakage (3%)"]
+    scenario_name = ["Steel sector\nNo CH4 leakage", "Steel sector\nLow CH4 leakage (0.1%)", "Steel sector\nHigh CH4 leakage (3%)"]
 
     rows = len(row_vars)
     cols = len(col_vars)
