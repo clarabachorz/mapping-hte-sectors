@@ -687,7 +687,7 @@ def plot_barplotaviation(dfs, dfs_breakdown, h2costs,co2ts_costs, sector = "plan
                 j+=1
  
             else: #case of hydrogen for methanol synthesis
-                axes.text(x=x_pos[2]-3.5,y= height[2]+0.006, s="Hydrogen:\nMethanol synthesis\nfor hydrogen costs of",
+                axes.text(x=x_pos[2]-3.9,y= height[2]+0.009, s="Hydrogen cost\nin e-jet fuel\nfor different LCOH",
                            verticalalignment='center', c= "dimgrey", fontsize = SMALL_SIZE)
                 
 

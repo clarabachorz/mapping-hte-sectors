@@ -957,7 +957,7 @@ def plot_hm_figS7(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
     fig.savefig(figpath, format='png', dpi=600, bbox_inches='tight')
     # fig.savefig('./././myimage.png', format='png', dpi=600, bbox_inches='tight')
 def plot_supretrofit():
-    row_titles = ["Standard case", "Climate neutrality case"]
+    row_titles = ["No conditions", "Climate neutrality case"]
     plot_hm_figS3(path_to_data = str(Path(__file__).parent.parent / '../data/supretrofit_rawdata.csv'),
                 rowvar_name= "scenario",
                 row_titles=row_titles)
@@ -973,7 +973,7 @@ def plot_supretrofit():
                 path_to_data = str(Path(__file__).parent.parent / '../data/supfossilcost_rawdata.csv'),
                 rowvar_name= "scenario",
                 row_titles=row_titles)
-    row_titlesblue = ["Standard case\n\n", "Climate neutrality case\n(GWP100)\n\n", "Climate neutrality case\n(GWP20)\n\n"]
+    row_titlesblue = ["No conditions\n\n", "Climate neutrality case\n(GWP100)\n\n", "Climate neutrality case\n(GWP20)\n\n"]
     plot_hm_figS7(
                 path_to_data = str(Path(__file__).parent.parent / '../data/supblueh2_rawdata.csv'),
                 rowvar_name= "scenario",
