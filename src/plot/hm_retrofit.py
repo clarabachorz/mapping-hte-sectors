@@ -624,7 +624,7 @@ def plot_hm_figS6(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
     row_vars = [""]
     sector_var = "plane"
 
-    scenario_name = ["Low jet fuel cost:\n25 EUR/MWh", "Base assumption", "High jet fuel cost:\n75 EUR/MWh"]
+    scenario_name = ["Low fossil jet fuel cost:\n25 EUR/MWh", "Base assumption", "High fossil jet fuel cost:\n75 EUR/MWh"]
 
     rows = len(row_vars)
     cols = len(col_vars)
@@ -803,7 +803,7 @@ def plot_hm_figS7(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
     row_vars = ["", "_compgwp100", "_compgwp20"]
     sector_var = "steel"
 
-    scenario_name = ["Steel sector\nNo leakage", "Steel sector\nLow leakage (0.1%)", "Steel sector\nHigh leakage (3%)"]
+    scenario_name = ["Steel sector\nNo CH4 leakage", "Steel sector\nLow CH4 leakage (0.1%)", "Steel sector\nHigh CH4 leakage (3%)"]
 
     rows = len(row_vars)
     cols = len(col_vars)
@@ -957,7 +957,7 @@ def plot_hm_figS7(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
     fig.savefig(figpath, format='png', dpi=600, bbox_inches='tight')
     # fig.savefig('./././myimage.png', format='png', dpi=600, bbox_inches='tight')
 def plot_supretrofit():
-    row_titles = ["Standard case", "Climate neutrality case"]
+    row_titles = ["No conditions", "Climate neutrality case"]
     plot_hm_figS3(path_to_data = str(Path(__file__).parent.parent / '../data/supretrofit_rawdata.csv'),
                 rowvar_name= "scenario",
                 row_titles=row_titles)
@@ -973,7 +973,7 @@ def plot_supretrofit():
                 path_to_data = str(Path(__file__).parent.parent / '../data/supfossilcost_rawdata.csv'),
                 rowvar_name= "scenario",
                 row_titles=row_titles)
-    row_titlesblue = ["Standard case\n\n", "Climate neutrality case\n(GWP100)\n\n", "Climate neutrality case\n(GWP20)\n\n"]
+    row_titlesblue = ["No conditions\n\n", "Climate neutrality case\n(GWP100)\n\n", "Climate neutrality case\n(GWP20)\n\n"]
     plot_hm_figS7(
                 path_to_data = str(Path(__file__).parent.parent / '../data/supblueh2_rawdata.csv'),
                 rowvar_name= "scenario",

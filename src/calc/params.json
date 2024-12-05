@@ -253,7 +253,7 @@
             "othercosts": 3.28e-2,
             "fossilJdemand": 2.47e-4,
             "unit": "EUR/PAX/km",
-            "desc": "Fossil kerosene"
+            "desc": "Fossil"
         },
         {
             "key": "comp_plane",

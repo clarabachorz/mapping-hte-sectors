@@ -8,13 +8,20 @@ All assumptions used for the calculations are contained in the src/calc folder, 
 
 ## How to use this software
 
-### Installing dependencies
+### System requirements
 
-In order to execute this software, the corresponding python dependencies have to be installed. The use of poetry is recommended here, using:
+This software can be ran on a standard computer, capable of running standard Python scripts. Ideally, a computer that has a multi-core processor should be used, to allow multiprocessing (as used in the `calc_data` script). 
+All major operating systems can be used (Windows, MacOS or Linux), although this software has only been tested on Windows 10.
+
+### Installing python dependencies
+
+This code has been tested and developed with Python 3.11. In order to execute this software, the corresponding python dependencies have to be installed. The use of poetry is recommended here, using:
 
 ```
 poetry install
 ```
+
+Installing these dependencies (excluding python and poetry) takes between 10 to 20 seconds.
 
 ### Replicating figures
 
@@ -23,16 +30,16 @@ To replicate the figures generated in this software, once the virtual environmen
 ```
 python export_figs.py
 ```
-This will generate all figures, including the supplementary figures.
+If the initial data files have not been changed by the user (see below), this will generate all paper figures, including the supplementary figures, as pngs in the `figs` file. This takes about 5 minutes to run on the default figure resolution.
 
 ### Re-calculating heat map data
 
-The heat map data used is contained in the `data` folder. This can be re-calculated (for example if parameters have been changed) by running:
+The heat map data used is contained in the `data` folder. This can be re-calculated for different techno-economic parameters, as defined by the user. The standard parameters used, that are detailed in the Supplementary Information of the paper, can be found  in the `calc\params.json` file. To run the full techno-economic calculation for new parameters, the user should first change the json file, before running:
 
 ```
 python calc_hmdata.py
 ```
-This script takes between 2 minutes and 20 minutes to run, dependent on the parameters chosen.
+This script will update every csv files in the `data` folder. It takes between 2 minutes and 20 minutes to run, dependent on the parameter resolution chosen for the heat maps (defined, for example in the main figure, by the parameters in the function `mainfig_params()` in `calc_hmdata`).
 
 ### Interactive webapp
 
