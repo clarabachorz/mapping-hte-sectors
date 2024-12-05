@@ -287,7 +287,7 @@ def plot_sectoral_hm(path_to_data, rowvar_name, row_vars, row_titles, x_var = "c
         plt.setp(ax.get_yticklabels(), fontsize=SMALL_SIZE)
         plt.setp(ax.get_xticklabels(), fontsize=SMALL_SIZE)
         #fig.savefig('./analysis/fig/fscp_hm.svg', format='svg', dpi=1200)
-    figpath = "././figs/" + fig_title + ".png"
+    figpath = r"././figs/" + fig_title + ".png"
     fig.savefig(figpath, format='png', dpi=600, bbox_inches='tight')
 
 

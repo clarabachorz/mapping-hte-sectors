@@ -113,6 +113,10 @@ def plot_basicfigs():
 
     LCOs_df = [get_LCOs(h2_cost=h2, co2_cost=co2, co2_transport_storage=co2_transport_storage_costs,calc_LCO_comps=True) for h2, co2 in zip(h2_costs, co2_costs)]
     LCOs_df_breakdown = pd.concat([calc_costs.breakdown_LCO_comps(LCO_df[1])[0] for LCO_df in LCOs_df])
+
+    #used in the steel barplot levelized cost +fscp figure. BF-BOF-CCS capex changed by +/- 50%. CCS is not sensitive to H2 or CO2 costs.
+    LCOs_df_steelccshigh = get_LCOs(h2_cost=100, co2_cost=100, co2_transport_storage=co2_transport_storage_costs, ccs_steel_capex = 978.7, calc_LCO_comps=False)
+    LCOs_df_steelccslow = get_LCOs(h2_cost=100, co2_cost=100, co2_transport_storage=co2_transport_storage_costs, ccs_steel_capex = 782.5, calc_LCO_comps=False) 
     
     LCOs_df_aviation = [get_LCOs(h2_cost=h2, co2_cost=co2, co2_transport_storage=co2_transport_storage_costs, calc_LCO_comps=True) for h2, co2 in zip(h2_costs_aviationfig, co2_costs)]
 
@@ -144,6 +148,7 @@ def plot_basicfigs():
     common.plot_barplotfscp(
         pd.concat([LCO_df[0] for LCO_df in LCOs_df]),
         LCOs_df_breakdown,
+        [LCOs_df_steelccslow, LCOs_df_steelccshigh],
         sector="steel",
     )
 

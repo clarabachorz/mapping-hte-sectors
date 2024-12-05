@@ -339,13 +339,20 @@ def plot_large_panel(dfs):
     fig.savefig('././figs/supp_FSCPcalcbreakdown.png', format='png', dpi = 300, bbox_inches='tight')
     #plt.show()
 
-def plot_barplotfscp(dfs, dfs_breakdown, sector = "steel", type = "h2",sensitivity = "h2_LCO"):
+def plot_barplotfscp(dfs, dfs_breakdown, dfs_steelccs, sector = "steel", type = "h2",sensitivity = "h2_LCO"):
     dfs = add_colors_units_rename(dfs)
     dfs_breakdown[["type", "sector"]] = dfs_breakdown["tech"].str.split("_", expand=True)
 
     #filter df to get relevant LCOs
     sub_df_LCO = dfs[(dfs["sector"]==sector) & ((dfs["type"]==type) | (dfs["type"]=="fossil") | (dfs["type"]=="ccs") )]
     sub_df_LCO_breakdown = dfs_breakdown[(dfs_breakdown["sector"]==sector) & ((dfs_breakdown["type"]==type) | (dfs_breakdown["type"]=="fossil") | (dfs_breakdown["type"]=="ccs") )]
+    
+    #filter steel ccs sensitivity df to get the relevant row
+    sub_df_steelccslow = dfs_steelccs[0][(dfs_steelccs[0]["sector"]==sector) & (dfs_steelccs[0]["type"]=="ccs") & (dfs_steelccs[0]["ccs_steel_capex"] == 782.5)]
+    sub_df_steelccshigh = dfs_steelccs[1].loc[(dfs_steelccs[1]["sector"]==sector) & (dfs_steelccs[1]["type"]=="ccs") & (dfs_steelccs[1]["ccs_steel_capex"] == 978.7)]
+    # error here are the +/- value.
+    steelccs_lco_error = (sub_df_steelccshigh["cost"].values[0] - sub_df_steelccslow["cost"].values[0])/2
+    steelccs_fscp_error = (sub_df_steelccshigh["fscp"].values[0] - sub_df_steelccslow["fscp"].values[0])/2
 
     #filter df to get relevant FSCP
     sub_df_FSCP = dfs[(dfs["sector"]==sector) & (dfs["type"]==type) ]
@@ -379,12 +386,12 @@ def plot_barplotfscp(dfs, dfs_breakdown, sector = "steel", type = "h2",sensitivi
     sub_df_LCO.sort_values(by = ["em", sensitivity], ascending = [False, True], inplace=True)
     sub_df_LCO_merge.sort_values(by = ["em", sensitivity], ascending = [False, True], inplace=True)
 
-    fig, axes = plt.subplots(nrows = 2,ncols=1, figsize=(11,14))
+    fig, axes = plt.subplots(nrows = 2,ncols=1, figsize=(14,14))
 
     #set font size
-    SMALL_SIZE = 12
-    MEDIUM_SIZE = 14
-    BIGGER_SIZE = 16
+    SMALL_SIZE = 15
+    MEDIUM_SIZE = 17
+    BIGGER_SIZE = 19
 
     plt.rc('font', size=SMALL_SIZE)          # controls default text sizes
     plt.rc('axes', labelsize=MEDIUM_SIZE)    # fontsize of the x and y labels
@@ -443,14 +450,15 @@ def plot_barplotfscp(dfs, dfs_breakdown, sector = "steel", type = "h2",sensitivi
             else:
                 axes[0].text(x=11.1,y= annot_height[5]+20, s=labels[comp], verticalalignment='center', c= "grey")
         
-    #add annotation to xaxis
+    #add errorbars to CCS bar
+    e = axes[0].errorbar(x_pos[1], height[1], yerr = steelccs_lco_error, fmt = "none", color = "black", capsize = 5, capthick = 1)
 
     # axes[0].annotate('', xy=(5.2, -100),xytext=(11.2,-100),       
     #             arrowprops=dict(arrowstyle='-',facecolor='black', linestyle = "--"),
     #             annotation_clip=False)
-
-    axes[0].annotate('H2-DRI-EAF, for different H2 costs',xy=(8.25,-140),xytext=(8.25,-140), color = "black", horizontalalignment = "center",
-                annotation_clip=False, fontsize = 14)
+    axes[0].legend([e], ["BF-BOF carbon capture CAPEX cost uncertainty\n"+r"($\pm$ 50% of base assumption)"], loc = "upper left")
+    axes[0].annotate('H2-DRI-EAF, for different H2 costs',xy=(8.25,-100),xytext=(8.25,-100), color = "black", horizontalalignment = "center",
+                annotation_clip=False, fontsize = MEDIUM_SIZE)
 
     #other plot settings
     axes[0].set_xticks(x_pos, sub_df_LCO_merge["code"])
@@ -458,7 +466,7 @@ def plot_barplotfscp(dfs, dfs_breakdown, sector = "steel", type = "h2",sensitivi
     axes[0] = change_spines(axes[0])
     
     axes[0].set_title("Levelized cost comparison based on different H2 cost assumptions", fontweight="bold",loc = "left")
-    axes[0].set_ylabel(f"Levelized cost \n(EUR{unit})", fontsize = 14)
+    axes[0].set_ylabel(f"Levelized cost \n(EUR{unit})", fontsize = MEDIUM_SIZE)
 
 
 
@@ -477,7 +485,10 @@ def plot_barplotfscp(dfs, dfs_breakdown, sector = "steel", type = "h2",sensitivi
 
     s2 = axes[1].scatter(sub_df_FSCP2["h2_LCO"], sub_df_FSCP2["fscp"], c=sub_df_FSCP2["color_type"], edgecolor = "grey", zorder = 1)
     l2, = axes[1].plot(np.linspace(0,250), a2*np.linspace(0,250) + b2, c = fscp_color2, alpha = 1, zorder = 0)
-
+    
+    #add errorbars to CCS bar for fscp
+    axes[1].fill_between([0,250], sub_df_FSCP2["fscp"].unique()[0]-steelccs_fscp_error, sub_df_FSCP2["fscp"].unique()[0]+steelccs_fscp_error, color = fscp_color2, alpha = 0.1)
+    sh1, = axes[1].fill(np.NaN, np.NaN, fscp_color2, alpha=0.1)
 
     ## extra vline on bottom pannel at intersection- not sure if needed
     axes[1].vlines(intersection, 0,250,ls="--", color = "darkgrey", lw = 1)
@@ -509,22 +520,23 @@ def plot_barplotfscp(dfs, dfs_breakdown, sector = "steel", type = "h2",sensitivi
     axes[1] = change_spines(axes[1])
     
     axes[1].set_title("FSCP dependency on assumed H2 cost", fontweight="bold", loc ="left")
-    axes[1].set_ylabel(f"Fuel-switching CO2 price \n(EUR/tCO2)", fontsize = 14)
-    axes[1].set_xlabel(f"Hydrogen cost (EUR/MWh)", fontsize = 14)
+    axes[1].set_ylabel(f"Fuel-switching CO2 price \n(EUR/tCO2)", fontsize = MEDIUM_SIZE)
+    axes[1].set_xlabel(f"Hydrogen cost (EUR/MWh)", fontsize = MEDIUM_SIZE)
     axes[1].set_ylim(0, 255)
     axes[1].set_xlim(0, 255)
     # axes[1].legend([(s1,l1), (s2,l2)],["DRI-EAF replacing BF-BOF steel","BF-BOF-CCS replacing BF-BOF steel"], loc = "lower right")
-    axes[1].legend([(s1,l1), (s2,l2), (l3)],
+    axes[1].legend([(s1,l1), (s2,l2,sh1), (l3)],
         ["H2-DRI-EAF replacing BF-BOF steel",
-        "BF-BOF-CCS replacing BF-BOF steel", 
-        "H2 cost at which BF-BOF-CCS and H2-DRI-EAF\n have the same abatement cost"], 
+        "BF-BOF-CCS replacing BF-BOF steel, ribbon indicating\n"+ r"$\pm$ 50% cost uncertainty on BF-BOF carbon capture CAPEX", 
+        "H2 cost at which BF-BOF-CCS and H2-DRI-EAF\nhave the same abatement cost (central assumption)",
+        ]	
     )#loc = "lower right")
 
     #axes size
-    plt.setp(axes[0].get_yticklabels(), fontsize=12)
-    plt.setp(axes[0].get_xticklabels(), fontsize=12)
-    plt.setp(axes[1].get_yticklabels(), fontsize=12)
-    plt.setp(axes[1].get_xticklabels(), fontsize=12)
+    plt.setp(axes[0].get_yticklabels(), fontsize=MEDIUM_SIZE)
+    plt.setp(axes[0].get_xticklabels(), fontsize=MEDIUM_SIZE)
+    plt.setp(axes[1].get_yticklabels(), fontsize=MEDIUM_SIZE)
+    plt.setp(axes[1].get_xticklabels(), fontsize=MEDIUM_SIZE)
 
     #add panel letter
     for n, ax in enumerate(axes):   
