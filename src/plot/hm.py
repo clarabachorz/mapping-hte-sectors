@@ -293,7 +293,7 @@ def plot_sectoral_hm(path_to_data, rowvar_name, row_vars, row_titles, x_var = "c
 
 def plot_mainfig():
     row_vars = ["normal","ccu", "comp"]
-    row_titles = ["No conditions\n", "Fossil CCU: CO2 utilization\nrequires CO2 source\n", "Compatibility with climate\nneutrality (compensation\nof residual emissions)\n\n"]
+    row_titles = ["No conditions\n", "Fossil CCU: CO2 utilization\nrequires CO2 source\n", "Full climate neutrality\n(compensation only for\nresidual emissions)\n\n"]
     
     cmap_list = None
     plot_sectoral_hm(#path_to_data='./data/figfscp_rawdata.csv',

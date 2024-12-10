@@ -30,7 +30,10 @@ rename_sectors = {"cement": "Cement\n", "steel" : "Steel\n", "ship" : "Maritime\
 order_types = ["fossil", "h2","blueh2", "efuel", "ccu", "ccs", "comp" ]
 #colors
 color_dict = {"cement":"#EABE7C", "steel":"#8c6570","ship":"#0471A6","plane":"#61E8E1", "chem":"#AFB3F7"}
-color_dict_tech = {"fossil":"#31393C", "h2": "#FCE762", "blueh2":"#0818A8", "efuel": "#FEB380", "comp":"#23CE6B", "ccu":"#8E9AAF", "ccs":"#3083DC"}
+# color_dict_tech = {"fossil":"#31393C", "h2": "#FCE762", "blueh2":"#0818A8", "efuel": "#FEB380", "comp":"#23CE6B", "ccu":"#8E9AAF", "ccs":"#3083DC"}
+#below: color-blind friendly(er) palette
+color_dict_tech = {"fossil":"#31393C", "h2": "#FCE762", "blueh2":"#0818A8", "efuel": "#FF9446", "comp":"#4C7D5B", "ccu":"#A5A9AF", "ccs":"#3083DC"}
+
 sector_units = {"cement": "/t clinker", "steel" : "/t crude", "ship" : "/MWh", "plane" : "/PAX/km", "chem" : "/t olefin"}
 
 #make nicer looking barplots
@@ -127,20 +130,20 @@ def plot_large_panel_ccuattr(dfs):
         if df_filtered.loc[i, 'sector'] == 'cement' and df_filtered.loc[i, 'type'] == 'ccu':
             if df_filtered.loc[i, 'fscp'] < cementccs_fscp:
                 symbol = '✔'  # Green tick
-                color = 'green'
+                color = '#149821'
             else:
                 symbol = '✘'  # Red cross
-                color = 'red'
+                color = '#E203D0'
                 #ax.bar(bar.get_x()+ bar.get_width() / 2, bar.get_height(), bar.get_width(), color='white',alpha = 0.7, edgecolor='grey')
             ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 1,
                     symbol, ha='center', va='bottom', fontsize=14, color=color)
         elif df_filtered.loc[i, 'sector'] == 'plane' and df_filtered.loc[i, 'type'] == 'ccu':
             if df_filtered.loc[i, 'fscp'] < aviationcomp_fscp:
                 symbol = '✔'
-                color = 'green'
+                color = '#149821'
             else:
                 symbol = '✘'
-                color = 'red'
+                color = '#E203D0'
                 #ax.bar(bar.get_x()+ bar.get_width() / 2, bar.get_height(), bar.get_width(), color='white',alpha = 0.7, edgecolor='grey')
         # Place the symbol at the top of the bar
             ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 1,
@@ -156,9 +159,9 @@ def plot_large_panel_ccuattr(dfs):
     #secondary legend
 
     na_patch = Line2D([0], [0], marker=r'$\checkmark$', color='w', label='CCU is the cheapest abatement\noption',
-             markerfacecolor='green', markersize=10, markeredgewidth=0, markeredgecolor='green')
+             markerfacecolor='#149821', markersize=10, markeredgewidth=0, markeredgecolor='#149821')
     fossil_patch = Line2D([0], [0], marker=r'$\times$', color='w', label='CCU more costly than alternative\noption (CCS or CDR compensation)',
-             markerfacecolor='red', markersize=10, markeredgewidth=0, markeredgecolor='red')
+             markerfacecolor='#E203D0', markersize=10, markeredgewidth=0, markeredgecolor='#E203D0')
     leg2 = fig.legend(handles=[na_patch,fossil_patch], bbox_to_anchor=(0.1, 0.68),loc='lower left', fontsize = 12)
     ax.add_artist(leg2)
 
