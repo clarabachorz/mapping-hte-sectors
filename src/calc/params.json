@@ -189,7 +189,7 @@
             "h2demand ": 1.23,
             "co2demand ": 0.27,
             "unit": "EUR/MWh",
-            "desc": "power-to-methanol using dac/bec"
+            "desc": "power-to-methanol using non-fossil CO2"
         },
         {
             "key": "bluech3oh",
@@ -200,7 +200,7 @@
             "blueh2demand ": 1.23,
             "co2demand ": 0.27,
             "unit": "EUR/MWh",
-            "desc": "power-to-methanol using dac/bec"
+            "desc": "power-to-methanol using non-fossil CO2"
         },
         {
             "key": "ch3ohccu",
@@ -208,7 +208,6 @@
             "opex": 4,
             "lifetime": 25,
             "elecdemand ": 0.067,
-            "heatdemand ": 0.086,
             "h2demand ": 1.23,
             "co2ccudemand ": 0.27,
             "unit": "EUR/MWh",
@@ -224,7 +223,7 @@
             "co2demand": 0.037,
             "ch3ohdemand ": 1.048,
             "unit": "EUR/MWh",
-            "desc": "power-to-jetfuel using /bec"
+            "desc": "power-to-jetfuel using non-fossil CO2"
         },
         {
             "key": "blueMtJ",
@@ -235,7 +234,7 @@
             "blueh2demand ": 0.024,
             "bluech3ohdemand ": 1.048,
             "unit": "EUR/MWh",
-            "desc": "power-to-jetfuel using dac/bec"
+            "desc": "power-to-jetfuel using non-fossil CO2"
         },
         {
             "key": "MtJccu",
@@ -268,14 +267,14 @@
             "othercosts": 3.28e-2,
             "MtJdemand": 2.47e-4,
             "unit": "EUR/PAX/km",
-            "desc": "e-kerosene (DAC/BEC)"
+            "desc": "e-kerosene (non-fossil CO2)"
         },
         {
             "key": "blueh2_plane",
             "othercosts": 3.28e-2,
             "blueMtJdemand": 2.47e-4,
             "unit": "EUR/PAX/km",
-            "desc": "e-kerosene (DAC/BEC)"
+            "desc": "e-kerosene (non-fossil CO2)"
         },
         {
             "key": "ccu_plane",
@@ -320,7 +319,7 @@
             "wacc": 0.09,
             "ch3ohdemand": 2.22222,
             "unit": "EUR/MWh",
-            "desc": "e-methanol (DAC/BEC)"
+            "desc": "e-methanol (non-fossil CO2)"
         },
         {
             "key": "ccu_ship",
@@ -484,7 +483,7 @@
             "ch3ohdemand": 16.41,
             "recycledco2": 0.314,
             "unit": "EUR/t",
-            "desc": "MTO using DAC/BEC"
+            "desc": "MTO using non-fossil CO2"
         },
         {
             "key": "blueh2_chem",
@@ -496,7 +495,7 @@
             "bluech3ohdemand": 16.41,
             "recycledco2": 0.314,
             "unit": "EUR/t",
-            "desc": "MTO using DAC/BEC"
+            "desc": "MTO using non-fossil CO2"
         },
         {
             "key": "ccu_chem",
