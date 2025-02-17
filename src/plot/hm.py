@@ -10,16 +10,16 @@ import string
 
 from src.plot import common
 
-SMALL_SIZE = 18
-MEDIUM_SIZE = 20
-BIGGER_SIZE = 22
+SMALL_SIZE = 5
+MEDIUM_SIZE = 6
+BIGGER_SIZE = 7
 
 plt.rc('font', size=MEDIUM_SIZE)          # controls default text sizes
 plt.rc('axes', titlesize=SMALL_SIZE)     # fontsize of the axes title
 plt.rc('axes', labelsize=MEDIUM_SIZE)    # fontsize of the x and y labels
 plt.rc('xtick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
 plt.rc('ytick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
-plt.rc('legend', fontsize=MEDIUM_SIZE)    # legend fontsize
+plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
 plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
 
 
@@ -37,7 +37,7 @@ def add_rectangle(ax, xcoord, ycoord, w, h):
             fill=True,
             # fc=(0.7, 0.7, 0.7, 0.15),
             fc=(0.7, 0.7, 0.7, 0.2),
-            lw=1.5,
+            lw=1,
         )
     )
 
@@ -91,9 +91,9 @@ def make_default_cbar(fig, defaultcmap, defaultcmap_ticks):
 
     colorbar.set_ticks(ticks)
     colorbar.set_ticklabels(defaultcmap_ticks)
-    colorbar.ax.tick_params(labelsize=MEDIUM_SIZE)
+    colorbar.ax.tick_params(labelsize=SMALL_SIZE)
 
-def plot_sectoral_hm(path_to_data, rowvar_name, row_vars, row_titles, x_var = "co2_LCO", y_var = "h2_LCO", cmap_list = None, vmax_hmdiff=100, fig_title = '', figsize=(20,20)):
+def plot_sectoral_hm(path_to_data, rowvar_name, row_vars, row_titles, x_var = "co2_LCO", y_var = "h2_LCO", cmap_list = None, vmax_hmdiff=100, fig_title = '', figsize=(7.09,6.9)):
     """
     rowvar_name: name of the variable that will be used to create the different rows
     row_vars: list of the different values that the rowvar_name can take (defines the number of rows)
@@ -155,9 +155,9 @@ def plot_sectoral_hm(path_to_data, rowvar_name, row_vars, row_titles, x_var = "c
                 ax.annotate(f'{row_titles[row]}',
                             xy=(0, 0.5), xytext=(-ax.yaxis.labelpad - pad, 0),
                             xycoords=ax.yaxis.label, textcoords='offset points',
-                            ha='center', va='center', ma= "center", rotation = 90, fontsize = BIGGER_SIZE)
-                ax.text(-0.3, 1, string.ascii_lowercase[row], transform=ax.transAxes, 
-                    size=18, weight='bold')
+                            ha='center', va='center', ma= "center", rotation = 90, fontsize = MEDIUM_SIZE)
+                ax.text(-0.4, 1, string.ascii_lowercase[row], transform=ax.transAxes, 
+                    size=MEDIUM_SIZE, weight='bold')
 
             #get the correct column variable
             col_var = col_vars[col]
@@ -221,7 +221,14 @@ def plot_sectoral_hm(path_to_data, rowvar_name, row_vars, row_titles, x_var = "c
             # add_annotation(ax, "2022", co2_2022_xcoord+co2_2022_w/2, h2_2022_ycoord-5)
 
             # change x and y parameter ticks manually
-            ax.locator_params(axis='x', nbins=11)
+            ax.locator_params(axis='x', nbins=7)
+            #specify xticks
+            x_var_unique = np.sort(sub_sub_df[x_var].unique())
+            no_xvars = len(x_var_unique)
+            x_ticks = np.linspace(0, no_xvars-1, 7)
+            ax.set_xticks(x_ticks)
+            x_ticklabels = np.round(np.linspace(x_var_unique[0], x_var_unique[-1], len(x_ticks)), 0).astype(int)
+            ax.set_xticklabels(x_ticklabels, fontsize=SMALL_SIZE)
 
             # Get unique y_var values and sort them
             y_var_unique = np.sort(sub_sub_df[y_var].unique())
@@ -233,7 +240,7 @@ def plot_sectoral_hm(path_to_data, rowvar_name, row_vars, row_titles, x_var = "c
 
             # Set y-tick labels at corresponding y_var values
             y_ticklabels = np.round(np.linspace(y_var_unique[0], y_var_unique[-1], len(y_ticks)), 0).astype(int)
-            ax.set_yticklabels(y_ticklabels)
+            ax.set_yticklabels(y_ticklabels, fontsize=SMALL_SIZE)
 
             ax.invert_yaxis()
 
@@ -249,10 +256,10 @@ def plot_sectoral_hm(path_to_data, rowvar_name, row_vars, row_titles, x_var = "c
             
             # Additional aesthetics: labels, titles, etc.
             if col == 0:
-                ax.set_ylabel('Low-emission H2 cost (EUR/MWh)', fontsize = SMALL_SIZE)
+                ax.set_ylabel('Low-emission H2 cost\n(EUR/MWh)', fontsize = SMALL_SIZE)
                 ax2.set_yticklabels([])
             elif col == cols-1:
-                ax2.set_ylabel("Low-emission H2 cost (EUR/kg)\n", fontsize = SMALL_SIZE)
+                ax2.set_ylabel("Low-emission H2 cost\n(EUR/kg)", fontsize = SMALL_SIZE)
                 ax.set_ylabel("")
                 ax.set_yticklabels([])
             else:
@@ -261,7 +268,7 @@ def plot_sectoral_hm(path_to_data, rowvar_name, row_vars, row_titles, x_var = "c
                 ax2.set_yticklabels([])
             
             if row == 0 :
-                ax.set_title(rename_sectors[col_var], fontsize = BIGGER_SIZE)
+                ax.set_title(rename_sectors[col_var], fontsize = MEDIUM_SIZE)
                 ax.set_xlabel("")
                 ax.set_xticklabels([])
             elif row == rows-1:
@@ -275,7 +282,8 @@ def plot_sectoral_hm(path_to_data, rowvar_name, row_vars, row_titles, x_var = "c
         #fig.get_layout_engine().set(w_pad=4 / 72, h_pad=4 / 72, hspace=0, wspace=0, rect=[0, 0, .9, 1])
         fig.get_layout_engine().set(w_pad=4 / 72, h_pad=4 / 72, hspace=0, wspace=0, rect=[0, 0, 1, .9])
     else:
-        fig.get_layout_engine().set(w_pad=4 / 72, h_pad=4 / 72, hspace=0, wspace=0)
+        #fig.get_layout_engine().set(w_pad=4 / 72, h_pad=4 / 72, hspace=0, wspace=0)
+        fig.get_layout_engine().set()
 
     # currently not needed
     # if cmap_list is not None:
@@ -288,12 +296,16 @@ def plot_sectoral_hm(path_to_data, rowvar_name, row_vars, row_titles, x_var = "c
         plt.setp(ax.get_xticklabels(), fontsize=SMALL_SIZE)
         #fig.savefig('./analysis/fig/fscp_hm.svg', format='svg', dpi=1200)
     figpath = r"././figs/" + fig_title + ".png"
-    fig.savefig(figpath, format='png', dpi=600, bbox_inches='tight')
+    # fig.savefig(figpath, format='png', dpi=600, bbox_inches='tight')
+    fig.savefig(figpath, format='png', dpi=200, bbox_inches='tight')
+
+    figpathpdf = r"././figs/" + fig_title + ".pdf"
+    fig.savefig(figpathpdf, format='pdf', bbox_inches='tight')
 
 
 def plot_mainfig():
     row_vars = ["normal","ccu", "comp"]
-    row_titles = ["No conditions\n", "Fossil CCU: CO2 utilization\nrequires CO2 source\n", "Full climate neutrality\n(compensation only for\nresidual emissions)\n\n"]
+    row_titles = ["No conditions", "Fossil CCU: CO2 utilization\nrequires CO2 source", "Full climate neutrality\n(compensation only for\nresidual emissions)"]
     
     cmap_list = None
     plot_sectoral_hm(#path_to_data='./data/figfscp_rawdata.csv',
@@ -302,6 +314,7 @@ def plot_mainfig():
                     row_vars = row_vars, 
                     row_titles= row_titles,
                     cmap_list = cmap_list,
+                    figsize=(7,6.9),
                     fig_title = 'main_HTElandscapes')
     
     plot_sectoral_hm(path_to_data = str(Path(__file__).parent.parent / '../data/supCCUattrib_rawdata.csv'),
@@ -322,5 +335,5 @@ def plot_supfig():
                     row_vars = row_vars, 
                     row_titles= row_titles,
                     fig_title = 'supp_HTElandscapesCO2ts',
-                    figsize=(20,25))
+                    figsize=(7.09,9))
     #plt.show()

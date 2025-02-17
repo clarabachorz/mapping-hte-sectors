@@ -12,16 +12,16 @@ from src.plot import common
 
 # matplotlib.rcParams.update(matplotlib.rcParamsDefault)
 
-SMALL_SIZE = 13
-MEDIUM_SIZE = 15
-BIGGER_SIZE = 17
+SMALL_SIZE = 5
+MEDIUM_SIZE = 6
+BIGGER_SIZE = 7
 
-plt.rc('font', size=MEDIUM_SIZE)          # controls default text sizes
+plt.rc('font', size=SMALL_SIZE)          # controls default text sizes
 plt.rc('axes', titlesize=SMALL_SIZE)     # fontsize of the axes title
-plt.rc('axes', labelsize=MEDIUM_SIZE)    # fontsize of the x and y labels
+plt.rc('axes', labelsize=SMALL_SIZE)    # fontsize of the x and y labels
 plt.rc('xtick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
 plt.rc('ytick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
-plt.rc('legend', fontsize=MEDIUM_SIZE)    # legend fontsize
+plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
 plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
 
 
@@ -38,7 +38,7 @@ def add_rectangle(ax, xcoord, ycoord, w, h):
             fill=True,
             # fc=(0.7, 0.7, 0.7, 0.15),
             fc=(0.7, 0.7, 0.7, 0.2),
-            lw=1.5,
+            lw=1,
         )
     )
 
@@ -97,7 +97,7 @@ def plot_hm_figS3(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
     cols = len(col_vars)
 
     # define figure size
-    fig, axs = plt.subplots(nrows=len(row_vars), ncols=len(col_vars), figsize=(5*len(col_vars),4*len(row_vars)), constrained_layout=True)
+    fig, axs = plt.subplots(nrows=len(row_vars), ncols=len(col_vars), figsize=(2*len(col_vars),1.73*len(row_vars)), constrained_layout=True)
 
     for row in range(len(row_vars)):
         #select the appropriate row var
@@ -113,7 +113,7 @@ def plot_hm_figS3(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
                 ax.annotate(f'{row_titles[row]}',
                             xy=(0, 0.5), xytext=(-ax.yaxis.labelpad - pad, 0),
                             xycoords=ax.yaxis.label, textcoords='offset points',
-                            ha='center', va='center', rotation = 90, fontsize=BIGGER_SIZE)
+                            ha='center', va='center', rotation = 90, fontsize=MEDIUM_SIZE)
                 # ax.text(-0.2, 1.05, string.ascii_lowercase[row], transform=ax.transAxes, 
                 #     size=BIGGER_SIZE, weight='bold')
 
@@ -134,9 +134,9 @@ def plot_hm_figS3(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
             heatmap = plot_heatmap(sns_df, heatmap_cmap, ax, (col == cols-1)&(row >= 0), rasterized=True)
 
 
-            # Colorbar setting: currently, first and second row consider all options (including full DACCS/BECCS)
+            # Colorbar setting: currently, first and second row consider all options (including full CDR)
             # third row does not, and the colorbar used changes. Full climate neutrality is also required,
-            # so all options are complemented with DACCS/BECCS
+            # so all options are complemented with CDR
             colorbar = ax.collections[0].colorbar
             if colorbar is not None:
                 if row > 0:
@@ -149,7 +149,7 @@ def plot_hm_figS3(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
                 ticks = np.arange(0+ step/2, 1 + step/2, step)
 
                 colorbar.set_ticks(ticks)
-                colorbar.set_ticklabels(ticklabels)
+                colorbar.set_ticklabels(ticklabels, fontsize=SMALL_SIZE)
 
             # add the additional transparent layer to show the fscp difference between the first and second minima
             heatmap_diff = plot_heatmap(sns_diff_df, transparent_cmap, ax, cbar = False, vmin=0, vmax=100)
@@ -182,7 +182,7 @@ def plot_hm_figS3(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
             #add_annotation(ax, "2022", co2_2022_xcoord+co2_2022_w/2, h2_2022_ycoord-5)
 
             # change x and y parameter ticks manually
-            ax.locator_params(axis='x', nbins=11)
+            ax.locator_params(axis='x', nbins=9)
 
             # Get unique y_var values and sort them
             y_var_unique = np.sort(sub_sub_df[y_var].unique())
@@ -194,7 +194,7 @@ def plot_hm_figS3(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
 
             # Set y-tick labels at corresponding y_var values
             y_ticklabels = np.round(np.linspace(y_var_unique[0], y_var_unique[-1], len(y_ticks)), 0).astype(int)
-            ax.set_yticklabels(y_ticklabels)
+            ax.set_yticklabels(y_ticklabels, fontsize=SMALL_SIZE)
 
             ax.invert_yaxis()
 
@@ -207,13 +207,15 @@ def plot_hm_figS3(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
                 ax2_yticklabels = np.round(np.linspace(min(h2tck), max(h2tck), len(ax.get_yticks())),1)
                 ax2.set_yticklabels(ax2_yticklabels, fontsize=SMALL_SIZE)
 
-            
+            ax.tick_params(axis='x', labelsize=SMALL_SIZE)
+            ax2.tick_params(axis='x', labelsize=SMALL_SIZE)
+
             # Additional aesthetics: labels, titles, etc.
             if col == 0:
-                ax.set_ylabel('Low-emission H2 cost (EUR/MWh)', fontsize=SMALL_SIZE)
+                ax.set_ylabel('Low-emission H2\ncost (EUR/MWh)', fontsize=SMALL_SIZE)
                 ax2.set_yticklabels([])
             elif col == cols-1:
-                ax2.set_ylabel("Low-emission H2 cost (EUR/kg)\n", fontsize=SMALL_SIZE)
+                ax2.set_ylabel("Low-emission H2\ncost (EUR/kg)\n", fontsize=SMALL_SIZE)
                 ax.set_ylabel("")
                 ax.set_yticklabels([])
             else:
@@ -222,14 +224,14 @@ def plot_hm_figS3(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
                 ax2.set_yticklabels([])
             
             if row == 0 :
-                ax.set_title(scenario_name[col], fontsize = BIGGER_SIZE)
-                ax.text(-0.2, 1.05, string.ascii_lowercase[row*2+col], transform=ax.transAxes, 
-                    size=BIGGER_SIZE, weight='bold')
+                ax.set_title(scenario_name[col], fontsize =MEDIUM_SIZE)
+                ax.text(-0.1, 1.05, string.ascii_lowercase[row*2+col], transform=ax.transAxes, 
+                    size=MEDIUM_SIZE, weight='bold')
                 ax.set_xlabel("")
                 ax.set_xticklabels([])
             elif row == rows-1:
-                ax.text(-0.2, 1.05, string.ascii_lowercase[row*2+col], transform=ax.transAxes, 
-                    size=BIGGER_SIZE, weight='bold')
+                ax.text(-0.1, 1.05, string.ascii_lowercase[row*2+col], transform=ax.transAxes, 
+                    size=MEDIUM_SIZE, weight='bold')
                 ax.set_xlabel('Non-fossil CO2 cost\n(EUR/tCO2)', fontsize=SMALL_SIZE)
             else: 
                 ax.set_xlabel("")
@@ -237,8 +239,9 @@ def plot_hm_figS3(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
 
     fig.get_layout_engine().set(w_pad=4 / 72, h_pad=4 / 72, hspace=0, wspace=0, rect=[0, 0, .9, 1])
     figpath = "././figs/" + "supp_steelretrofit" + ".png"
+    figpathpdf = "././figs/" + "supp_steelretrofit" + ".pdf"
     fig.savefig(figpath, format='png', dpi=600, bbox_inches='tight')
-    # fig.savefig('./././myimage.png', format='png', dpi=600, bbox_inches='tight')
+    fig.savefig(figpathpdf, format='pdf', bbox_inches='tight')
 
 def plot_hm_figS4(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_var = "h2_LCO"):
     # import plotting parameters from plot_fun
@@ -275,7 +278,7 @@ def plot_hm_figS4(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
     cols = len(col_vars)
 
     # define figure size
-    fig, axs = plt.subplots(nrows=len(row_vars), ncols=len(col_vars), figsize=(5*len(col_vars),4*len(row_vars)), constrained_layout=True)
+    fig, axs = plt.subplots(nrows=len(row_vars), ncols=len(col_vars), figsize=(2*len(col_vars),1.73*len(row_vars)), constrained_layout=True)
 
     for row in range(len(row_vars)):
         #select the appropriate row var
@@ -291,7 +294,7 @@ def plot_hm_figS4(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
                 ax.annotate(f'{row_titles[row]}',
                             xy=(0, 0.5), xytext=(-ax.yaxis.labelpad - pad, 0),
                             xycoords=ax.yaxis.label, textcoords='offset points',
-                            ha='center', va='center', rotation = 90, fontsize=BIGGER_SIZE)
+                            ha='center', va='center', rotation = 90, fontsize=MEDIUM_SIZE)
                 # ax.text(-0.2, 1.05, string.ascii_lowercase[row], transform=ax.transAxes, 
                 #     size=BIGGER_SIZE, weight='bold')
 
@@ -312,9 +315,9 @@ def plot_hm_figS4(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
             heatmap = plot_heatmap(sns_df, heatmap_cmap, ax, (col == cols-1)&(row >= 0), rasterized=True)
 
 
-            # Colorbar setting: currently, first and second row consider all options (including full DACCS/BECCS)
+            # Colorbar setting: currently, first and second row consider all options (including full CDR)
             # third row does not, and the colorbar used changes. Full climate neutrality is also required,
-            # so all options are complemented with DACCS/BECCS
+            # so all options are complemented with CDR
             colorbar = ax.collections[0].colorbar
             if colorbar is not None:
                 if row > 0:
@@ -327,7 +330,7 @@ def plot_hm_figS4(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
                 ticks = np.arange(0+ step/2, 1 + step/2, step)
 
                 colorbar.set_ticks(ticks)
-                colorbar.set_ticklabels(ticklabels)
+                colorbar.set_ticklabels(ticklabels, fontsize=SMALL_SIZE)
 
             # add the additional transparent layer to show the fscp difference between the first and second minima
             heatmap_diff = plot_heatmap(sns_diff_df, transparent_cmap, ax, cbar = False, vmin=0, vmax=100)
@@ -360,7 +363,7 @@ def plot_hm_figS4(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
             #add_annotation(ax, "2022", co2_2022_xcoord+co2_2022_w/2, h2_2022_ycoord-5)
 
             # change x and y parameter ticks manually
-            ax.locator_params(axis='x', nbins=11)
+            ax.locator_params(axis='x', nbins=9)
 
             # Get unique y_var values and sort them
             y_var_unique = np.sort(sub_sub_df[y_var].unique())
@@ -372,7 +375,7 @@ def plot_hm_figS4(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
 
             # Set y-tick labels at corresponding y_var values
             y_ticklabels = np.round(np.linspace(y_var_unique[0], y_var_unique[-1], len(y_ticks)), 0).astype(int)
-            ax.set_yticklabels(y_ticklabels)
+            ax.set_yticklabels(y_ticklabels, fontsize=SMALL_SIZE)
 
             ax.invert_yaxis()
 
@@ -384,14 +387,16 @@ def plot_hm_figS4(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
                 ax2.set_yticks(ax.get_yticks())
                 ax2_yticklabels = np.round(np.linspace(min(h2tck), max(h2tck), len(ax.get_yticks())),1)
                 ax2.set_yticklabels(ax2_yticklabels, fontsize=SMALL_SIZE)
-
+            
+            ax.tick_params(axis='x', labelsize=SMALL_SIZE)
+            ax2.tick_params(axis='x', labelsize=SMALL_SIZE)
             
             # Additional aesthetics: labels, titles, etc.
             if col == 0:
-                ax.set_ylabel('Low-emission H2 cost (EUR/MWh)', fontsize=SMALL_SIZE)
+                ax.set_ylabel('Low-emission H2\ncost (EUR/MWh)', fontsize=SMALL_SIZE)
                 ax2.set_yticklabels([])
             elif col == cols-1:
-                ax2.set_ylabel("Low-emission H2 cost (EUR/kg)\n", fontsize=SMALL_SIZE)
+                ax2.set_ylabel("Low-emission H2\ncost (EUR/kg)\n", fontsize=SMALL_SIZE)
                 ax.set_ylabel("")
                 ax.set_yticklabels([])
             else:
@@ -400,14 +405,15 @@ def plot_hm_figS4(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
                 ax2.set_yticklabels([])
             
             if row == 0 :
-                ax.set_title(scenario_name[col], fontsize = BIGGER_SIZE)
-                ax.text(-0.2, 1.05, string.ascii_lowercase[row*2+col], transform=ax.transAxes, 
-                    size=BIGGER_SIZE, weight='bold')
+                ax.set_title(scenario_name[col], fontsize = MEDIUM_SIZE)
+                ax.text(-0.1, 1.05, string.ascii_lowercase[row*2+col], transform=ax.transAxes, 
+                    size=MEDIUM_SIZE, weight='bold')
                 ax.set_xlabel("")
                 ax.set_xticklabels([])
             elif row == rows-1:
-                ax.text(-0.2, 1.05, string.ascii_lowercase[row*2+col+1], transform=ax.transAxes, 
-                    size=BIGGER_SIZE, weight='bold')
+                ax.text(-0.1, 1.05, string.ascii_lowercase[row*2+col+1], transform=ax.transAxes, 
+                    size=MEDIUM_SIZE, weight='bold')
+                #ax.set_xticklabels(ax.get_xticklabels(), fontsize=SMALL_SIZE)
                 ax.set_xlabel('Non-fossil CO2 cost\n(EUR/tCO2)', fontsize=SMALL_SIZE)
             else: 
                 ax.set_xlabel("")
@@ -415,8 +421,9 @@ def plot_hm_figS4(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
 
     fig.get_layout_engine().set(w_pad=4 / 72, h_pad=4 / 72, hspace=0, wspace=0, rect=[0, 0, .9, 1])
     figpath = "././figs/" + "supp_BFCCSsensitivity" + ".png"
+    figpathpdf = "././figs/" + "supp_BFCCSsensitivity" + ".pdf"
     fig.savefig(figpath, format='png', dpi=600, bbox_inches='tight')
-    # fig.savefig('./././myimage.png', format='png', dpi=600, bbox_inches='tight')
+    fig.savefig(figpathpdf, format='pdf', bbox_inches='tight')
 
 def plot_hm_figS5(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_var = "h2_LCO"):
     # import plotting parameters from plot_fun
@@ -453,7 +460,7 @@ def plot_hm_figS5(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
     cols = len(col_vars)
 
     # define figure size
-    fig, axs = plt.subplots(nrows=len(row_vars), ncols=len(col_vars), figsize=(5*len(col_vars),4*len(row_vars)), constrained_layout=True)
+    fig, axs = plt.subplots(nrows=len(row_vars), ncols=len(col_vars), figsize=(2*len(col_vars),1.73*len(row_vars)), constrained_layout=True)
 
     for row in range(len(row_vars)):
         #select the appropriate row var
@@ -469,7 +476,7 @@ def plot_hm_figS5(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
                 ax.annotate(f'{row_titles[row]}',
                             xy=(0, 0.5), xytext=(-ax.yaxis.labelpad - pad, 0),
                             xycoords=ax.yaxis.label, textcoords='offset points',
-                            ha='center', va='center', rotation = 90, fontsize=BIGGER_SIZE)
+                            ha='center', va='center', rotation = 90, fontsize=MEDIUM_SIZE)
                 # ax.text(-0.2, 1.05, string.ascii_lowercase[row], transform=ax.transAxes, 
                 #     size=BIGGER_SIZE, weight='bold')
 
@@ -490,9 +497,9 @@ def plot_hm_figS5(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
             heatmap = plot_heatmap(sns_df, heatmap_cmap, ax, (col == cols-1)&(row >= 0), rasterized=True)
 
 
-            # Colorbar setting: currently, first and second row consider all options (including full DACCS/BECCS)
+            # Colorbar setting: currently, first and second row consider all options (including full CDR)
             # third row does not, and the colorbar used changes. Full climate neutrality is also required,
-            # so all options are complemented with DACCS/BECCS
+            # so all options are complemented with CDR
             colorbar = ax.collections[0].colorbar
             if colorbar is not None:
                 if row > 0:
@@ -505,7 +512,7 @@ def plot_hm_figS5(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
                 ticks = np.arange(0+ step/2, 1 + step/2, step)
 
                 colorbar.set_ticks(ticks)
-                colorbar.set_ticklabels(ticklabels)
+                colorbar.set_ticklabels(ticklabels, fontsize=SMALL_SIZE)
 
             # add the additional transparent layer to show the fscp difference between the first and second minima
             heatmap_diff = plot_heatmap(sns_diff_df, transparent_cmap, ax, cbar = False, vmin=0, vmax=100)
@@ -538,7 +545,7 @@ def plot_hm_figS5(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
             #add_annotation(ax, "2022", co2_2022_xcoord+co2_2022_w/2, h2_2022_ycoord-5)
 
             # change x and y parameter ticks manually
-            ax.locator_params(axis='x', nbins=11)
+            ax.locator_params(axis='x', nbins=9)
 
             # Get unique y_var values and sort them
             y_var_unique = np.sort(sub_sub_df[y_var].unique())
@@ -550,7 +557,7 @@ def plot_hm_figS5(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
 
             # Set y-tick labels at corresponding y_var values
             y_ticklabels = np.round(np.linspace(y_var_unique[0], y_var_unique[-1], len(y_ticks)), 0).astype(int)
-            ax.set_yticklabels(y_ticklabels)
+            ax.set_yticklabels(y_ticklabels, fontsize=SMALL_SIZE)
 
             ax.invert_yaxis()
 
@@ -563,13 +570,14 @@ def plot_hm_figS5(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
                 ax2_yticklabels = np.round(np.linspace(min(h2tck), max(h2tck), len(ax.get_yticks())),1)
                 ax2.set_yticklabels(ax2_yticklabels, fontsize=SMALL_SIZE)
 
-            
+            ax.tick_params(axis='x', labelsize=SMALL_SIZE)
+            ax2.tick_params(axis='x', labelsize=SMALL_SIZE)
             # Additional aesthetics: labels, titles, etc.
             if col == 0:
-                ax.set_ylabel('Low-emission H2 cost (EUR/MWh)', fontsize=SMALL_SIZE)
+                ax.set_ylabel('Low-emission H2\ncost(EUR/MWh)', fontsize=SMALL_SIZE)
                 ax2.set_yticklabels([])
             elif col == cols-1:
-                ax2.set_ylabel("Low-emission H2 cost (EUR/kg)\n", fontsize=SMALL_SIZE)
+                ax2.set_ylabel("Low-emission H2\ncost (EUR/kg)\n", fontsize=SMALL_SIZE)
                 ax.set_ylabel("")
                 ax.set_yticklabels([])
             else:
@@ -578,14 +586,15 @@ def plot_hm_figS5(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
                 ax2.set_yticklabels([])
             
             if row == 0 :
-                ax.set_title(scenario_name[col], fontsize = BIGGER_SIZE)
-                ax.text(-0.2, 1.05, string.ascii_lowercase[row*2+col], transform=ax.transAxes, 
-                    size=BIGGER_SIZE, weight='bold')
+                ax.set_title(scenario_name[col], fontsize = MEDIUM_SIZE)
+                ax.text(-0.1, 1.05, string.ascii_lowercase[row*2+col], transform=ax.transAxes, 
+                    size=MEDIUM_SIZE, weight='bold')
                 ax.set_xlabel("")
                 ax.set_xticklabels([])
             elif row == rows-1:
-                ax.text(-0.2, 1.05, string.ascii_lowercase[row*2+col], transform=ax.transAxes, 
-                    size=BIGGER_SIZE, weight='bold')
+                ax.text(-0.1, 1.05, string.ascii_lowercase[row*2+col], transform=ax.transAxes, 
+                    size=MEDIUM_SIZE, weight='bold')
+                #ax.set_xticklabels(ax.get_xticklabels(), fontsize=SMALL_SIZE)
                 ax.set_xlabel('Non-fossil CO2 cost\n(EUR/tCO2)', fontsize=SMALL_SIZE)
             else: 
                 ax.set_xlabel("")
@@ -594,7 +603,9 @@ def plot_hm_figS5(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
     fig.get_layout_engine().set(w_pad=4 / 72, h_pad=4 / 72, hspace=0, wspace=0, rect=[0, 0, .9, 1])
     figpath = "././figs/" + "supp_CFretrofit" + ".png"
     fig.savefig(figpath, format='png', dpi=600, bbox_inches='tight')
-    # fig.savefig('./././myimage.png', format='png', dpi=600, bbox_inches='tight')
+
+    figpathpdf = "././figs/" + "supp_CFretrofit" + ".pdf"
+    fig.savefig(figpathpdf, format='pdf', bbox_inches='tight')
 
 def plot_hm_figS6(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_var = "h2_LCO"):
     #plot aviation figure with different jet fuel prices
@@ -630,7 +641,7 @@ def plot_hm_figS6(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
     cols = len(col_vars)
 
     # define figure size
-    fig, axs = plt.subplots(nrows=len(row_vars), ncols=len(col_vars), figsize=(5*len(col_vars),4*len(row_vars)), constrained_layout=True)
+    fig, axs = plt.subplots(nrows=len(row_vars), ncols=len(col_vars), figsize=(2*len(col_vars),1.73*len(row_vars)), constrained_layout=True)
 
     for row in range(len(row_vars)):
         #select the appropriate row var
@@ -646,7 +657,7 @@ def plot_hm_figS6(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
                 ax.annotate(f'{row_titles[row]}',
                             xy=(0, 0.5), xytext=(-ax.yaxis.labelpad - pad, 0),
                             xycoords=ax.yaxis.label, textcoords='offset points',
-                            ha='center', va='center', rotation = 90, fontsize=BIGGER_SIZE)
+                            ha='center', va='center', rotation = 90, fontsize=MEDIUM_SIZE)
                 # ax.text(-0.2, 1.05, string.ascii_lowercase[row], transform=ax.transAxes, 
                 #     size=BIGGER_SIZE, weight='bold')
 
@@ -667,9 +678,9 @@ def plot_hm_figS6(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
             heatmap = plot_heatmap(sns_df, heatmap_cmap, ax, (col == cols-1)&(row >= 0), rasterized=True)
 
 
-            # Colorbar setting: currently, first and second row consider all options (including full DACCS/BECCS)
+            # Colorbar setting: currently, first and second row consider all options (including full CDR)
             # third row does not, and the colorbar used changes. Full climate neutrality is also required,
-            # so all options are complemented with DACCS/BECCS
+            # so all options are complemented with CDR
             colorbar = ax.collections[0].colorbar
             if colorbar is not None:
                 if row > 0:
@@ -682,7 +693,7 @@ def plot_hm_figS6(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
                 ticks = np.arange(0+ step/2, 1 + step/2, step)
 
                 colorbar.set_ticks(ticks)
-                colorbar.set_ticklabels(ticklabels)
+                colorbar.set_ticklabels(ticklabels, fontsize=SMALL_SIZE)
 
             # add the additional transparent layer to show the fscp difference between the first and second minima
             heatmap_diff = plot_heatmap(sns_diff_df, transparent_cmap, ax, cbar = False, vmin=0, vmax=100)
@@ -715,7 +726,7 @@ def plot_hm_figS6(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
             #add_annotation(ax, "2022", co2_2022_xcoord+co2_2022_w/2, h2_2022_ycoord-5)
 
             # change x and y parameter ticks manually
-            ax.locator_params(axis='x', nbins=11)
+            ax.locator_params(axis='x', nbins=9)
 
             # Get unique y_var values and sort them
             y_var_unique = np.sort(sub_sub_df[y_var].unique())
@@ -727,7 +738,7 @@ def plot_hm_figS6(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
 
             # Set y-tick labels at corresponding y_var values
             y_ticklabels = np.round(np.linspace(y_var_unique[0], y_var_unique[-1], len(y_ticks)), 0).astype(int)
-            ax.set_yticklabels(y_ticklabels)
+            ax.set_yticklabels(y_ticklabels, fontsize=SMALL_SIZE)
 
             ax.invert_yaxis()
 
@@ -739,14 +750,16 @@ def plot_hm_figS6(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
                 ax2.set_yticks(ax.get_yticks())
                 ax2_yticklabels = np.round(np.linspace(min(h2tck), max(h2tck), len(ax.get_yticks())),1)
                 ax2.set_yticklabels(ax2_yticklabels, fontsize=SMALL_SIZE)
-
+            
+            ax.tick_params(axis='x', labelsize=SMALL_SIZE)
+            ax2.tick_params(axis='x', labelsize=SMALL_SIZE)
             
             # Additional aesthetics: labels, titles, etc.
             if col == 0:
-                ax.set_ylabel('Low-emission H2 cost (EUR/MWh)', fontsize=SMALL_SIZE)
+                ax.set_ylabel('Low-emission H2\ncost (EUR/MWh)', fontsize=SMALL_SIZE)
                 ax2.set_yticklabels([])
             elif col == cols-1:
-                ax2.set_ylabel("Low-emission H2 cost (EUR/kg)\n", fontsize=SMALL_SIZE)
+                ax2.set_ylabel("Low-emission H2\ncost (EUR/kg)\n", fontsize=SMALL_SIZE)
                 ax.set_ylabel("")
                 ax.set_yticklabels([])
             else:
@@ -755,14 +768,15 @@ def plot_hm_figS6(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
                 ax2.set_yticklabels([])
             
             if row == 0 :
-                ax.set_title(scenario_name[col], fontsize = BIGGER_SIZE)
-                ax.text(-0.2, 1.05, string.ascii_lowercase[row*2+col], transform=ax.transAxes, 
-                    size=BIGGER_SIZE, weight='bold')
+                ax.set_title(scenario_name[col], fontsize = MEDIUM_SIZE)
+                ax.text(-0.1, 1.05, string.ascii_lowercase[row*2+col], transform=ax.transAxes, 
+                    size=MEDIUM_SIZE, weight='bold')
                 ax.set_xlabel("")
                 ax.set_xticklabels([])
             elif row == rows-1:
-                ax.text(-0.2, 1.05, string.ascii_lowercase[row*2+col+1], transform=ax.transAxes, 
-                    size=BIGGER_SIZE, weight='bold')
+                ax.text(-0.1, 1.05, string.ascii_lowercase[row*2+col+1], transform=ax.transAxes, 
+                    size=MEDIUM_SIZE, weight='bold')
+                #ax.set_xticklabels(ax.get_xticklabels(), fontsize=SMALL_SIZE)
                 ax.set_xlabel('Non-fossil CO2 cost\n(EUR/tCO2)', fontsize=SMALL_SIZE)
             else: 
                 ax.set_xlabel("")
@@ -771,7 +785,9 @@ def plot_hm_figS6(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
     fig.get_layout_engine().set(w_pad=4 / 72, h_pad=4 / 72, hspace=0, wspace=0, rect=[0, 0, .9, 1])
     figpath = "././figs/" + "supp_fossiljetfuelcosts" + ".png"
     fig.savefig(figpath, format='png', dpi=600, bbox_inches='tight')
-    # fig.savefig('./././myimage.png', format='png', dpi=600, bbox_inches='tight')
+
+    figpathpdf = "././figs/" + "supp_fossiljetfuelcosts" + ".pdf"
+    fig.savefig(figpathpdf, format='pdf', bbox_inches='tight')
 
 def plot_hm_figS7(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_var = "h2_LCO"):
     # import plotting parameters from plot_fun
@@ -809,7 +825,7 @@ def plot_hm_figS7(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
     cols = len(col_vars)
 
     # define figure size
-    fig, axs = plt.subplots(nrows=len(row_vars), ncols=len(col_vars), figsize=(5*len(col_vars),4*len(row_vars)), constrained_layout=True)
+    fig, axs = plt.subplots(nrows=len(row_vars), ncols=len(col_vars), figsize=(2*len(col_vars),1.73*len(row_vars)), constrained_layout=True)
 
     for row in range(len(row_vars)):
         #select the appropriate row var
@@ -825,7 +841,7 @@ def plot_hm_figS7(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
                 ax.annotate(f'{row_titles[row]}',
                             xy=(0, 0.5), xytext=(-ax.yaxis.labelpad - pad, 0),
                             xycoords=ax.yaxis.label, textcoords='offset points',
-                            ha='center', va='center', rotation = 90, fontsize=BIGGER_SIZE)
+                            ha='center', va='center', rotation = 90, fontsize=MEDIUM_SIZE)
                 # ax.text(-0.2, 1.05, string.ascii_lowercase[row], transform=ax.transAxes, 
                 #     size=BIGGER_SIZE, weight='bold')
 
@@ -846,9 +862,9 @@ def plot_hm_figS7(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
             heatmap = plot_heatmap(sns_df, heatmap_cmap, ax, (col == cols-1)&(row >= 0), rasterized=True)
 
 
-            # Colorbar setting: currently, first and second row consider all options (including full DACCS/BECCS)
+            # Colorbar setting: currently, first and second row consider all options (including full CDR)
             # third row does not, and the colorbar used changes. Full climate neutrality is also required,
-            # so all options are complemented with DACCS/BECCS
+            # so all options are complemented with CDR
             colorbar = ax.collections[0].colorbar
             if colorbar is not None:
                 if row > 0:
@@ -861,7 +877,7 @@ def plot_hm_figS7(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
                 ticks = np.arange(0+ step/2, 1 + step/2, step)
 
                 colorbar.set_ticks(ticks)
-                colorbar.set_ticklabels(ticklabels)
+                colorbar.set_ticklabels(ticklabels, fontsize=SMALL_SIZE)
 
             # add the additional transparent layer to show the fscp difference between the first and second minima
             heatmap_diff = plot_heatmap(sns_diff_df, transparent_cmap, ax, cbar = False, vmin=0, vmax=100)
@@ -894,7 +910,7 @@ def plot_hm_figS7(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
             #add_annotation(ax, "2022", co2_2022_xcoord+co2_2022_w/2, h2_2022_ycoord-5)
 
             # change x and y parameter ticks manually
-            ax.locator_params(axis='x', nbins=11)
+            ax.locator_params(axis='x', nbins=9)
 
             # Get unique y_var values and sort them
             y_var_unique = np.sort(sub_sub_df[y_var].unique())
@@ -906,7 +922,7 @@ def plot_hm_figS7(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
 
             # Set y-tick labels at corresponding y_var values
             y_ticklabels = np.round(np.linspace(y_var_unique[0], y_var_unique[-1], len(y_ticks)), 0).astype(int)
-            ax.set_yticklabels(y_ticklabels)
+            ax.set_yticklabels(y_ticklabels, fontsize=SMALL_SIZE)
 
             ax.invert_yaxis()
 
@@ -919,13 +935,14 @@ def plot_hm_figS7(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
                 ax2_yticklabels = np.round(np.linspace(min(h2tck), max(h2tck), len(ax.get_yticks())),1)
                 ax2.set_yticklabels(ax2_yticklabels, fontsize=SMALL_SIZE)
 
-            
+            ax.tick_params(axis='x', labelsize=SMALL_SIZE)
+            ax2.tick_params(axis='x', labelsize=SMALL_SIZE)
             # Additional aesthetics: labels, titles, etc.
             if col == 0:
-                ax.set_ylabel('Green H2 cost (EUR/MWh)', fontsize=SMALL_SIZE)
+                ax.set_ylabel('Green H2 cost\n(EUR/MWh)', fontsize=SMALL_SIZE)
                 ax2.set_yticklabels([])
             elif col == cols-1:
-                ax2.set_ylabel("Green H2 cost (EUR/kg)\n", fontsize=SMALL_SIZE)
+                ax2.set_ylabel("Green H2 cost\n(EUR/kg)\n", fontsize=SMALL_SIZE)
                 ax.set_ylabel("")
                 ax.set_yticklabels([])
             else:
@@ -934,19 +951,20 @@ def plot_hm_figS7(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
                 ax2.set_yticklabels([])
             
             if row == 0:
-                ax.set_title(scenario_name[col], fontsize = BIGGER_SIZE)
-                ax.text(-0.2, 1.05, string.ascii_lowercase[row*2+col], transform=ax.transAxes, 
-                    size=BIGGER_SIZE, weight='bold')
+                ax.set_title(scenario_name[col], fontsize=MEDIUM_SIZE)
+                ax.text(-0.1, 1.05, string.ascii_lowercase[row*2+col], transform=ax.transAxes, 
+                    size=MEDIUM_SIZE, weight='bold')
                 ax.set_xlabel("")
                 ax.set_xticklabels([])
             elif row ==1:
-                ax.text(-0.2, 1.05, string.ascii_lowercase[row*2+col+1], transform=ax.transAxes, 
-                    size=BIGGER_SIZE, weight='bold')
+                ax.text(-0.1, 1.05, string.ascii_lowercase[row*2+col+1], transform=ax.transAxes, 
+                    size=MEDIUM_SIZE, weight='bold')
                 ax.set_xlabel("")
                 ax.set_xticklabels([])
             elif row == rows-1:
-                ax.text(-0.2, 1.05, string.ascii_lowercase[row*3+col], transform=ax.transAxes, 
-                    size=BIGGER_SIZE, weight='bold')
+                ax.text(-0.1, 1.05, string.ascii_lowercase[row*3+col], transform=ax.transAxes, 
+                    size=MEDIUM_SIZE, weight='bold')
+                #ax.set_xticklabels(ax.get_xticklabels(), fontsize=SMALL_SIZE)
                 ax.set_xlabel('Non-fossil CO2 cost\n(EUR/tCO2)', fontsize=SMALL_SIZE)
             else: 
                 ax.set_xlabel("")
@@ -955,9 +973,12 @@ def plot_hm_figS7(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
     fig.get_layout_engine().set(w_pad=4 / 72, h_pad=4 / 72, hspace=0, wspace=0, rect=[0, 0, .9, 1])
     figpath = "././figs/" + "supp_blueH2steel" + ".png"
     fig.savefig(figpath, format='png', dpi=600, bbox_inches='tight')
-    # fig.savefig('./././myimage.png', format='png', dpi=600, bbox_inches='tight')
+
+    figpathpdf = "././figs/" + "supp_blueH2steel" + ".pdf"
+    fig.savefig(figpathpdf, format='pdf', bbox_inches='tight')
+
 def plot_supretrofit():
-    row_titles = ["No conditions", "Climate neutrality case"]
+    row_titles = ["No conditions", "Climate neutrality\ncase"]
     plot_hm_figS3(path_to_data = str(Path(__file__).parent.parent / '../data/supretrofit_rawdata.csv'),
                 rowvar_name= "scenario",
                 row_titles=row_titles)
