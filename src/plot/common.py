@@ -154,15 +154,16 @@ def plot_large_panel_ccuattr(dfs):
     ax.axhline(y=aviationcomp_fscp, xmin = 0.3, xmax = 0.9, color=color_dict["plane"], linewidth=1, linestyle='--', zorder = 0)
 
     #main legend
-    ax.legend(handles=[Patch(facecolor=color_dict["cement"]), Patch(facecolor=color_dict["plane"])], edgecolor='grey', labels=['Cement (potential CO2 source)', "Aviation (potential CO2 utilisation)"], fontsize =SMALL_SIZE, bbox_to_anchor=(0, 0.85),loc='lower left')
+    ax.legend(handles=[Patch(facecolor=color_dict["cement"]), Patch(facecolor=color_dict["plane"])], edgecolor='grey', labels=['Cement (potential CO$_2$ source)', "Aviation (potential CO$_2$ utilisation)"], 
+            fontsize =SMALL_SIZE, bbox_to_anchor=(0, 0.9),loc='lower left')
     
     #secondary legend
 
-    na_patch = Line2D([0], [0], marker=r'$\checkmark$', color='w', label='CCU is the cheapest abatement\noption',
+    na_patch = Line2D([0], [0], marker=r'$\checkmark$', color='w', label='CCU is the most cost-effective\nabatement option',
              markerfacecolor='#149821', markersize=MEDIUM_SIZE, markeredgewidth=0, markeredgecolor='#149821')
-    fossil_patch = Line2D([0], [0], marker=r'$\times$', color='w', label='CCU more costly than alternative\noption (CCS or CDR compensation)',
+    fossil_patch = Line2D([0], [0], marker=r'$\times$', color='w', label='CCU is less cost-effective\nthan alternative option\n(CCS or CDR compensation)',
              markerfacecolor='#E203D0', markersize=MEDIUM_SIZE, markeredgewidth=0, markeredgecolor='#E203D0')
-    leg2 = fig.legend(handles=[na_patch,fossil_patch], bbox_to_anchor=(0.15, 0.68),loc='lower left', fontsize = SMALL_SIZE)
+    leg2 = fig.legend(handles=[na_patch,fossil_patch], bbox_to_anchor=(0.16, 0.70),loc='lower left', fontsize = SMALL_SIZE)
     ax.add_artist(leg2)
 
 
@@ -176,7 +177,7 @@ def plot_large_panel_ccuattr(dfs):
     plt.setp(ax.get_xticklabels(), fontsize=MEDIUM_SIZE)
 
     ax = change_spines(ax)
-    ax.set_ylabel("Abatement cost (EUR/tCO2)", fontsize = MEDIUM_SIZE)
+    ax.set_ylabel("Abatement cost (EUR/tCO$_2$)", fontsize = MEDIUM_SIZE)
     ax.set_title("Abatement cost for different\nCCU attributions", fontweight="bold",loc = "left")
 
     fig.tight_layout()
@@ -252,11 +253,11 @@ def plot_large_panel(dfs):
         axes[1,idx].axhline(0, color='black', lw = 0.75)
         
         # if idx == 0:
-        #     axes[1,idx].set_ylabel(f"CO2 emissions \n (tCO2{unit})")
+        #     axes[1,idx].set_ylabel(f"CO$_2$ emissions \n (tCO$_2${unit})")
         if idx ==0:
-            axes[1,idx].set_ylabel(f"CO2 emissions \n (tCO2{unit})")
+            axes[1,idx].set_ylabel(f"CO$_2$ emissions \n (tCO$_2${unit})")
         else:
-            axes[1,idx].set_ylabel(f"(tCO2{unit})")
+            axes[1,idx].set_ylabel(f"(tCO$_2${unit})")
         axes[1,idx].set_ylim(-max_em*0.2, max_em*1.05)
         #axes[1,idx].tick_params(rotation=90)
 
@@ -279,7 +280,7 @@ def plot_large_panel(dfs):
         axes[2,idx].bar(df["code"][0], max_fscp * 1.3, facecolor='white', hatch='/', edgecolor = "black")
 
         if idx == 0:
-            axes[2,idx].set_ylabel(f"Abatement cost \n(EUR/tCO2)")  
+            axes[2,idx].set_ylabel(f"Abatement cost \n(EUR/tCO$_2$)")  
         # axes[2,idx].set_ylim(0, np.nanmax(df["fscp"])*1.05)
         axes[2,idx].set_ylim(0, max_fscp * 1.05)
         #share axis between line 1 & 2
@@ -320,12 +321,12 @@ def plot_large_panel(dfs):
     colbar = fig.colorbar(ScalarMappable( cmap=cmap), cax = cbar_ax)
 
     colbar.set_ticks([0.1, 0.3, 0.5, 0.7, 0.9])
-    colbar.set_ticklabels(['H2/NH3', 'E-fuel','Compen-\nsation', 'CCU', 'CCS'])
+    colbar.set_ticklabels(['H$_2$/NH$_3$', 'Low-emission\nsynfuel','Compen-\nsation', 'CCU', 'CCS'])
 
 
-    h2_patch = Patch(facecolor='white', edgecolor='slategrey', label='Low-emission\nH2', hatch='+++')
-    #co2ts_patch = Patch(facecolor='white', edgecolor='grey', label='CO2 transport\n and storage',hatch ='////')
-    co2_patch = Patch(facecolor='white', edgecolor='slategrey', label='Non-fossil\nCO2',hatch ='o')
+    h2_patch = Patch(facecolor='white', edgecolor='slategrey', label='Low-emission\nH$_2$', hatch='+++')
+    #co2ts_patch = Patch(facecolor='white', edgecolor='grey', label='CO$_2$ transport\n and storage',hatch ='////')
+    co2_patch = Patch(facecolor='white', edgecolor='slategrey', label='Non-fossil\nCO$_2$',hatch ='o')
     fig.legend(handles=[h2_patch,co2_patch], title = "Cost contributions",bbox_to_anchor=(0.52, 0.4, 0.49, 0.5), fontsize = MEDIUM_SIZE)
     
     na_patch = Patch(facecolor='white', edgecolor='grey', label='No option\navailable',hatch ='//')
@@ -336,7 +337,7 @@ def plot_large_panel(dfs):
     ### PLOT FULL FIGURE ###
     h2_LCO = dfs["h2_LCO"].unique()[0]
     co2_LCO = dfs["co2_LCO"].unique()[0]
-    fig.suptitle(f"Abatement cost for the HTE sectors, based on optimistic parameter projection for 2050.\nCost of low-emission H2: {h2_LCO} EUR/MWh, cost of non-fossil CO2: {co2_LCO:.0f} EUR/tCO2.", fontsize = BIGGER_SIZE)
+    fig.suptitle(f"Abatement cost for the HTE sectors, based on optimistic parameter projection for 2050.\nCost of low-emission H$_2$: {h2_LCO} EUR/MWh, cost of non-fossil CO$_2$: {co2_LCO:.0f} EUR/tCO$_2$.", fontsize = BIGGER_SIZE)
     #fig.tight_layout()
     plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.45, hspace=0.1)
     #fig.savefig('./././myimage.png', format='png', dpi=600, bbox_inches='tight')
@@ -384,7 +385,7 @@ def plot_barplotfscp(dfs, dfs_breakdown, dfs_steelccs, sector = "steel", type = 
     #merge to make final df
     sub_df_LCO_merge = sub_df_LCO.merge(sub_df_LCO_breakdown,how ="left",  on =[ "cost"],validate = "1:1")
     
-    # sub_df_LCO_merge.loc[(sub_df_LCO["type"] != "fossil") & (sub_df_LCO["type"] != "ccs"), "code"] = sub_df_LCO["code"] + ",\nH2 cost =\n" +sub_df_LCO["h2_LCO"].astype(str) + " EUR/MWh"
+    # sub_df_LCO_merge.loc[(sub_df_LCO["type"] != "fossil") & (sub_df_LCO["type"] != "ccs"), "code"] = sub_df_LCO["code"] + ",\nH$_2$ cost =\n" +sub_df_LCO["h2_LCO"].astype(str) + " EUR/MWh"
     sub_df_LCO_merge.loc[(sub_df_LCO["type"] != "fossil") & (sub_df_LCO["type"] != "ccs"), "code"] = sub_df_LCO["h2_LCO"].astype(str) + " \nEUR/MWh"
 
     #sort so the fossil pathway is first
@@ -411,7 +412,7 @@ def plot_barplotfscp(dfs, dfs_breakdown, dfs_steelccs, sector = "steel", type = 
     height = 0
     alpha_list = [0.8, 0.7, 0.6, 0.5,0.4, 0.3, 0.2, 0.1, 0, 0.2, 0.5]
     color = ["white", "white", "white", "white", "white", "white","white","white","white", "darkgrey","darkgrey"]
-    labels = {"capex":"CAPEX", "opex":"O&M", "other costs":"other OPEX", "ironore":"Iron ore", "scrap":"Scrap,\nferroalloys","elec":"Electricity","fossilng": "Natural gas", "h2":"H2", "fossilccoal":"Coking coal", "fossilpci":"PCI coal","co2 transport and storage": "CO2 transport\n& storage"}
+    labels = {"capex":"CAPEX", "opex":"O&M", "other costs":"other OPEX", "ironore":"Iron ore", "scrap":"Scrap,\nferroalloys","elec":"Electricity","fossilng": "Natural gas", "h2":"H$_2$", "fossilccoal":"Coking coal", "fossilpci":"PCI coal","co2 transport and storage": "CO$_2$ transport\n& storage"}
 
     #first, plot colorerd layer
     axes[0].bar(x_pos, sub_df_LCO_merge["cost"], color = sub_df_LCO_merge["color_type"],  edgecolor = "grey")
@@ -462,14 +463,14 @@ def plot_barplotfscp(dfs, dfs_breakdown, dfs_steelccs, sector = "steel", type = 
     #             arrowprops=dict(arrowstyle='-',facecolor='black', linestyle = "--"),
     #             annotation_clip=False)
     axes[0].legend([e], ["BF-BOF carbon capture CAPEX cost uncertainty\n"+r"($\pm$ 50% of base assumption)"], loc = "upper left")
-    axes[0].annotate('H2-DRI-EAF, for different H2 costs',xy=(8.25,-100),xytext=(8.25,-100), color = "black", horizontalalignment = "center",
+    axes[0].annotate('H$_2$-DRI-EAF, for different H$_2$ costs',xy=(8.25,-100),xytext=(8.25,-100), color = "black", horizontalalignment = "center",
                 annotation_clip=False, fontsize = MEDIUM_SIZE)
     #other plot settings
     axes[0].set_xticks(x_pos, sub_df_LCO_merge["code"])
     
     axes[0] = change_spines(axes[0])
     
-    axes[0].set_title("Levelized cost comparison based on different H2 cost assumptions", fontweight="bold",loc = "left", fontsize = BIGGER_SIZE)
+    axes[0].set_title("Levelized cost comparison based on different H$_{\\mathbf{2}}$ cost assumptions", fontweight="bold",loc = "left", fontsize = BIGGER_SIZE)
     axes[0].set_ylabel(f"Levelized cost \n(EUR{unit})", fontsize = MEDIUM_SIZE)
 
 
@@ -524,17 +525,17 @@ def plot_barplotfscp(dfs, dfs_breakdown, dfs_steelccs, sector = "steel", type = 
 
     axes[1] = change_spines(axes[1])
     
-    axes[1].set_title("Abatement cost dependency on assumed H2 cost", fontweight="bold", loc ="left", fontsize = BIGGER_SIZE)
-    axes[1].set_ylabel(f"Abatement cost \n(EUR/tCO2)", fontsize = MEDIUM_SIZE)
+    axes[1].set_title("Abatement cost dependency on assumed H$_{\\mathbf{2}}$ cost", fontweight="bold", loc ="left", fontsize = BIGGER_SIZE)
+    axes[1].set_ylabel(f"Abatement cost \n(EUR/tCO$_2$)", fontsize = MEDIUM_SIZE)
     axes[1].set_xlabel(f"Hydrogen cost (EUR/MWh)", fontsize = MEDIUM_SIZE)
     axes[1].set_ylim(0, 255)
     axes[1].set_xlim(0, 255)
     # axes[1].legend([(s1,l1), (s2,l2)],["DRI-EAF replacing BF-BOF steel","BF-BOF-CCS replacing BF-BOF steel"], loc = "lower right")
     axes[1].legend([(s1,l1), (s2,l2),(sh1), (l3)],
-        ["H2-DRI-EAF replacing BF-BOF steel",
+        ["H$_2$-DRI-EAF replacing BF-BOF steel",
         "BF-BOF-CCS replacing BF-BOF steel", 
-        "Ribbon indicating "+r"$\pm$ 50% cost uncertainty on"+ "\nBF-BOF carbon capture CAPEX",
-        "H2 cost at which BF-BOF-CCS and H2-DRI-EAF\nhave the same abatement cost (central assumption)",
+        r"$\pm$ 50% uncertainty on"+ " CAPEX for carbon capture",
+        "H$_2$ cost at which BF-BOF-CCS and H$_2$-DRI-EAF\nhave the same abatement cost (central assumption)",
         ]	
     )#loc = "lower right")
 
@@ -595,8 +596,8 @@ def plot_barplotaviation(dfs, dfs_breakdown, h2costs,co2ts_costs, sector = "plan
     #merge to make final df
     sub_df_LCO_merge = sub_df_LCO.merge(sub_df_LCO_breakdown,how ="left",  on =[ "cost"],validate = "1:1")
 
-    # sub_df_LCO_merge.loc[(sub_df_LCO["type"] != "fossil") & (sub_df_LCO["type"] != "comp"), "code"] = sub_df_LCO["code"] + ",\nH2 cost =\n" +sub_df_LCO["h2_LCO"].astype(str) + " EUR/MWh"
-    sub_df_LCO_merge.loc[(sub_df_LCO["type"] != "fossil") & (sub_df_LCO["type"] != "comp"), "code"] = "E-fuel"#sub_df_LCO["h2_LCO"].astype(str) + " \nEUR/MWh"
+    # sub_df_LCO_merge.loc[(sub_df_LCO["type"] != "fossil") & (sub_df_LCO["type"] != "comp"), "code"] = sub_df_LCO["code"] + ",\nH$_2$ cost =\n" +sub_df_LCO["h2_LCO"].astype(str) + " EUR/MWh"
+    sub_df_LCO_merge.loc[(sub_df_LCO["type"] != "fossil") & (sub_df_LCO["type"] != "comp"), "code"] = "Low-emission\njet synfuel"#sub_df_LCO["h2_LCO"].astype(str) + " \nEUR/MWh"
 
     #sort so the fossil pathway is first
     sub_df_LCO.sort_values(by = ["em", sensitivity], ascending = [False, True], inplace=True)
@@ -625,9 +626,9 @@ def plot_barplotaviation(dfs, dfs_breakdown, h2costs,co2ts_costs, sector = "plan
     height = 0
     alpha_list = [0.8, 0.6, 0.4, 0.2,0.3, 0.5, 0.7, 0.9, 0.4, 0.2,0.5, 0.8]
     color = ["white", "white", "white", "white", "white", "white","white","white","white", "darkgrey","darkgrey","white"]
-    labels = {"MtJ_capex":"CAPEX: MtJ", "MtJ_opex":"O&M: MtJ","MtJ_elec":"Electricity: MtJ ","MtJ_h2":"Hydrogen: MtJ ","MtJ_co2":"CO2 losses: MtJ", "other costs":"Aircraft cost and\noperating fees", "MtJ_ch3oh_capex":"CAPEX: Methanol","MtJ_ch3oh_co2":"CO2: Methanol",
+    labels = {"MtJ_capex":"CAPEX: MtJ", "MtJ_opex":"O&M: MtJ","MtJ_elec":"Electricity: MtJ ","MtJ_h2":"Hydrogen: MtJ ","MtJ_co2":"CO$_2$ losses: MtJ", "other costs":"Aircraft cost and\noperating fees", "MtJ_ch3oh_capex":"CAPEX: Methanol","MtJ_ch3oh_co2":"CO$_2$: Methanol",
             "MtJ_ch3oh_elec":"Electricity: Methanol","MtJ_ch3oh_h2":"Hydrogen: Methanol","MtJ_ch3oh_opex":"O&M: Methanol",
-            "compco2":"CO2: CDR ","elec":"Electricity","fossilJ":"Fossil jet fuel","co2 transport and storage": "CO2 transport\n& storage", "MtJ_allopex":"All OPEX: MtJ"}
+            "compco2":"CO$_2$: CDR ","elec":"Electricity","fossilJ":"Fossil jet fuel","co2 transport and storage": "CO$_2$ transport\n& storage", "MtJ_allopex":"All OPEX: MtJ"}
     
 
     sub_df_LCO_merge["MtJ_allopex"] = sub_df_LCO_merge["MtJ_opex"] + sub_df_LCO_merge["MtJ_elec"] + sub_df_LCO_merge["MtJ_h2"]
@@ -672,7 +673,7 @@ def plot_barplotaviation(dfs, dfs_breakdown, h2costs,co2ts_costs, sector = "plan
                     axes.bar(x_pos[1]+k*0.8, val, bottom = temp_height, edgecolor = None, color = color[i], alpha = alpha_list[i])#,linestyle="--", lw =1)
                 else:
                     pass
-                axes.text(x = x_pos[1]- 1+(k+0.5)*0.8, y= temp_height-column[1]/2+val+((k-0.6)*0.0022), s=str(co2ts_costs[k])+"\nEUR/tCO2", verticalalignment='center',horizontalalignment = "right", c= "darkgrey", fontsize = SMALL_SIZE)
+                axes.text(x = x_pos[1]- 1+(k+0.5)*0.8, y= temp_height-column[1]/2+val+((k-0.6)*0.0022), s=str(co2ts_costs[k])+"\nEUR/tCO$_2$", verticalalignment='center',horizontalalignment = "right", c= "darkgrey", fontsize = SMALL_SIZE)
                 temp_height += val
         else:
             bars = axes.bar(x_pos, column, bottom = height, edgecolor = None, color = color[i], alpha = alpha_list[i])
@@ -690,7 +691,7 @@ def plot_barplotaviation(dfs, dfs_breakdown, h2costs,co2ts_costs, sector = "plan
 
         if column[1] > 0:
             if comp =="co2 transport and storage":
-                axes.text(x = x_pos[1]-4.2, y = height[1]+0.005, s= "CO2 transport\nand storage\ncosts for:",verticalalignment='center', c= "dimgrey", zorder=2, fontsize = SMALL_SIZE)
+                axes.text(x = x_pos[1]-4.2, y = height[1]+0.005, s= "CO$_2$ transport\nand storage\ncosts for:",verticalalignment='center', c= "dimgrey", zorder=2, fontsize = SMALL_SIZE)
                 #axes.hlines(annot_height[1], x_pos[1]+0.4, x_pos[1]+0.55, colors = "darkgrey", linewidth = 1, zorder=2)
             else:
                 axes.text(x= x_pos[1]+0.6,y= annot_height[1], s=labels[comp], verticalalignment='center', c= "dimgrey", zorder=2, fontsize = SMALL_SIZE)
@@ -707,7 +708,7 @@ def plot_barplotaviation(dfs, dfs_breakdown, h2costs,co2ts_costs, sector = "plan
                 j+=1
  
             else: #case of hydrogen for methanol synthesis
-                axes.text(x=x_pos[2]-4.2,y= height[2]+0.009, s="Hydrogen cost\nin e-jet fuel\nfor different\nLCOH",
+                axes.text(x=x_pos[2]-4.2,y= height[2]+0.009, s="Hydrogen cost\nin jet synfuel\nfor different\nLCOH",
                            verticalalignment='center', c= "dimgrey", fontsize = SMALL_SIZE)
                 
 
@@ -734,7 +735,7 @@ def plot_barplotaviation(dfs, dfs_breakdown, h2costs,co2ts_costs, sector = "plan
             axes.text(
                 bars[-1].get_x() + bars[-1].get_width() +4,
                 mtj_co2_bottom[0] + mtj_co2_height[0] / 2,  # position y (center of the rectangle)
-                'CDR and e-fuels:\ncommon costs', 
+                'CDR and low-emission\nsynfuels: common costs', 
                 va='center', ha='left', fontsize=SMALL_SIZE, color='black',
                 clip_on=False
             )
@@ -742,7 +743,7 @@ def plot_barplotaviation(dfs, dfs_breakdown, h2costs,co2ts_costs, sector = "plan
             axes.text(
                 bars[-1].get_x() + bars[-1].get_width() +4, 
                 mtj_co2_bottom[0] *2,  
-                'CDR and e-fuels:\ncost differences', 
+                'CDR and low-emission\nsynfuels: cost differences', 
                 va='center', ha='left', fontsize=SMALL_SIZE, color='black'
             )
 
@@ -751,7 +752,7 @@ def plot_barplotaviation(dfs, dfs_breakdown, h2costs,co2ts_costs, sector = "plan
     
     axes = change_spines(axes)
     
-    axes.set_title("Aviation: Levelized cost comparison between CDR compensation\nand e-fuels", fontweight="bold",loc = "left", fontsize = BIGGER_SIZE)
+    axes.set_title("Aviation: Levelized cost comparison between CDR compensation\nand low-emission synfuels", fontweight="bold",loc = "left", fontsize = BIGGER_SIZE)
     axes.set_ylabel(f"Levelized cost (EUR{unit})", fontsize = MEDIUM_SIZE+1)
 
     #axes size
@@ -798,7 +799,7 @@ def plot_barplotfuels(dfs, dfs_breakdown, sector = "steel", type = "h2",sensitiv
     sub_df_LCO_merge = sub_df_LCO.merge(sub_df_LCO_breakdown,how ="left",  on =[ "cost"],validate = "1:1")
     
     # sub_df_LCO_merge.loc[(sub_df_LCO["type"] != "fossil") & (sub_df_LCO["type"] != "ccs"), "code"] = sub_df_LCO["code"] + ",\nH2 cost =\n" +sub_df_LCO["h2_LCO"].astype(str) + " EUR/MWh"
-    sub_df_LCO_merge.loc[(sub_df_LCO["tech"] != "fossilJ"), "code"] = "H2 : "+sub_df_LCO["h2_LCO"].astype(str) + " EUR/MWh,\nCO2 : "+sub_df_LCO["co2_LCO"].astype(str) + " EUR/tCO2"
+    sub_df_LCO_merge.loc[(sub_df_LCO["tech"] != "fossilJ"), "code"] = "H$_2$ : "+sub_df_LCO["h2_LCO"].astype(str) + " EUR/MWh,\nCO$_2$ : "+sub_df_LCO["co2_LCO"].astype(str) + " EUR/tCO$_2$"
 
     #sort so the fossil pathway is first
     sub_df_LCO.sort_values(by = ["em", sensitivity], ascending = [False, True], inplace=True)
@@ -817,7 +818,7 @@ def plot_barplotfuels(dfs, dfs_breakdown, sector = "steel", type = "h2",sensitiv
     color = ["white", "white", "white", "white", "darkgrey","darkgrey", "darkgrey","white", "white","white"]
     labels = {"capex":"CAPEX (methanol-to-jetfuel)","ch3oh_capex":"CAPEX (h2-to-methanol)", "opex":"OPEX (methanol-to-jetfuel)","ch3oh_opex":"OPEX (h2-to-methanol)",
                 "elec":"Electricity (methanol-to-jetfuel)","ch3oh_elec":"Electricity (h2-to-methanol)","ch3oh_heat":"Heat (h2-to-methanol)",
-                  "h2":"Green H2 (methanol-to-jetfuel)", "ch3oh_h2":"Green H2 (h2-to-methanol)", "ch3oh_co2":"DAC CO2 (h2-to-methanol)"}
+                  "h2":"Green H$_2$ (methanol-to-jetfuel)", "ch3oh_h2":"Green H$_2$ (h2-to-methanol)", "ch3oh_co2":"DAC CO$_2$ (h2-to-methanol)"}
 
     #first, plot colorerd layer
     axes.bar(x_pos, sub_df_LCO_merge["cost"], color = sub_df_LCO_merge["color_type"],  edgecolor = "grey")
@@ -856,7 +857,7 @@ def plot_barplotfuels(dfs, dfs_breakdown, sector = "steel", type = "h2",sensitiv
     #             arrowprops=dict(arrowstyle='-',facecolor='black', linestyle = "--"),
     #             annotation_clip=False)
 
-    axes.annotate('E-jet fuel, for different H2 and CO2 costs',xy=(6.8,-80),xytext=(6.8,-60), color = "black", horizontalalignment = "center",
+    axes.annotate('Jet synfuel, for different H$_2$ and CO$_2$ costs',xy=(6.8,-80),xytext=(6.8,-60), color = "black", horizontalalignment = "center",
                 annotation_clip=False)
 
     #other plot settings
@@ -864,7 +865,7 @@ def plot_barplotfuels(dfs, dfs_breakdown, sector = "steel", type = "h2",sensitiv
     
     axes = change_spines(axes)
     
-    axes.set_title("Levelized cost comparison based on different H2 cost assumptions", fontweight="bold",loc = "left")
+    axes.set_title("Levelized cost comparison based on different H$_2$ cost assumptions", fontweight="bold",loc = "left")
     axes.set_ylabel(f"Levelized cost \n(EUR{unit})")
 
 
@@ -947,7 +948,7 @@ def plot_steel_macc(dfs, dfs_retrofit, dfs_comp, dfs_comp_retrofit, sector = "st
     sub_df_LCO_merge = sub_df_LCO
 
     # sub_df_LCO_merge.loc[(sub_df_LCO["type"] != "comp") & (sub_df_LCO["type"] != "ccs"), "code"] = sub_df_LCO["code"] + ",\nH2 cost =\n" +sub_df_LCO["h2_LCO"].astype(str) + " EUR/MWh"
-    sub_df_LCO_merge.loc[(sub_df_LCO["type"] != "comp") & (sub_df_LCO["type"] != "ccs") & (sub_df_LCO["type"] != "ccsretrofit"), "annot"] = "H2 cost: "+sub_df_LCO["h2_LCO"].astype(str) + " EUR/MWh"
+    sub_df_LCO_merge.loc[(sub_df_LCO["type"] != "comp") & (sub_df_LCO["type"] != "ccs") & (sub_df_LCO["type"] != "ccsretrofit"), "annot"] = "H$_2$ cost: "+sub_df_LCO["h2_LCO"].astype(str) + " EUR/MWh"
 
     #sort so the comp pathway is first
     # sub_df_LCO.sort_values(by = ["em", sensitivity], ascending = [False, True], inplace=True)
@@ -1024,7 +1025,7 @@ def plot_steel_macc(dfs, dfs_retrofit, dfs_comp, dfs_comp_retrofit, sector = "st
 
     axes["A"].set_ylim(0, 370)
     axes["A"].set_title("Marginal abatement cost curve for BF-BOF-CCS\nand CDR compensation combination,\nfor a retrofit and a new plant case.", loc = "left", weight = "bold")
-    axes["A"].set_ylabel(f"Abatement cost\n(EUR/tCO2)", fontsize = MEDIUM_SIZE)
+    axes["A"].set_ylabel(f"Abatement cost\n(EUR/tCO$_2$)", fontsize = MEDIUM_SIZE)
     axes["A"].set_xlabel(f"% emissions mitigation compared to BF-BOF (w/o CCS)", fontsize = MEDIUM_SIZE)
     
     sub_df_LCO_merge_h2 = sub_df_LCO_merge[(sub_df_LCO_merge["type"]=="h2") | (sub_df_LCO_merge["type"]=="comp") ]
@@ -1070,8 +1071,8 @@ def plot_steel_macc(dfs, dfs_retrofit, dfs_comp, dfs_comp_retrofit, sector = "st
         axes["B"].text(0, fscp, annot, ha='center', va='bottom', color = "grey", fontsize = MEDIUM_SIZE)
 
     axes["B"].set_ylim(0, 370)
-    axes["B"].set_title("Marginal abatement cost curve for\nH2-DRI-EAF and CDR compensation combination,\nwith different H2 cost assumptions",loc = "left", weight = "bold")
-    axes["B"].set_ylabel(f"Abatement cost\n(EUR/tCO2)", fontsize = MEDIUM_SIZE)
+    axes["B"].set_title("Marginal abatement cost curve for\nH$_{\\mathbf{2}}$-DRI-EAF and CDR compensation combination,\nwith different H$_2$ cost assumptions",loc = "left", weight = "bold")
+    axes["B"].set_ylabel(f"Abatement cost\n(EUR/tCO$_2$)", fontsize = MEDIUM_SIZE)
     axes["B"].set_xlabel(f"% emissions mitigation compared to BF-BOF (w/o CCS)", fontsize = MEDIUM_SIZE)
 
     #plot C
@@ -1080,7 +1081,7 @@ def plot_steel_macc(dfs, dfs_retrofit, dfs_comp, dfs_comp_retrofit, sector = "st
     sub_df_LCO_merge_h2 = fscp_fractions(sub_df_LCO_merge_h2, fossil_em)
     df_ccs_h2_fscpdiff = pd.concat([sub_df_LCO_merge_CCS.iloc[::-1],sub_df_LCO_merge_h2], ignore_index=True)
 
-    df_ccs_h2_fscpdiff.loc[(df_ccs_h2_fscpdiff["type"] != "ccs") & (df_ccs_h2_fscpdiff["type"] != "ccsretrofit"), "annot"] = "H2-DRI-EAF,\nH2 cost: "+df_ccs_h2_fscpdiff["h2_LCO"].astype(str) + " EUR/MWh"
+    df_ccs_h2_fscpdiff.loc[(df_ccs_h2_fscpdiff["type"] != "ccs") & (df_ccs_h2_fscpdiff["type"] != "ccsretrofit"), "annot"] = "H$_2$-DRI-EAF,\nH$_2$ cost: "+df_ccs_h2_fscpdiff["h2_LCO"].astype(str) + " EUR/MWh"
     df_ccs_h2_fscpdiff.loc[(df_ccs_h2_fscpdiff["type"] == "ccs"), "annot"] = "CCS: New plant"
     df_ccs_h2_fscpdiff.loc[(df_ccs_h2_fscpdiff["annot"] == "Retrofit"), "annot"] = "CCS: Retrofit"
     
@@ -1107,17 +1108,17 @@ def plot_steel_macc(dfs, dfs_retrofit, dfs_comp, dfs_comp_retrofit, sector = "st
     legend_els = [
         Patch(facecolor=hex_to_rgba(fscp_color3, 0.3), edgecolor=fscp_color3, linewidth = 0.7, label='BF-BOF-CCS (retrofit)'),
         Patch(facecolor=hex_to_rgba(fscp_color2, 0.3), edgecolor=fscp_color2, linewidth = 0.7, label='BF-BOF-CCS (new plant)'),
-        Patch(facecolor=hex_to_rgba(fscp_color, 0.3), edgecolor=fscp_color, linewidth = 0.7, label='H2-DRI-EAF'),
+        Patch(facecolor=hex_to_rgba(fscp_color, 0.3), edgecolor=fscp_color, linewidth = 0.7, label='H$_2$-DRI-EAF'),
         Patch(facecolor=hex_to_rgba(fscp_color4[0], 0.3), edgecolor=fscp_color4[0], linewidth = 0.7, label='CDR compensation')
     ]
 
     box = axes["C"].get_position()
-    axes["C"].set_position([box.x0-0.05, box.y0-0.02, box.width * 0.85, box.height* 1])
+    axes["C"].set_position([box.x0-0.05, box.y0-0.03, box.width * 0.85, box.height* 1])
     axes["C"].legend(handles = legend_els, bbox_to_anchor=(1.0, 0.05), loc="lower left", borderaxespad=0)
 
 
     axes["C"].set_title("Total abatement cost for full mitigation, with its different components",loc = "left", weight = "bold")
-    axes["C"].set_ylabel(f"Abatement cost\n(EUR/tCO2)", fontsize = MEDIUM_SIZE)
+    axes["C"].set_ylabel(f"Abatement cost\n(EUR/tCO$_2$)", fontsize = MEDIUM_SIZE)
     axes["C"].set_ylim(0, 260)
 
 
@@ -1170,8 +1171,8 @@ def plot_steel_macc(dfs, dfs_retrofit, dfs_comp, dfs_comp_retrofit, sector = "st
 
     FSCP = change_spines(FSCP)
     
-    FSCP.set_title("Abatement cost dependency on assumed H2 cost", loc ="left", weight = "bold")
-    FSCP.set_ylabel(f"Abatement cost\n(EUR/tCO2)", fontsize = MEDIUM_SIZE)
+    FSCP.set_title("Abatement cost dependency on assumed H$_{\\mathbf{2}}$ cost", loc ="left", weight = "bold")
+    FSCP.set_ylabel(f"Abatement cost\n(EUR/tCO$_2$)", fontsize = MEDIUM_SIZE)
     FSCP.set_xlabel(f"Hydrogen cost (EUR/MWh)", fontsize = MEDIUM_SIZE)
     #FSCP.set_ylim(0, 255)
     #FSCP.set_xlim(0, 255)
@@ -1182,12 +1183,12 @@ def plot_steel_macc(dfs, dfs_retrofit, dfs_comp, dfs_comp_retrofit, sector = "st
     # # Adjust the position of the subplot
     # # The values are in fractions of the figure width and height
     # FSCP.set_position([box.x0-0.05, box.y0-0.08, box.width * 0.85, box.height* 0.85])
-    FSCP.set_position([box.x0-0.05, box.y0-0.02, box.width * 0.85, box.height* 0.85])
+    FSCP.set_position([box.x0-0.05, box.y0-0.03, box.width * 0.85, box.height* 0.85])
     FSCP.legend([(l1), (l2), (l3), (l4), (l5), (l6), (m1), (m2)],
-                ["H2-DRI-EAF + CDR \n(full mitigation)",
+                ["H$_2$-DRI-EAF + CDR \n(full mitigation)",
                  "BF-BOF-CCS + CDR \n(full mitigation, new plant)",
                  "BF-BOF-CCS + CDR \n(full mitigation, retrofit)",
-                 "H2-DRI-EAF \n(incomplete mitigation)",
+                 "H$_2$-DRI-EAF \n(incomplete mitigation)",
                  "BF-BOF-CCS \n(incomplete mitigation,\nnew plant)",
                  "BF-BOF-CCS \n(incomplete mitigation, retrofit)",
                  "Break-even points\n(full mitigation)",
@@ -1200,8 +1201,12 @@ def plot_steel_macc(dfs, dfs_retrofit, dfs_comp, dfs_comp_retrofit, sector = "st
     for n,ax in enumerate(axes.values()):
         plt.setp(ax.get_yticklabels(), fontsize=MEDIUM_SIZE)
         plt.setp(ax.get_xticklabels(), fontsize=MEDIUM_SIZE)
-        ax.text(-0.1, 1.05, string.ascii_lowercase[n], transform=ax.transAxes, 
-                    size=MEDIUM_SIZE, weight='bold')
+        if n < 2:
+            ax.text(-0.1, 1.05, string.ascii_lowercase[n], transform=ax.transAxes, 
+                        size=MEDIUM_SIZE, weight='bold')
+        else:
+            ax.text(-0.06, 1.05, string.ascii_lowercase[n], transform=ax.transAxes, 
+                        size=MEDIUM_SIZE, weight='bold')
 
     #fig.tight_layout()
     #plt.show()
@@ -1216,9 +1221,9 @@ def blueh2_costanalysis(dfs):
         blueh2_rows.append(filtered_df)
     blueh2_df = pd.concat(blueh2_rows, ignore_index=True)
     
-    SMALL_SIZE = 5
-    MEDIUM_SIZE = 6
-    BIGGER_SIZE = 7
+    SMALL_SIZE = 7
+    MEDIUM_SIZE = 9
+    BIGGER_SIZE = 11
 
     co2cost = 200 #EUR/tCO2
     GWP100 = 34 #CO2 equivalent
@@ -1246,10 +1251,12 @@ def blueh2_costanalysis(dfs):
     ax = plt.gca()
     ax = change_spines(ax)
     
+
     plt.ylim(0, 120)
-    plt.ylabel("Low-emission H2 cost\n(EUR/MWh)")
-    plt.xticks([1, 2,3,4], ["Green H2\n(IEA NZE 2050)", "Blue H2", "Blue H2, \n0.1"+'%'+" leakage", "Blue H2, \n3"+'%'+" leakage"])
-    plt.title('Cost of various low-emission hydrogen production pathways',fontsize = MEDIUM_SIZE, fontweight='bold', loc='left')
+    plt.ylabel("Low-emission H$_2$ cost\n(EUR/MWh)", fontsize = MEDIUM_SIZE)
+    plt.xticks([1, 2,3,4], ["Green H$_2$\n(IEA NZE 2050)", "Blue H$_2$", "Blue H$_2$, \n0.1"+'%'+" leakage", "Blue H$_2$, \n3"+'%'+" leakage"], fontsize = MEDIUM_SIZE)
+    plt.yticks(fontsize = MEDIUM_SIZE)
+    plt.title('Cost of various low-emission hydrogen production pathways',fontsize = BIGGER_SIZE, fontweight='bold', loc='left')
     fig.savefig('././figs/supp_blueH2cost.png', format='png', dpi = 200)
     fig.savefig('././figs/supp_blueH2cost.pdf', format='pdf')
 
@@ -1259,9 +1266,9 @@ def nonfossilco2_supplycurve():
     cost = np.array([40.8,20.1,52.65,36,165.6,400]) #in EUR/tCO2
     color = np.array(['#3fa34d', '#137547', '#72b01d', '#054a29', '#2a9134', "#FEB380"])
 
-    SMALL_SIZE = 5
-    MEDIUM_SIZE = 6
-    BIGGER_SIZE = 7
+    SMALL_SIZE = 7
+    MEDIUM_SIZE = 9
+    BIGGER_SIZE = 11
 
     CO2_df = pd.DataFrame({"CO2_source": CO2_source, "amount": amount, "cost": cost, "color": color})
     CO2_df = CO2_df.sort_values(by = "cost")
@@ -1358,11 +1365,11 @@ def nonfossilco2_supplycurve():
                                  arrowstyle='<->', mutation_scale=15, color='darkgrey', lw=2)
     ax.add_patch(arrow2)
     # Add 1st annotation
-    plt.text(cumulative_width1 / 2, top_y_position - top_rect_height / 2, "E-chemical CO2 demand\n(2050)", 
-            ha='center', va='center', fontsize=MEDIUM_SIZE, color = "dimgrey")
+    plt.text(cumulative_width1 / 2, top_y_position - top_rect_height / 2, "Syn-chemical CO$_2$ demand\n(2050)", 
+            ha='center', va='center', fontsize=MEDIUM_SIZE-1, color = "dimgrey")
     # Add 2nd annotation
-    plt.text(cumulative_width1 + cumulative_width2 / 2, top_y_position - top_rect_height / 2, "E-fuel CO2 demand\n(2050)", 
-            ha='center', va='center', fontsize=MEDIUM_SIZE, color = "dimgrey")
+    plt.text(cumulative_width1 + cumulative_width2 / 2, top_y_position - top_rect_height / 2, "Low-emission\nsynfuels CO$_2$ demand\n(2050)", 
+            ha='center', va='center', fontsize=MEDIUM_SIZE-1, color = "dimgrey")
 
     #add vline displaying total demand in 2050
     plt.axvline(x=cumulative_width1 + cumulative_width2, ymin = 0, ymax = top_y_position, color='darkgrey', linestyle='--')
@@ -1374,8 +1381,10 @@ def nonfossilco2_supplycurve():
     # Adding grid and labels
     ax = fig.get_axes()[0]
     ax = change_spines(ax)
-    plt.xlabel('Theoretical quantity availably by 2050 (GtCO2/yr)')
-    plt.ylabel('Cost (EUR/tCO2)')
-    plt.title('Non-fossil CO2 Supply Curve', fontsize=MEDIUM_SIZE,fontweight='bold', loc='left')
+    plt.xticks(fontsize=MEDIUM_SIZE)
+    plt.yticks(fontsize=MEDIUM_SIZE)
+    plt.xlabel('Theoretical quantity availably by 2050 (GtCO$_2$/yr)', fontsize=MEDIUM_SIZE)
+    plt.ylabel('Cost (EUR/tCO$_2$)', fontsize=MEDIUM_SIZE)
+    plt.title('Non-fossil CO$_2$ Supply Curve', fontsize=BIGGER_SIZE,fontweight='bold', loc='left')
     fig.savefig('././figs/supp_nonfossilCO2supplycurve.png', format='png', dpi = 200)
     fig.savefig('././figs/supp_nonfossilCO2supplycurve.pdf', format='pdf')

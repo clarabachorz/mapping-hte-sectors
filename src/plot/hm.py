@@ -67,7 +67,7 @@ def make_multiple_cbars(ax, row, cmap_list, defaultcmap_ticks):
     # so all options are complemented with DACCS
     colorbar = ax.collections[0].colorbar
     if colorbar is not None:
-        ticklabels = ['H2/NH3\n+ CDR', 'E-fuel\n+ CDR', 'CCU\n+ CDR', 'CCS\n+ CDR'] if cmap_list[row] is not None else defaultcmap_ticks
+        ticklabels = ['H$_2$/NH$_3$\n+ CDR', 'Low-emission\nsynfuels\n+ CDR', 'CCU\n+ CDR', 'CCS\n+ CDR'] if cmap_list[row] is not None else defaultcmap_ticks
 
         # Calculate tick positions
         step = 1.0 / (len(ticklabels))
@@ -117,8 +117,8 @@ def plot_sectoral_hm(path_to_data, rowvar_name, row_vars, row_titles, x_var = "c
     transparent_cmap = return_transparent_cmap()
 
     # define default ticks for the colorbar
-    # defaultcmap_ticks = ['H2/NH3', 'Blue\nH2/NH3', 'E-fuel','DACCS\ncompen-\nsation', 'CCU', 'CCS']
-    defaultcmap_ticks = ['H2/NH3', 'E-fuel','Compen-\nsation', 'CCU', 'CCS']
+    # defaultcmap_ticks = ['H2/NH$_3$', 'Blue\nH2/NH$_3$', 'E-fuel','DACCS\ncompen-\nsation', 'CCU', 'CCS']
+    defaultcmap_ticks = ['H$_2$/NH$_3$', 'Low-emission\nsynfuels','Compen-\nsation', 'CCU', 'CCS']
 
     #load data 
     df_fig = pd.read_csv(path_to_data) 
@@ -256,10 +256,10 @@ def plot_sectoral_hm(path_to_data, rowvar_name, row_vars, row_titles, x_var = "c
             
             # Additional aesthetics: labels, titles, etc.
             if col == 0:
-                ax.set_ylabel('Low-emission H2 cost\n(EUR/MWh)', fontsize = SMALL_SIZE)
+                ax.set_ylabel('Low-emission H$_2$ cost\n(EUR/MWh)', fontsize = SMALL_SIZE)
                 ax2.set_yticklabels([])
             elif col == cols-1:
-                ax2.set_ylabel("Low-emission H2 cost\n(EUR/kg)", fontsize = SMALL_SIZE)
+                ax2.set_ylabel("Low-emission H$_2$ cost\n(EUR/kg)", fontsize = SMALL_SIZE)
                 ax.set_ylabel("")
                 ax.set_yticklabels([])
             else:
@@ -272,7 +272,7 @@ def plot_sectoral_hm(path_to_data, rowvar_name, row_vars, row_titles, x_var = "c
                 ax.set_xlabel("")
                 ax.set_xticklabels([])
             elif row == rows-1:
-                ax.set_xlabel('Non-fossil CO2 cost\n(EUR/tCO2)', fontsize = SMALL_SIZE)
+                ax.set_xlabel('Non-fossil CO$_2$ cost\n(EUR/tCO$_2$)', fontsize = SMALL_SIZE)
             else: 
                 ax.set_xlabel("")
                 ax.set_xticklabels([])
@@ -305,7 +305,7 @@ def plot_sectoral_hm(path_to_data, rowvar_name, row_vars, row_titles, x_var = "c
 
 def plot_mainfig():
     row_vars = ["normal","ccu", "comp"]
-    row_titles = ["No conditions", "Fossil CCU: CO2 utilization\nrequires CO2 source", "Full climate neutrality\n(compensation only for\nresidual emissions)"]
+    row_titles = ["No conditions", "Fossil CCU: CO$_2$ utilization\nrequires CO$_2$ source", "Full climate neutrality\n(compensation only for\nresidual emissions)"]
     
     cmap_list = None
     plot_sectoral_hm(#path_to_data='./data/figfscp_rawdata.csv',
@@ -327,7 +327,7 @@ def plot_mainfig():
 
 def plot_supfig():
     row_vars = [8,30,100,200]
-    row_titles = [f'CO2 transport and storage cost:\n {num} EUR/tCO2\n\n' for num in row_vars]
+    row_titles = [f'CO$_2$ transport and storage cost:\n {num} EUR/tCO$_2$\n\n' for num in row_vars]
 
     plot_sectoral_hm(#path_to_data='code_figS3/figS2_rawdata.csv',
                     path_to_data = str(Path(__file__).parent.parent / '../data/sup_rawdata.csv'),

@@ -76,7 +76,7 @@ def plot_hm_figS3(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
     transparent_cmap = return_transparent_cmap()
 
     # define default ticks for the colorbar
-    defaultcmap_ticks = ['H2/NH3','Compen-\nsation', 'CCU', 'CCS']
+    defaultcmap_ticks = ['H$_2$/NH$_3$','Compen-\nsation', 'CCU', 'CCS']
     #load data calculated by calc_data_figS3
     df_fig = pd.read_csv(path_to_data)
     #remove the first two columns, which are just old indice
@@ -140,7 +140,7 @@ def plot_hm_figS3(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
             colorbar = ax.collections[0].colorbar
             if colorbar is not None:
                 if row > 0:
-                    ticklabels = ['H2/NH3\n+ CDR','Compen-\nsation', 'CCU\n+ CDR', 'CCS\n+ CDR']
+                    ticklabels = ['H$_2$/NH$_3$\n+ CDR','Compen-\nsation', 'CCU\n+ CDR', 'CCS\n+ CDR']
                 else:
                     ticklabels = defaultcmap_ticks
 
@@ -212,10 +212,10 @@ def plot_hm_figS3(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
 
             # Additional aesthetics: labels, titles, etc.
             if col == 0:
-                ax.set_ylabel('Low-emission H2\ncost (EUR/MWh)', fontsize=SMALL_SIZE)
+                ax.set_ylabel('Low-emission H$_2$\ncost (EUR/MWh)', fontsize=SMALL_SIZE)
                 ax2.set_yticklabels([])
             elif col == cols-1:
-                ax2.set_ylabel("Low-emission H2\ncost (EUR/kg)\n", fontsize=SMALL_SIZE)
+                ax2.set_ylabel("Low-emission H$_2$\ncost (EUR/kg)\n", fontsize=SMALL_SIZE)
                 ax.set_ylabel("")
                 ax.set_yticklabels([])
             else:
@@ -232,7 +232,7 @@ def plot_hm_figS3(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
             elif row == rows-1:
                 ax.text(-0.1, 1.05, string.ascii_lowercase[row*2+col], transform=ax.transAxes, 
                     size=MEDIUM_SIZE, weight='bold')
-                ax.set_xlabel('Non-fossil CO2 cost\n(EUR/tCO2)', fontsize=SMALL_SIZE)
+                ax.set_xlabel('Non-fossil CO$_2$ cost\n(EUR/tCO$_2$)', fontsize=SMALL_SIZE)
             else: 
                 ax.set_xlabel("")
                 ax.set_xticklabels([])
@@ -257,7 +257,7 @@ def plot_hm_figS4(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
     transparent_cmap = return_transparent_cmap()
 
     # define default ticks for the colorbar
-    defaultcmap_ticks = ['H2/NH3','Compen-\nsation', 'CCU', 'CCS']
+    defaultcmap_ticks = ['H$_2$/NH$_3$','Compen-\nsation', 'CCU', 'CCS']
     #load data calculated by calc_data_figS3
     df_fig = pd.read_csv(path_to_data)
     #remove the first two columns, which are just old indice
@@ -321,7 +321,7 @@ def plot_hm_figS4(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
             colorbar = ax.collections[0].colorbar
             if colorbar is not None:
                 if row > 0:
-                    ticklabels = ['H2/NH3\n+ CDR','Compen-\nsation', 'CCU\n+ CDR', 'CCS\n+ CDR']
+                    ticklabels = ['H$_2$/NH$_3$\n+ CDR','Compen-\nsation', 'CCU\n+ CDR', 'CCS\n+ CDR']
                 else:
                     ticklabels = defaultcmap_ticks
 
@@ -393,10 +393,10 @@ def plot_hm_figS4(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
             
             # Additional aesthetics: labels, titles, etc.
             if col == 0:
-                ax.set_ylabel('Low-emission H2\ncost (EUR/MWh)', fontsize=SMALL_SIZE)
+                ax.set_ylabel('Low-emission H$_2$\ncost (EUR/MWh)', fontsize=SMALL_SIZE)
                 ax2.set_yticklabels([])
             elif col == cols-1:
-                ax2.set_ylabel("Low-emission H2\ncost (EUR/kg)\n", fontsize=SMALL_SIZE)
+                ax2.set_ylabel("Low-emission H$_2$\ncost (EUR/kg)\n", fontsize=SMALL_SIZE)
                 ax.set_ylabel("")
                 ax.set_yticklabels([])
             else:
@@ -414,7 +414,7 @@ def plot_hm_figS4(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
                 ax.text(-0.1, 1.05, string.ascii_lowercase[row*2+col+1], transform=ax.transAxes, 
                     size=MEDIUM_SIZE, weight='bold')
                 #ax.set_xticklabels(ax.get_xticklabels(), fontsize=SMALL_SIZE)
-                ax.set_xlabel('Non-fossil CO2 cost\n(EUR/tCO2)', fontsize=SMALL_SIZE)
+                ax.set_xlabel('Non-fossil CO$_2$ cost\n(EUR/tCO$_2$)', fontsize=SMALL_SIZE)
             else: 
                 ax.set_xlabel("")
                 ax.set_xticklabels([])
@@ -439,7 +439,7 @@ def plot_hm_figS5(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
     transparent_cmap = return_transparent_cmap()
 
     # define default ticks for the colorbar
-    defaultcmap_ticks = ['E-fuel','Compen-\nsation', 'CCU']
+    defaultcmap_ticks = ['Low-emission\nsynfuels','Compen-\nsation', 'CCU']
     #load data calculated by calc_data_figS3
     df_fig = pd.read_csv(path_to_data)
     #remove the first two columns, which are just old indice
@@ -503,7 +503,7 @@ def plot_hm_figS5(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
             colorbar = ax.collections[0].colorbar
             if colorbar is not None:
                 if row > 0:
-                    ticklabels = ['E-fuels\n+ CDR','Compen-\nsation', 'CCU\n+ CDR']
+                    ticklabels = ['Low-emission\nsynfuels\n+ CDR','Compen-\nsation', 'CCU\n+ CDR']
                 else:
                     ticklabels = defaultcmap_ticks
 
@@ -574,10 +574,10 @@ def plot_hm_figS5(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
             ax2.tick_params(axis='x', labelsize=SMALL_SIZE)
             # Additional aesthetics: labels, titles, etc.
             if col == 0:
-                ax.set_ylabel('Low-emission H2\ncost(EUR/MWh)', fontsize=SMALL_SIZE)
+                ax.set_ylabel('Low-emission H$_2$\ncost(EUR/MWh)', fontsize=SMALL_SIZE)
                 ax2.set_yticklabels([])
             elif col == cols-1:
-                ax2.set_ylabel("Low-emission H2\ncost (EUR/kg)\n", fontsize=SMALL_SIZE)
+                ax2.set_ylabel("Low-emission H$_2$\ncost (EUR/kg)\n", fontsize=SMALL_SIZE)
                 ax.set_ylabel("")
                 ax.set_yticklabels([])
             else:
@@ -595,7 +595,7 @@ def plot_hm_figS5(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
                 ax.text(-0.1, 1.05, string.ascii_lowercase[row*2+col], transform=ax.transAxes, 
                     size=MEDIUM_SIZE, weight='bold')
                 #ax.set_xticklabels(ax.get_xticklabels(), fontsize=SMALL_SIZE)
-                ax.set_xlabel('Non-fossil CO2 cost\n(EUR/tCO2)', fontsize=SMALL_SIZE)
+                ax.set_xlabel('Non-fossil CO$_2$ cost\n(EUR/tCO$_2$)', fontsize=SMALL_SIZE)
             else: 
                 ax.set_xlabel("")
                 ax.set_xticklabels([])
@@ -620,7 +620,7 @@ def plot_hm_figS6(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
     transparent_cmap = return_transparent_cmap()
 
     # define default ticks for the colorbar
-    defaultcmap_ticks = ['Compen-\nsation', 'CCU', 'E-fuels']
+    defaultcmap_ticks = ['Compen-\nsation', 'CCU', 'Low-emission\nsynfuels']
     #load data calculated by calc_data_figS3
     df_fig = pd.read_csv(path_to_data)
     #remove the first two columns, which are just old indice
@@ -684,7 +684,7 @@ def plot_hm_figS6(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
             colorbar = ax.collections[0].colorbar
             if colorbar is not None:
                 if row > 0:
-                    ticklabels = ['Compen-\nsation', 'CCU\n+ CDR', 'E-fuel']
+                    ticklabels = ['Compen-\nsation', 'CCU\n+ CDR', 'Low-emission\nsynfuels']
                 else:
                     ticklabels = defaultcmap_ticks
 
@@ -756,10 +756,10 @@ def plot_hm_figS6(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
             
             # Additional aesthetics: labels, titles, etc.
             if col == 0:
-                ax.set_ylabel('Low-emission H2\ncost (EUR/MWh)', fontsize=SMALL_SIZE)
+                ax.set_ylabel('Low-emission H$_2$\ncost (EUR/MWh)', fontsize=SMALL_SIZE)
                 ax2.set_yticklabels([])
             elif col == cols-1:
-                ax2.set_ylabel("Low-emission H2\ncost (EUR/kg)\n", fontsize=SMALL_SIZE)
+                ax2.set_ylabel("Low-emission H$_2$\ncost (EUR/kg)\n", fontsize=SMALL_SIZE)
                 ax.set_ylabel("")
                 ax.set_yticklabels([])
             else:
@@ -777,7 +777,7 @@ def plot_hm_figS6(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
                 ax.text(-0.1, 1.05, string.ascii_lowercase[row*2+col+1], transform=ax.transAxes, 
                     size=MEDIUM_SIZE, weight='bold')
                 #ax.set_xticklabels(ax.get_xticklabels(), fontsize=SMALL_SIZE)
-                ax.set_xlabel('Non-fossil CO2 cost\n(EUR/tCO2)', fontsize=SMALL_SIZE)
+                ax.set_xlabel('Non-fossil CO$_2$ cost\n(EUR/tCO$_2$)', fontsize=SMALL_SIZE)
             else: 
                 ax.set_xlabel("")
                 ax.set_xticklabels([])
@@ -803,8 +803,8 @@ def plot_hm_figS7(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
     transparent_cmap = return_transparent_cmap()
 
     # define default ticks for the colorbar
-    #defaultcmap_ticks = ['H2/NH3','Compen-\nsation', 'CCU', 'CCS']
-    defaultcmap_ticks = ['Green H2','Blue H2','Compen-\nsation', 'CCU', 'CCS']
+    #defaultcmap_ticks = ['H$_2$/NH$_3$','Compen-\nsation', 'CCU', 'CCS']
+    defaultcmap_ticks = ['Green H$_2$','Blue H$_2$','Compen-\nsation', 'CCU', 'CCS']
     #load data calculated by calc_data_figS3
     df_fig = pd.read_csv(path_to_data)
     #remove the first two columns, which are just old indice
@@ -868,7 +868,7 @@ def plot_hm_figS7(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
             colorbar = ax.collections[0].colorbar
             if colorbar is not None:
                 if row > 0:
-                    ticklabels = ['Green H2\n+ CDR','Blue H2\n+ CDR','Compen-\nsation', 'CCU\n+ CDR', 'CCS\n+ CDR']
+                    ticklabels = ['Green H$_2$\n+ CDR','Blue H$_2$\n+ CDR','Compen-\nsation', 'CCU\n+ CDR', 'CCS\n+ CDR']
                 else:
                     ticklabels = defaultcmap_ticks
 
@@ -939,10 +939,10 @@ def plot_hm_figS7(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
             ax2.tick_params(axis='x', labelsize=SMALL_SIZE)
             # Additional aesthetics: labels, titles, etc.
             if col == 0:
-                ax.set_ylabel('Green H2 cost\n(EUR/MWh)', fontsize=SMALL_SIZE)
+                ax.set_ylabel('Green H$_2$ cost\n(EUR/MWh)', fontsize=SMALL_SIZE)
                 ax2.set_yticklabels([])
             elif col == cols-1:
-                ax2.set_ylabel("Green H2 cost\n(EUR/kg)\n", fontsize=SMALL_SIZE)
+                ax2.set_ylabel("Green H$_2$ cost\n(EUR/kg)\n", fontsize=SMALL_SIZE)
                 ax.set_ylabel("")
                 ax.set_yticklabels([])
             else:
@@ -965,7 +965,7 @@ def plot_hm_figS7(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
                 ax.text(-0.1, 1.05, string.ascii_lowercase[row*3+col], transform=ax.transAxes, 
                     size=MEDIUM_SIZE, weight='bold')
                 #ax.set_xticklabels(ax.get_xticklabels(), fontsize=SMALL_SIZE)
-                ax.set_xlabel('Non-fossil CO2 cost\n(EUR/tCO2)', fontsize=SMALL_SIZE)
+                ax.set_xlabel('Non-fossil CO$_2$ cost\n(EUR/tCO$_2$)', fontsize=SMALL_SIZE)
             else: 
                 ax.set_xlabel("")
                 ax.set_xticklabels([])
