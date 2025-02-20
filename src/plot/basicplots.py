@@ -134,7 +134,7 @@ def plot_basicfigs():
     LCOs_df_comp_retrofit = [get_LCOs(h2_cost=h2, co2_cost=co2, co2_transport_storage=co2_transport_storage_costs, compensate=True, **new_kwargs) for h2, co2 in zip(h2_costs_steel, co2_costs_steel)]
 
     #calculate LCOs for different attributions (CCU)
-    LCOs_df_ccu = [get_LCOs(h2_cost=70, co2_cost=800, co2_transport_storage=co2_transport_storage_costs, co2ccu_co2em = attr, calc_LCO_comps=False) for attr in [0.5,0.6,0.7,0.8,0.9]]
+    LCOs_df_ccu = [get_LCOs(h2_cost=50, co2_cost=800, co2_transport_storage=co2_transport_storage_costs, co2ccu_co2em = attr, calc_LCO_comps=False) for attr in [0.5,0.6,0.7,0.8]]
 
     #calculate LCOs for different gas prices
     LCOs_df_blueh2 = [get_LCOs(h2_cost=70, co2_cost=800, co2_transport_storage=co2_transport_storage_costs, fossilng_LCO = fossilng_LCO, calc_LCO_comps=False) for fossilng_LCO in [10,20,30,40]]

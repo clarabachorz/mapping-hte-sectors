@@ -117,8 +117,8 @@ def plot_large_panel_ccuattr(dfs):
     plt.rc('axes', titlesize=BIGGER_SIZE)
 
 
-    widths = [0.8,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.8]
-    x_positions = [0,1.5,1.9,2.5,2.9,3.5,3.9,4.5,4.9,5.5,5.9,7.5]
+    widths = [0.8,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.8]
+    x_positions = [0,1.5,1.9,2.5,2.9,3.5,3.9,4.5,4.9,6.5]
     attrs = df_filtered["co2ccu_co2em"].unique() *100
     attrs = attrs.astype(int).astype(str)
 
@@ -169,8 +169,8 @@ def plot_large_panel_ccuattr(dfs):
 
     ax.text(3.5, -0.1, "CCU for cement and aviation,\nfor varying emission attributions\n(to the user sector)", ha='center', va='center', fontsize=MEDIUM_SIZE,transform=ax.get_xaxis_transform())
     # add delimiation line for cement ccs and aviation comp
-    ax.set_xticks([0,1.7,2.7,3.7,4.7,5.7,7.5])
-    ax.set_xticklabels(["CCS\n(cement)",attrs[0]+"%", attrs[1]+"%", attrs[2]+"%", attrs[3]+"%",attrs[4]+"%","CDR compensation\n(aviation)"])
+    ax.set_xticks([0,1.7,2.7,3.7,4.7,6.5])
+    ax.set_xticklabels(["CCS\n(cement)",attrs[0]+"%", attrs[1]+"%", attrs[2]+"%", attrs[3]+"%","CDR compensation\n(aviation)"])
 
     #axes size
     plt.setp(ax.get_yticklabels(), fontsize=MEDIUM_SIZE)
@@ -591,7 +591,8 @@ def plot_barplotaviation(dfs, dfs_breakdown, h2costs,co2ts_costs, sector = "plan
         MtJ_ch3oh_h2_costs = sub_df_LCO_breakdown["MtJ_ch3oh_h2"].dropna().diff().fillna(0).infer_objects(copy=False)
         comp_co2ts_costs = sub_df_LCO_breakdown["co2 transport and storage"].dropna().diff().fillna(0).infer_objects(copy=False)
     
-    sub_df_LCO_breakdown = sub_df_LCO_breakdown[[ "cost", "other costs","MtJ_capex", "MtJ_opex","MtJ_elec","MtJ_h2","MtJ_co2", "MtJ_ch3oh_capex","MtJ_ch3oh_co2","MtJ_ch3oh_elec","MtJ_ch3oh_h2","MtJ_ch3oh_opex","compco2","co2 transport and storage","fossilJ"]]
+    #sub_df_LCO_breakdown = sub_df_LCO_breakdown[[ "cost", "other costs","MtJ_capex", "MtJ_opex","MtJ_elec","MtJ_h2","MtJ_co2", "MtJ_ch3oh_capex","MtJ_ch3oh_co2","MtJ_ch3oh_elec","MtJ_ch3oh_h2","MtJ_ch3oh_opex","compco2","co2 transport and storage","fossilJ"]]
+    sub_df_LCO_breakdown = sub_df_LCO_breakdown[[ "cost", "other costs","MtJ_capex", "MtJ_opex","MtJ_elec","MtJ_h2", "MtJ_ch3oh_capex","MtJ_ch3oh_co2","MtJ_ch3oh_elec","MtJ_ch3oh_h2","MtJ_ch3oh_opex","compco2","co2 transport and storage","fossilJ"]]
 
     #merge to make final df
     sub_df_LCO_merge = sub_df_LCO.merge(sub_df_LCO_breakdown,how ="left",  on =[ "cost"],validate = "1:1")
@@ -624,9 +625,9 @@ def plot_barplotaviation(dfs, dfs_breakdown, h2costs,co2ts_costs, sector = "plan
     #x_pos = [0,3,6,7.5,9,10.5]
     x_pos = [0,4,10]
     height = 0
-    alpha_list = [0.8, 0.6, 0.4, 0.2,0.3, 0.5, 0.7, 0.9, 0.4, 0.2,0.5, 0.8]
-    color = ["white", "white", "white", "white", "white", "white","white","white","white", "darkgrey","darkgrey","white"]
-    labels = {"MtJ_capex":"CAPEX: MtJ", "MtJ_opex":"O&M: MtJ","MtJ_elec":"Electricity: MtJ ","MtJ_h2":"Hydrogen: MtJ ","MtJ_co2":"CO$_2$ losses: MtJ", "other costs":"Aircraft cost and\noperating fees", "MtJ_ch3oh_capex":"CAPEX: Methanol","MtJ_ch3oh_co2":"CO$_2$: Methanol",
+    alpha_list = [0.8, 0.6, 0.4, 0.2,0.3, 0.5, 0.9, 0.4, 0.2,0.5, 0.8]
+    color = ["white", "white", "white", "white", "white", "white","white","white", "darkgrey","darkgrey","white"]
+    labels = {"MtJ_capex":"CAPEX: MtJ", "MtJ_opex":"O&M: MtJ","MtJ_elec":"Electricity: MtJ ","MtJ_h2":"Hydrogen: MtJ ", "other costs":"Aircraft cost and\noperating fees", "MtJ_ch3oh_capex":"CAPEX: Methanol","MtJ_ch3oh_co2":"CO$_2$: Methanol",
             "MtJ_ch3oh_elec":"Electricity: Methanol","MtJ_ch3oh_h2":"Hydrogen: Methanol","MtJ_ch3oh_opex":"O&M: Methanol",
             "compco2":"CO$_2$: CDR ","elec":"Electricity","fossilJ":"Fossil jet fuel","co2 transport and storage": "CO$_2$ transport\n& storage", "MtJ_allopex":"All OPEX: MtJ"}
     
@@ -641,7 +642,7 @@ def plot_barplotaviation(dfs, dfs_breakdown, h2costs,co2ts_costs, sector = "plan
     axes.bar(x_pos, sub_df_LCO_merge["cost"], color = sub_df_LCO_merge["color_type"],  edgecolor = None)
     j=0
     #then, transparent stacked bars
-    for i, comp in enumerate(["other costs","compco2","MtJ_ch3oh_co2","MtJ_co2","MtJ_capex","MtJ_ch3oh_capex", "MtJ_allopex", "MtJ_ch3oh_opex","MtJ_ch3oh_elec","MtJ_ch3oh_h2","fossilJ","co2 transport and storage"]):
+    for i, comp in enumerate(["other costs","compco2","MtJ_ch3oh_co2","MtJ_capex","MtJ_ch3oh_capex", "MtJ_allopex", "MtJ_ch3oh_opex","MtJ_ch3oh_elec","MtJ_ch3oh_h2","fossilJ","co2 transport and storage"]):
         with pd.option_context("future.no_silent_downcasting", True):
             column = sub_df_LCO_merge[comp].fillna(0).infer_objects(copy=False)
         #find h2 cost for MtJ
@@ -711,25 +712,25 @@ def plot_barplotaviation(dfs, dfs_breakdown, h2costs,co2ts_costs, sector = "plan
                 axes.text(x=x_pos[2]-4.2,y= height[2]+0.009, s="Hydrogen cost\nin jet synfuel\nfor different\nLCOH",
                            verticalalignment='center', c= "dimgrey", fontsize = SMALL_SIZE)
                 
+        if comp == "compco2":
+            compco2_bottom = height - column
+            compco2_height = column
+            # Draw a dashed line at the top of the "comp_co2" section
+            axes.axhline(y=compco2_bottom[1]+compco2_height[1], xmin = 0.34, xmax = 1.08,
+                         color='black', linestyle='--',  label='common costs', clip_on=False, linewidth = 0.8) #linewidth=1,
 
-
-        # Find the index of "MtJ_co2"
-        if comp == "MtJ_co2":
+        if comp == "MtJ_ch3oh_co2":
             mtj_co2_bottom = height - column  # This is the bottom position of the "MtJ_co2" section
             mtj_co2_height = column  # This is the height of the "MtJ_co2" section
 
-            # # Draw a grey rectangle highlighting "MtJ_co2"
-            # rect = Rectangle(
-            #     (bars[1].get_x() - bars[0].get_width() * 0.1, 0),  # x, y position (left edge of the rectangle)
-            #     (bars[2].get_x()-bars[1].get_x()) * 1.9 ,  # width spans all bars + some padding
-            #     mtj_co2_bottom[2]+mtj_co2_height[2],  # height
-            #     fc=(0.7,0.7,0.7,0.2), ec=(0,0,0,0.7), zorder=1  # semi-transparent grey rectangle
-            # )
-            # axes.add_patch(rect)
-
-            # Draw a dashed line at the top of the "MtJ_co2" section
-            axes.axhline(y=mtj_co2_bottom[2]+mtj_co2_height[2], xmin = 0.34, xmax = 1.08,
-                         color='black', linestyle='--',  label='common costs', clip_on=False, linewidth = 0.8) #linewidth=1,
+            #add the losses annotation
+            axes.annotate(" ",(x_pos[2]+0.4, mtj_co2_height[2]+ mtj_co2_bottom[2]-0.001), xytext = (x_pos[2]+0.45, mtj_co2_height[2]+ mtj_co2_bottom[2] -0.002),c= "dimgrey",
+                                arrowprops=dict(color='darkgrey', width = 0.03, headwidth = 0, linewidth = 0.5), zorder=2, fontsize = SMALL_SIZE)
+            axes.annotate("CO$_2$: Methanol\n(losses)",(x_pos[2]+0.55, mtj_co2_height[2]+ mtj_co2_bottom[2]-0.009),c= "dimgrey",
+                             zorder=2, fontsize = SMALL_SIZE)
+            # # Draw a dashed line at the top of the "MtJ_co2" section
+            # axes.axhline(y=mtj_co2_bottom[2]+mtj_co2_height[2], xmin = 0.34, xmax = 1.08,
+            #              color='black', linestyle='--',  label='common costs', clip_on=False, linewidth = 0.8) #linewidth=1,
 
             # Add label "common costs" on the rightmost edge of the rectangle
             axes.text(
@@ -1026,7 +1027,7 @@ def plot_steel_macc(dfs, dfs_retrofit, dfs_comp, dfs_comp_retrofit, sector = "st
     axes["A"].set_ylim(0, 370)
     axes["A"].set_title("Marginal abatement cost curve for BF-BOF-CCS\nand CDR compensation combination,\nfor a retrofit and a new plant case.", loc = "left", weight = "bold")
     axes["A"].set_ylabel(f"Abatement cost\n(EUR/tCO$_2$)", fontsize = MEDIUM_SIZE)
-    axes["A"].set_xlabel(f"% emissions mitigation compared to BF-BOF (w/o CCS)", fontsize = MEDIUM_SIZE)
+    axes["A"].set_xlabel(f"Emissions mitigation compared to BF-BOF (w/o CCS) (%)", fontsize = MEDIUM_SIZE)
     
     sub_df_LCO_merge_h2 = sub_df_LCO_merge[(sub_df_LCO_merge["type"]=="h2") | (sub_df_LCO_merge["type"]=="comp") ]
     sub_df_LCO_merge_h2['em_abated'] = sub_df_LCO_merge_h2.apply(calculate_em_abated, args=(fossil_em, sub_df_LCO_merge_h2), axis=1)
@@ -1071,9 +1072,9 @@ def plot_steel_macc(dfs, dfs_retrofit, dfs_comp, dfs_comp_retrofit, sector = "st
         axes["B"].text(0, fscp, annot, ha='center', va='bottom', color = "grey", fontsize = MEDIUM_SIZE)
 
     axes["B"].set_ylim(0, 370)
-    axes["B"].set_title("Marginal abatement cost curve for\nH$_{\\mathbf{2}}$-DRI-EAF and CDR compensation combination,\nwith different H$_2$ cost assumptions",loc = "left", weight = "bold")
+    axes["B"].set_title("Marginal abatement cost curve for\nH$_{\\mathbf{2}}$-DRI-EAF and CDR compensation combination,\nwith different H$_{\\mathbf{2}}$ cost assumptions",loc = "left", weight = "bold")
     axes["B"].set_ylabel(f"Abatement cost\n(EUR/tCO$_2$)", fontsize = MEDIUM_SIZE)
-    axes["B"].set_xlabel(f"% emissions mitigation compared to BF-BOF (w/o CCS)", fontsize = MEDIUM_SIZE)
+    axes["B"].set_xlabel(f"Emissions mitigation compared to BF-BOF (w/o CCS) (%)", fontsize = MEDIUM_SIZE)
 
     #plot C
 
