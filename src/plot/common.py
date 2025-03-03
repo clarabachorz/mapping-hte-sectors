@@ -309,8 +309,9 @@ def plot_large_panel(dfs):
 
         #step to next iteration
         idx += 1
-
-
+    for idx2 in range(3):
+        axes[idx2,0].text(-0.4, 1, string.ascii_lowercase[idx2], transform=axes[idx2,0].transAxes, 
+                        size=MEDIUM_SIZE, weight='bold')
     #colorbar function
     colors_tech = {k: color_dict_tech[k] for k in ('h2', 'efuel', 'comp', 'ccu', 'ccs')}
     cmap = ListedColormap(colors_tech.values())

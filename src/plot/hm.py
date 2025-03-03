@@ -23,7 +23,6 @@ plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
 plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
 
 
-
 def plot_heatmap(data, cmap, ax, cbar, vmin=0, vmax=1, rasterized=True):
     return sns.heatmap(data, cmap=cmap, cbar = cbar, vmin=vmin, vmax=vmax, ax=ax, rasterized=rasterized)
 
@@ -37,7 +36,7 @@ def add_rectangle(ax, xcoord, ycoord, w, h):
             fill=True,
             # fc=(0.7, 0.7, 0.7, 0.15),
             fc=(0.7, 0.7, 0.7, 0.2),
-            lw=1,
+            lw=0.7,
         )
     )
 
@@ -194,7 +193,7 @@ def plot_sectoral_hm(path_to_data, rowvar_name, row_vars, row_titles, x_var = "c
             heatmap_diff = plot_heatmap(sns_diff_df, transparent_cmap, ax, cbar = False, vmin=0, vmax=vmax_hmdiff)
             # and the contour line
             contour_values = {"steel": [0, 50, 100, 150, 200,250], "cement": [0,50, 100, 150, 200, 250], "plane":[0, 500, 1000, 1500, 2000]}.get(col_var, [0, 400, 800, 1200, 1600])
-            contour = ax.contour(np.arange(.5, contour_df.shape[1]), np.arange(.5, contour_df.shape[0]), contour_df, contour_values, colors='#3b3b3b', alpha=0.8, linewidths=0.8)
+            contour = ax.contour(np.arange(.5, contour_df.shape[1]), np.arange(.5, contour_df.shape[0]), contour_df, contour_values, colors='#3b3b3b', alpha=0.8, linewidths=0.5)
 
             #change contour label params
             ax.clabel(contour, inline=True, fontsize=SMALL_SIZE)
@@ -276,6 +275,13 @@ def plot_sectoral_hm(path_to_data, rowvar_name, row_vars, row_titles, x_var = "c
             else: 
                 ax.set_xlabel("")
                 ax.set_xticklabels([])
+            
+            ax.tick_params(length=2, width=0.1)
+            ax2.tick_params(length=2, width=0.1)
+            for spine in ax.spines.values():
+                spine.set_linewidth(0.4)
+            for spine in ax2.spines.values():
+                spine.set_linewidth(0.4)
 
     # tight layout needs to be adjusted depending on whether we have one big colorbar, or multiple small ones
     if cmap_list is None:
@@ -327,7 +333,7 @@ def plot_mainfig():
 
 def plot_supfig():
     row_vars = [8,30,100,200]
-    row_titles = [f'CO$_2$ transport and storage cost:\n {num} EUR/tCO$_2$\n\n' for num in row_vars]
+    row_titles = [f'CO$_2$ transport and storage cost:\n {num} EUR/tCO$_2$' for num in row_vars]
 
     plot_sectoral_hm(#path_to_data='code_figS3/figS2_rawdata.csv',
                     path_to_data = str(Path(__file__).parent.parent / '../data/sup_rawdata.csv'),

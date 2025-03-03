@@ -38,7 +38,7 @@ def add_rectangle(ax, xcoord, ycoord, w, h):
             fill=True,
             # fc=(0.7, 0.7, 0.7, 0.15),
             fc=(0.7, 0.7, 0.7, 0.2),
-            lw=1,
+            lw=0.7,
         )
     )
 
@@ -155,7 +155,7 @@ def plot_hm_figS3(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
             heatmap_diff = plot_heatmap(sns_diff_df, transparent_cmap, ax, cbar = False, vmin=0, vmax=100)
             # and the contour line
             contour_values = {"steel": [0, 50, 100, 150, 200,250], "cement": [0,50, 100, 150, 200, 250]}.get(col_var, [0, 50, 100, 150, 200, 250])
-            contour = ax.contour(np.arange(.5, contour_df.shape[1]), np.arange(.5, contour_df.shape[0]), contour_df, contour_values, colors='#3b3b3b', alpha=0.8, linewidths=0.8)
+            contour = ax.contour(np.arange(.5, contour_df.shape[1]), np.arange(.5, contour_df.shape[0]), contour_df, contour_values, colors='#3b3b3b', alpha=0.8, linewidths=0.5)
 
             #change contour label params
             ax.clabel(contour, inline=True, fontsize=SMALL_SIZE)
@@ -236,6 +236,13 @@ def plot_hm_figS3(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
             else: 
                 ax.set_xlabel("")
                 ax.set_xticklabels([])
+            
+            ax.tick_params(length=2, width=0.1)
+            ax2.tick_params(length=2, width=0.1)
+            for spine in ax.spines.values():
+                spine.set_linewidth(0.4)
+            for spine in ax2.spines.values():
+                spine.set_linewidth(0.4)
 
     fig.get_layout_engine().set(w_pad=4 / 72, h_pad=4 / 72, hspace=0, wspace=0, rect=[0, 0, .9, 1])
     figpath = "././figs/" + "supp_steelretrofit" + ".png"
@@ -336,7 +343,7 @@ def plot_hm_figS4(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
             heatmap_diff = plot_heatmap(sns_diff_df, transparent_cmap, ax, cbar = False, vmin=0, vmax=100)
             # and the contour line
             contour_values = {"steel": [0, 50, 100, 150, 200,250], "cement": [0,50, 100, 150, 200, 250]}.get(col_var, [0, 50, 100, 150, 200, 250])
-            contour = ax.contour(np.arange(.5, contour_df.shape[1]), np.arange(.5, contour_df.shape[0]), contour_df, contour_values, colors='#3b3b3b', alpha=0.8, linewidths=0.8)
+            contour = ax.contour(np.arange(.5, contour_df.shape[1]), np.arange(.5, contour_df.shape[0]), contour_df, contour_values, colors='#3b3b3b', alpha=0.8, linewidths=0.5)
 
             #change contour label params
             ax.clabel(contour, inline=True, fontsize=SMALL_SIZE)
@@ -418,6 +425,13 @@ def plot_hm_figS4(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
             else: 
                 ax.set_xlabel("")
                 ax.set_xticklabels([])
+            
+            ax.tick_params(length=2, width=0.1)
+            ax2.tick_params(length=2, width=0.1)
+            for spine in ax.spines.values():
+                spine.set_linewidth(0.4)
+            for spine in ax2.spines.values():
+                spine.set_linewidth(0.4)
 
     fig.get_layout_engine().set(w_pad=4 / 72, h_pad=4 / 72, hspace=0, wspace=0, rect=[0, 0, .9, 1])
     figpath = "././figs/" + "supp_BFCCSsensitivity" + ".png"
@@ -518,7 +532,7 @@ def plot_hm_figS5(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
             heatmap_diff = plot_heatmap(sns_diff_df, transparent_cmap, ax, cbar = False, vmin=0, vmax=100)
             # and the contour line
             contour_values = {"steel": [0, 50, 100, 150, 200,250], "chem": [0,400, 800, 1200, 1600]}.get(col_var, [0,400, 800, 1200, 1600])
-            contour = ax.contour(np.arange(.5, contour_df.shape[1]), np.arange(.5, contour_df.shape[0]), contour_df, contour_values, colors='#3b3b3b', alpha=0.8, linewidths=0.8)
+            contour = ax.contour(np.arange(.5, contour_df.shape[1]), np.arange(.5, contour_df.shape[0]), contour_df, contour_values, colors='#3b3b3b', alpha=0.8, linewidths=0.5)
 
             #change contour label params
             ax.clabel(contour, inline=True, fontsize=SMALL_SIZE)
@@ -574,10 +588,10 @@ def plot_hm_figS5(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
             ax2.tick_params(axis='x', labelsize=SMALL_SIZE)
             # Additional aesthetics: labels, titles, etc.
             if col == 0:
-                ax.set_ylabel('Low-emission H$_2$\ncost(EUR/MWh)', fontsize=SMALL_SIZE)
+                ax.set_ylabel('Low-emission H$_2$ cost(EUR/MWh)', fontsize=SMALL_SIZE)
                 ax2.set_yticklabels([])
             elif col == cols-1:
-                ax2.set_ylabel("Low-emission H$_2$\ncost (EUR/kg)\n", fontsize=SMALL_SIZE)
+                ax2.set_ylabel("Low-emission H$_2$ ncost (EUR/kg)", fontsize=SMALL_SIZE)
                 ax.set_ylabel("")
                 ax.set_yticklabels([])
             else:
@@ -599,6 +613,12 @@ def plot_hm_figS5(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
             else: 
                 ax.set_xlabel("")
                 ax.set_xticklabels([])
+            ax.tick_params(length=2, width=0.1)
+            ax2.tick_params(length=2, width=0.1)
+            for spine in ax.spines.values():
+                spine.set_linewidth(0.4)
+            for spine in ax2.spines.values():
+                spine.set_linewidth(0.4)
 
     fig.get_layout_engine().set(w_pad=4 / 72, h_pad=4 / 72, hspace=0, wspace=0, rect=[0, 0, .9, 1])
     figpath = "././figs/" + "supp_CFretrofit" + ".png"
@@ -699,7 +719,7 @@ def plot_hm_figS6(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
             heatmap_diff = plot_heatmap(sns_diff_df, transparent_cmap, ax, cbar = False, vmin=0, vmax=100)
             # and the contour line
             contour_values = {"steel": [0, 50, 100, 150, 200,250], "cement": [0,50, 100, 150, 200, 250]}.get(col_var, [0, 200, 400, 600, 800, 1000])
-            contour = ax.contour(np.arange(.5, contour_df.shape[1]), np.arange(.5, contour_df.shape[0]), contour_df, contour_values, colors='#3b3b3b', alpha=0.8, linewidths=0.8)
+            contour = ax.contour(np.arange(.5, contour_df.shape[1]), np.arange(.5, contour_df.shape[0]), contour_df, contour_values, colors='#3b3b3b', alpha=0.8, linewidths=0.5)
 
             #change contour label params
             ax.clabel(contour, inline=True, fontsize=SMALL_SIZE)
@@ -781,6 +801,12 @@ def plot_hm_figS6(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
             else: 
                 ax.set_xlabel("")
                 ax.set_xticklabels([])
+            ax.tick_params(length=2, width=0.1)
+            ax2.tick_params(length=2, width=0.1)
+            for spine in ax.spines.values():
+                spine.set_linewidth(0.4)
+            for spine in ax2.spines.values():
+                spine.set_linewidth(0.4)
 
     fig.get_layout_engine().set(w_pad=4 / 72, h_pad=4 / 72, hspace=0, wspace=0, rect=[0, 0, .9, 1])
     figpath = "././figs/" + "supp_fossiljetfuelcosts" + ".png"
@@ -883,7 +909,7 @@ def plot_hm_figS7(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
             heatmap_diff = plot_heatmap(sns_diff_df, transparent_cmap, ax, cbar = False, vmin=0, vmax=100)
             # and the contour line
             contour_values = {"steel": [0, 50, 100, 150, 200,250], "cement": [0,50, 100, 150, 200, 250]}.get(col_var, [0, 50, 100, 150, 200, 250])
-            contour = ax.contour(np.arange(.5, contour_df.shape[1]), np.arange(.5, contour_df.shape[0]), contour_df, contour_values, colors='#3b3b3b', alpha=0.8, linewidths=0.8)
+            contour = ax.contour(np.arange(.5, contour_df.shape[1]), np.arange(.5, contour_df.shape[0]), contour_df, contour_values, colors='#3b3b3b', alpha=0.8, linewidths=0.5)
 
             #change contour label params
             ax.clabel(contour, inline=True, fontsize=SMALL_SIZE)
@@ -970,6 +996,13 @@ def plot_hm_figS7(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
                 ax.set_xlabel("")
                 ax.set_xticklabels([])
 
+            ax.tick_params(length=2, width=0.1)
+            ax2.tick_params(length=2, width=0.1)
+            for spine in ax.spines.values():
+                spine.set_linewidth(0.4)
+            for spine in ax2.spines.values():
+                spine.set_linewidth(0.4)
+
     fig.get_layout_engine().set(w_pad=4 / 72, h_pad=4 / 72, hspace=0, wspace=0, rect=[0, 0, .9, 1])
     figpath = "././figs/" + "supp_blueH2steel" + ".png"
     fig.savefig(figpath, format='png', dpi=600, bbox_inches='tight')
@@ -978,7 +1011,7 @@ def plot_hm_figS7(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
     fig.savefig(figpathpdf, format='pdf', bbox_inches='tight')
 
 def plot_supretrofit():
-    row_titles = ["No conditions", "Climate neutrality\ncase"]
+    row_titles = ["No conditions", "Climate neutrality case"]
     plot_hm_figS3(path_to_data = str(Path(__file__).parent.parent / '../data/supretrofit_rawdata.csv'),
                 rowvar_name= "scenario",
                 row_titles=row_titles)
