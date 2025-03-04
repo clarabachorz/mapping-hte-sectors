@@ -74,7 +74,8 @@ def make_multiple_cbars(ax, row, cmap_list, defaultcmap_ticks):
 
         colorbar.set_ticks(ticks)
         colorbar.set_ticklabels(ticklabels)
-        colorbar.ax.tick_params(labelsize=MEDIUM_SIZE) 
+        colorbar.outline.set_linewidth(0.4)
+        colorbar.ax.tick_params(labelsize=MEDIUM_SIZE, length=2, width=0.3) 
 
 
 def make_default_cbar(fig, defaultcmap, defaultcmap_ticks):
@@ -90,7 +91,8 @@ def make_default_cbar(fig, defaultcmap, defaultcmap_ticks):
 
     colorbar.set_ticks(ticks)
     colorbar.set_ticklabels(defaultcmap_ticks)
-    colorbar.ax.tick_params(labelsize=SMALL_SIZE)
+    colorbar.outline.set_linewidth(0.4)
+    colorbar.ax.tick_params(labelsize=SMALL_SIZE, length=2, width=0.3)
 
 def plot_sectoral_hm(path_to_data, rowvar_name, row_vars, row_titles, x_var = "co2_LCO", y_var = "h2_LCO", cmap_list = None, vmax_hmdiff=100, fig_title = '', figsize=(7.09,6.9)):
     """
@@ -276,8 +278,8 @@ def plot_sectoral_hm(path_to_data, rowvar_name, row_vars, row_titles, x_var = "c
                 ax.set_xlabel("")
                 ax.set_xticklabels([])
             
-            ax.tick_params(length=2, width=0.1)
-            ax2.tick_params(length=2, width=0.1)
+            ax.tick_params(length=2, width=0.3)
+            ax2.tick_params(length=2, width=0.3)
             for spine in ax.spines.values():
                 spine.set_linewidth(0.4)
             for spine in ax2.spines.values():
@@ -303,7 +305,7 @@ def plot_sectoral_hm(path_to_data, rowvar_name, row_vars, row_titles, x_var = "c
         #fig.savefig('./analysis/fig/fscp_hm.svg', format='svg', dpi=1200)
     figpath = r"././figs/" + fig_title + ".png"
     # fig.savefig(figpath, format='png', dpi=600, bbox_inches='tight')
-    fig.savefig(figpath, format='png', dpi=200, bbox_inches='tight')
+    fig.savefig(figpath, format='png', dpi=600, bbox_inches='tight')
 
     figpathpdf = r"././figs/" + fig_title + ".pdf"
     fig.savefig(figpathpdf, format='pdf', bbox_inches='tight')
@@ -333,7 +335,7 @@ def plot_mainfig():
 
 def plot_supfig():
     row_vars = [8,30,100,200]
-    row_titles = [f'CO$_2$ transport and storage cost:\n {num} EUR/tCO$_2$' for num in row_vars]
+    row_titles = [f'CO$_2$ transport and storage\ncost: {num} EUR/tCO$_2$' for num in row_vars]
 
     plot_sectoral_hm(#path_to_data='code_figS3/figS2_rawdata.csv',
                     path_to_data = str(Path(__file__).parent.parent / '../data/sup_rawdata.csv'),

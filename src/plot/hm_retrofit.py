@@ -151,6 +151,9 @@ def plot_hm_figS3(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
                 colorbar.set_ticks(ticks)
                 colorbar.set_ticklabels(ticklabels, fontsize=SMALL_SIZE)
 
+                colorbar.outline.set_linewidth(0.4)
+                colorbar.ax.tick_params(labelsize=SMALL_SIZE, length=2, width=0.3)
+
             # add the additional transparent layer to show the fscp difference between the first and second minima
             heatmap_diff = plot_heatmap(sns_diff_df, transparent_cmap, ax, cbar = False, vmin=0, vmax=100)
             # and the contour line
@@ -237,8 +240,8 @@ def plot_hm_figS3(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
                 ax.set_xlabel("")
                 ax.set_xticklabels([])
             
-            ax.tick_params(length=2, width=0.1)
-            ax2.tick_params(length=2, width=0.1)
+            ax.tick_params(length=2, width=0.3)
+            ax2.tick_params(length=2, width=0.3)
             for spine in ax.spines.values():
                 spine.set_linewidth(0.4)
             for spine in ax2.spines.values():
@@ -339,6 +342,9 @@ def plot_hm_figS4(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
                 colorbar.set_ticks(ticks)
                 colorbar.set_ticklabels(ticklabels, fontsize=SMALL_SIZE)
 
+                colorbar.outline.set_linewidth(0.4)
+                colorbar.ax.tick_params(labelsize=SMALL_SIZE, length=2, width=0.3)
+
             # add the additional transparent layer to show the fscp difference between the first and second minima
             heatmap_diff = plot_heatmap(sns_diff_df, transparent_cmap, ax, cbar = False, vmin=0, vmax=100)
             # and the contour line
@@ -426,8 +432,8 @@ def plot_hm_figS4(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
                 ax.set_xlabel("")
                 ax.set_xticklabels([])
             
-            ax.tick_params(length=2, width=0.1)
-            ax2.tick_params(length=2, width=0.1)
+            ax.tick_params(length=2, width=0.3)
+            ax2.tick_params(length=2, width=0.3)
             for spine in ax.spines.values():
                 spine.set_linewidth(0.4)
             for spine in ax2.spines.values():
@@ -528,6 +534,9 @@ def plot_hm_figS5(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
                 colorbar.set_ticks(ticks)
                 colorbar.set_ticklabels(ticklabels, fontsize=SMALL_SIZE)
 
+                colorbar.outline.set_linewidth(0.4)
+                colorbar.ax.tick_params(labelsize=SMALL_SIZE, length=2, width=0.3)
+
             # add the additional transparent layer to show the fscp difference between the first and second minima
             heatmap_diff = plot_heatmap(sns_diff_df, transparent_cmap, ax, cbar = False, vmin=0, vmax=100)
             # and the contour line
@@ -613,8 +622,8 @@ def plot_hm_figS5(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
             else: 
                 ax.set_xlabel("")
                 ax.set_xticklabels([])
-            ax.tick_params(length=2, width=0.1)
-            ax2.tick_params(length=2, width=0.1)
+            ax.tick_params(length=2, width=0.3)
+            ax2.tick_params(length=2, width=0.3)
             for spine in ax.spines.values():
                 spine.set_linewidth(0.4)
             for spine in ax2.spines.values():
@@ -715,6 +724,9 @@ def plot_hm_figS6(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
                 colorbar.set_ticks(ticks)
                 colorbar.set_ticklabels(ticklabels, fontsize=SMALL_SIZE)
 
+                colorbar.outline.set_linewidth(0.4)
+                colorbar.ax.tick_params(labelsize=SMALL_SIZE, length=2, width=0.3)
+
             # add the additional transparent layer to show the fscp difference between the first and second minima
             heatmap_diff = plot_heatmap(sns_diff_df, transparent_cmap, ax, cbar = False, vmin=0, vmax=100)
             # and the contour line
@@ -801,8 +813,8 @@ def plot_hm_figS6(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
             else: 
                 ax.set_xlabel("")
                 ax.set_xticklabels([])
-            ax.tick_params(length=2, width=0.1)
-            ax2.tick_params(length=2, width=0.1)
+            ax.tick_params(length=2, width=0.3)
+            ax2.tick_params(length=2, width=0.3)
             for spine in ax.spines.values():
                 spine.set_linewidth(0.4)
             for spine in ax2.spines.values():
@@ -905,6 +917,9 @@ def plot_hm_figS7(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
                 colorbar.set_ticks(ticks)
                 colorbar.set_ticklabels(ticklabels, fontsize=SMALL_SIZE)
 
+                colorbar.outline.set_linewidth(0.4)
+                colorbar.ax.tick_params(labelsize=SMALL_SIZE, length=2, width=0.3)
+
             # add the additional transparent layer to show the fscp difference between the first and second minima
             heatmap_diff = plot_heatmap(sns_diff_df, transparent_cmap, ax, cbar = False, vmin=0, vmax=100)
             # and the contour line
@@ -996,8 +1011,8 @@ def plot_hm_figS7(path_to_data, rowvar_name, row_titles, x_var = "co2_LCO", y_va
                 ax.set_xlabel("")
                 ax.set_xticklabels([])
 
-            ax.tick_params(length=2, width=0.1)
-            ax2.tick_params(length=2, width=0.1)
+            ax.tick_params(length=2, width=0.3)
+            ax2.tick_params(length=2, width=0.3)
             for spine in ax.spines.values():
                 spine.set_linewidth(0.4)
             for spine in ax2.spines.values():

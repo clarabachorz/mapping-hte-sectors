@@ -181,7 +181,7 @@ def plot_large_panel_ccuattr(dfs):
     ax.set_title("Abatement cost for different\nCCU attributions", fontweight="bold",loc = "left")
 
     fig.tight_layout()
-    fig.savefig('././figs/main_CementaviationCCUAttributin.png', format='png', dpi = 200)
+    fig.savefig('././figs/main_CementaviationCCUAttributin.png', format='png', dpi = 600)
     fig.savefig('././figs/main_CementaviationCCUAttributin.pdf', format='pdf')
     #plt.show()
 
@@ -342,7 +342,7 @@ def plot_large_panel(dfs):
     #fig.tight_layout()
     plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.45, hspace=0.1)
     #fig.savefig('./././myimage.png', format='png', dpi=600, bbox_inches='tight')
-    fig.savefig('././figs/supp_FSCPcalcbreakdown.png', format='png', dpi = 300, bbox_inches='tight')
+    fig.savefig('././figs/supp_FSCPcalcbreakdown.png', format='png', dpi = 600, bbox_inches='tight')
     fig.savefig('././figs/supp_FSCPcalcbreakdown.pdf', format='pdf', bbox_inches='tight')
     #plt.show()
 
@@ -553,7 +553,7 @@ def plot_barplotfscp(dfs, dfs_breakdown, dfs_steelccs, sector = "steel", type = 
 
     fig.tight_layout()
     #plt.show()
-    fig.savefig('././figs/main_steelLCObreakdown.png', format='png', dpi = 200)
+    fig.savefig('././figs/main_steelLCObreakdown.png', format='png', dpi = 600)
     fig.savefig('././figs/main_steelLCObreakdown.pdf', format='pdf')
 
 def curly(x,y, scale, ax=None):
@@ -763,7 +763,7 @@ def plot_barplotaviation(dfs, dfs_breakdown, h2costs,co2ts_costs, sector = "plan
 
 
     #fig.tight_layout()
-    fig.savefig('././figs/main_aviationCDRefuels.png', format='png', dpi = 200,bbox_inches='tight')
+    fig.savefig('././figs/main_aviationCDRefuels.png', format='png', dpi = 600,bbox_inches='tight')
     fig.savefig('././figs/main_aviationCDRefuels.pdf', format='pdf', bbox_inches='tight')
     #plt.show()
 
@@ -874,7 +874,7 @@ def plot_barplotfuels(dfs, dfs_breakdown, sector = "steel", type = "h2",sensitiv
 
 
     fig.tight_layout()
-    fig.savefig('././figs/supp_aviationfuelLCObreakdown.png', format='png', dpi = 200)
+    fig.savefig('././figs/supp_aviationfuelLCObreakdown.png', format='png', dpi = 600)
     fig.savefig('././figs/supp_aviationfuelLCObreakdown.pdf', format='pdf')
     #plt.show()
 
@@ -1213,7 +1213,7 @@ def plot_steel_macc(dfs, dfs_retrofit, dfs_comp, dfs_comp_retrofit, sector = "st
     #fig.tight_layout()
     #plt.show()
     # fig.savefig('././myimage.svg', format='svg', dpi=1200)
-    fig.savefig('././figs/main_steelFSCP.png', format='png', dpi = 200)
+    fig.savefig('././figs/main_steelFSCP.png', format='png', dpi = 600)
     fig.savefig('././figs/main_steelFSCP.pdf', format='pdf')
     
 def blueh2_costanalysis(dfs):
@@ -1259,7 +1259,7 @@ def blueh2_costanalysis(dfs):
     plt.xticks([1, 2,3,4], ["Green H$_2$\n(IEA NZE 2050)", "Blue H$_2$", "Blue H$_2$, \n0.1"+'%'+" leakage", "Blue H$_2$, \n3"+'%'+" leakage"], fontsize = MEDIUM_SIZE)
     plt.yticks(fontsize = MEDIUM_SIZE)
     plt.title('Cost of various low-emission hydrogen production pathways',fontsize = BIGGER_SIZE, fontweight='bold', loc='left')
-    fig.savefig('././figs/supp_blueH2cost.png', format='png', dpi = 200)
+    fig.savefig('././figs/supp_blueH2cost.png', format='png', dpi = 600)
     fig.savefig('././figs/supp_blueH2cost.pdf', format='pdf')
 
 def nonfossilco2_supplycurve():
@@ -1388,5 +1388,5 @@ def nonfossilco2_supplycurve():
     plt.xlabel('Theoretical quantity availably by 2050 (GtCO$_2$/yr)', fontsize=MEDIUM_SIZE)
     plt.ylabel('Cost (EUR/tCO$_2$)', fontsize=MEDIUM_SIZE)
     plt.title('Non-fossil CO$_2$ Supply Curve', fontsize=BIGGER_SIZE,fontweight='bold', loc='left')
-    fig.savefig('././figs/supp_nonfossilCO2supplycurve.png', format='png', dpi = 200)
+    fig.savefig('././figs/supp_nonfossilCO2supplycurve.png', format='png', dpi = 600)
     fig.savefig('././figs/supp_nonfossilCO2supplycurve.pdf', format='pdf')
