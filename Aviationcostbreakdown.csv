@@ -1,0 +1,6 @@
+,tech,cost,em,code,co2,co2_comp,elec_co2em,h2_LCO,co2_LCO,co2ts_LCO,co2tax_othercosts,type,sector,fscp,elec_fscp,unit,sector_desc,color_sector,color_type,info,capex,ch3oh_capex,opex,ch3oh_opex,elec,ch3oh_elec,h2,ch3oh_h2,ch3oh_co2
+0,fossilJ,51.94,0.32,fossil jet fuel (kerosene),0.0,0.0,0,231.6,200,15,0,fossilJ,,,,,,,,,,,,,,,,,
+1,MtJ,497.9,0.0,power-to-jetfuel using non-fossil CO2,0.34,0.0,0,231.6,200,15,0,MtJ,,,,,,,,,13.97,12.49,5.07,4.53,4.36,3.42,21.31,363.78,68.96
+2,MtJ,344.93,0.0,power-to-jetfuel using non-fossil CO2,0.34,0.0,0,139.6,200,15,0,MtJ,,,,,,,,,13.97,12.49,5.07,4.53,4.36,3.42,12.84,219.27,68.96
+3,MtJ,295.54,0.0,power-to-jetfuel using non-fossil CO2,0.34,0.0,0,109.9,200,15,0,MtJ,,,,,,,,,13.97,12.49,5.07,4.53,4.36,3.42,10.11,172.62,68.96
+4,MtJ,246.16,0.0,power-to-jetfuel using non-fossil CO2,0.34,0.0,0,80.2,200,15,0,MtJ,,,,,,,,,13.97,12.49,5.07,4.53,4.36,3.42,7.38,125.97,68.96

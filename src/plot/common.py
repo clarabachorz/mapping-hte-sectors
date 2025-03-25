@@ -799,6 +799,9 @@ def plot_barplotfuels(dfs, dfs_breakdown, sector = "steel", type = "h2",sensitiv
     
     #merge to make final df
     sub_df_LCO_merge = sub_df_LCO.merge(sub_df_LCO_breakdown,how ="left",  on =[ "cost"],validate = "1:1")
+
+    #save to csv
+    sub_df_LCO_merge.to_csv("Aviationcostbreakdown.csv")
     
     # sub_df_LCO_merge.loc[(sub_df_LCO["type"] != "fossil") & (sub_df_LCO["type"] != "ccs"), "code"] = sub_df_LCO["code"] + ",\nH2 cost =\n" +sub_df_LCO["h2_LCO"].astype(str) + " EUR/MWh"
     sub_df_LCO_merge.loc[(sub_df_LCO["tech"] != "fossilJ"), "code"] = "H$_2$ : "+sub_df_LCO["h2_LCO"].astype(str) + " EUR/MWh,\nCO$_2$ : "+sub_df_LCO["co2_LCO"].astype(str) + " EUR/tCO$_2$"

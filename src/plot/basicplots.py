@@ -89,6 +89,36 @@ def get_LCOs(
     else:
         return df_macc
 
+    
+    
+
+def get_LCOs_kerosene_project():
+    df = pd.read_csv("h2LCOkerosene.csv")
+
+    #list to stock values
+    kerosene_lco_average = []
+    kerosene_lco_high = []
+    kerosene_lco_low = []
+
+    #iteration
+    for index, row in df.iterrows():
+        lco_average = get_LCOs(h2_cost = row['average'], co2_cost=200)
+        lco_high = get_LCOs(h2_cost = row['high'], co2_cost=200)
+        lco_low = get_LCOs(h2_cost = row['low'], co2_cost=200)
+
+        kerosene_lco_average.append(lco_average.loc[lco_average["tech"] == "MtJ", "cost"].values[0])
+        kerosene_lco_high.append(lco_high.loc[lco_high["tech"] == "MtJ", "cost"].values[0])
+        kerosene_lco_low.append(lco_low.loc[lco_low["tech"] == "MtJ", "cost"].values[0])
+
+    df['kero_lco_average'] = kerosene_lco_average
+    df['kero_lco_high'] = kerosene_lco_high
+    df['kero_lco_low'] = kerosene_lco_low
+
+    #save df
+    df_tosave = df[['Year','kero_lco_average','kero_lco_high','kero_lco_low']]
+
+    df_tosave.to_csv("keroseneLCO_only.csv", index=False)
+
 def plot_basicfigs():
     # Code starts here
 
@@ -103,10 +133,11 @@ def plot_basicfigs():
     h2_costs = [50, 100, 150, 200] #in EUR/MWh
     h2_costs_aviationfig = [50,100,150]
     h2_costs_steel = [100,  200] #in EUR/MWh
+    h2_costs_fuels = [231.6, 139.6, 109.9, 80.2] #in EUR/MWh
 
     # co2 parameters for the bar plots
     co2_costs = [300, 300, 300, 300] #in EUR/tonne CO2
-    co2_costs_fuels = [200, 400, 600, 800] #in EUR/tonne CO2
+    co2_costs_fuels = [200, 200, 200, 200] #in EUR/tonne CO2
     co2_costs_steel = [350, 350, 350, 350]
 
     co2_transport_storage_costs = 15 #in EUR/tonne CO2
@@ -121,7 +152,7 @@ def plot_basicfigs():
     
     LCOs_df_aviation = [get_LCOs(h2_cost=h2, co2_cost=300, co2_transport_storage=co2_ts_costs, calc_LCO_comps=True) for h2, co2_ts_costs in zip(h2_costs_aviationfig, co2_ts_costs)]
 
-    LCOs_fuels_df = [get_LCOs(h2_cost=h2, co2_cost=co2, co2_transport_storage=co2_transport_storage_costs, calc_LCO_comps=True) for h2, co2 in zip(h2_costs, co2_costs_fuels)]
+    LCOs_fuels_df = [get_LCOs(h2_cost=h2, co2_cost=co2, co2_transport_storage=co2_transport_storage_costs, calc_LCO_comps=True) for h2, co2 in zip(h2_costs_fuels, co2_costs_fuels)]
 
     #additional set of LCOs for steel FSCP figure
     LCOs_df_base = [get_LCOs(h2_cost=h2, co2_cost=co2, co2_transport_storage=co2_transport_storage_costs, fossil_steel_capex = 0, comp_steel_capex = 0) for h2, co2 in zip(h2_costs_steel, co2_costs_steel)]
@@ -139,6 +170,8 @@ def plot_basicfigs():
     #calculate LCOs for different gas prices
     LCOs_df_blueh2 = [get_LCOs(h2_cost=70, co2_cost=800, co2_transport_storage=co2_transport_storage_costs, fossilng_LCO = fossilng_LCO, calc_LCO_comps=False) for fossilng_LCO in [10,20,30,40]]
     
+
+    get_LCOs_kerosene_project()
     ### UNCOMMENT BELOW TO DO SOME PLOTTING (FIGURE 1)###
 
     # line below: full panel plotting, with no MAC, but instead LCO breakdown
