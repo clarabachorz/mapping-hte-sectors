@@ -100,22 +100,76 @@ def get_LCOs_kerosene_project():
     kerosene_lco_high = []
     kerosene_lco_low = []
 
+    kerosene_lcobreakdown_average = []
+    kerosene_lcobreakdown_high = []
+    kerosene_lcobreakdown_low = []
+    #CAPEX: cost in USD/kW * extra for stack replacement * conversion to EUR * conversion to /MWh
+    #test, comps = calc_costs.calc_all_LCO_wbreakdown(elec_LCO = 60, h2_capex = 1850*1.5*0.92/8.76, h2_flh = 3750/8760, h2_elecdemand = 1/0.65, co2_LCO = 200)
+    
     #iteration
     for index, row in df.iterrows():
-        lco_average = get_LCOs(h2_cost = row['average'], co2_cost=200)
-        lco_high = get_LCOs(h2_cost = row['high'], co2_cost=200)
-        lco_low = get_LCOs(h2_cost = row['low'], co2_cost=200)
+        params_average = {
+            'elec_LCO': row['elec_LCO_average'],
+            'h2_capex': row['h2_capex_average'],
+            'h2_flh': row['h2_flh_average'],
+            'h2_elecdemand': row['h2_elecdemand_average'],
+            'co2_LCO': row['co2_LCO_average'],
+            'ch3oh_capex': row['ch3oh_capex_average'],
+            'MtJ_capex': row['MtJ_capex_average'],
+        }
+        params_high = {
+            'elec_LCO': row['elec_LCO_high'],
+            'h2_capex': row['h2_capex_high'],
+            'h2_flh': row['h2_flh_high'],
+            'h2_elecdemand': row['h2_elecdemand_high'],
+            'co2_LCO': row['co2_LCO_high'],
+            'ch3oh_capex': row['ch3oh_capex_high'],
+            'MtJ_capex': row['MtJ_capex_high'],
+        }
+        params_low = {
+            'elec_LCO': row['elec_LCO_low'],
+            'h2_capex': row['h2_capex_low'],
+            'h2_flh': row['h2_flh_low'],
+            'h2_elecdemand': row['h2_elecdemand_low'],
+            'co2_LCO': row['co2_LCO_low'],
+            'ch3oh_capex': row['ch3oh_capex_low'],
+            'MtJ_capex': row['MtJ_capex_low'],
+        }
 
-        kerosene_lco_average.append(lco_average.loc[lco_average["tech"] == "MtJ", "cost"].values[0])
-        kerosene_lco_high.append(lco_high.loc[lco_high["tech"] == "MtJ", "cost"].values[0])
-        kerosene_lco_low.append(lco_low.loc[lco_low["tech"] == "MtJ", "cost"].values[0])
+        # Calculate LCOs for each scenario
+        lco_average, lcobreakdown_average = calc_costs.calc_all_LCO_wbreakdown(**params_average)
+        lco_high, lcobreakdown_high = calc_costs.calc_all_LCO_wbreakdown(**params_high)
+        lco_low, lcobreakdown_low = calc_costs.calc_all_LCO_wbreakdown(**params_low)
 
-    df['kero_lco_average'] = kerosene_lco_average
-    df['kero_lco_high'] = kerosene_lco_high
-    df['kero_lco_low'] = kerosene_lco_low
 
-    #save df
-    df_tosave = df[['Year','kero_lco_average','kero_lco_high','kero_lco_low']]
+        #calculate extended breakdown
+        lcobreakdown_average = calc_costs.breakdown_LCO_comps(lcobreakdown_average)[1]
+        lcobreakdown_average['Year'] = row['year']
+        lcobreakdown_average['case'] = 'medium'
+
+        lcobreakdown_high = calc_costs.breakdown_LCO_comps(lcobreakdown_high)[1]
+        lcobreakdown_high['Year'] = row['year']
+        lcobreakdown_high['case'] = 'high'
+        
+        lcobreakdown_low = calc_costs.breakdown_LCO_comps(lcobreakdown_low)[1]
+        lcobreakdown_low['Year'] = row['year']
+        lcobreakdown_low['case'] = 'low'
+
+        kerosene_lcobreakdown_average.append(lcobreakdown_average.loc[lcobreakdown_average["tech"] == "MtJ"].dropna(axis = 1).drop(columns=["tech", "ch3oh", "ch3oh_h2", "h2"]))
+        kerosene_lcobreakdown_high.append(lcobreakdown_high.loc[lcobreakdown_high["tech"] == "MtJ"].dropna(axis = 1).drop(columns=["tech", "ch3oh", "ch3oh_h2", "h2"]))
+        kerosene_lcobreakdown_low.append(lcobreakdown_low.loc[lcobreakdown_low["tech"] == "MtJ"].dropna(axis = 1).drop(columns=["tech", "ch3oh", "ch3oh_h2", "h2"]))
+
+    # concatenate all cases into a single DataFrame
+    breakdown_df_average = pd.concat(kerosene_lcobreakdown_average, ignore_index=True)
+    breakdown_df_high = pd.concat(kerosene_lcobreakdown_high, ignore_index=True)
+    breakdown_df_low = pd.concat(kerosene_lcobreakdown_low, ignore_index=True)
+
+
+    df_tosave = pd.concat([breakdown_df_average, breakdown_df_high, breakdown_df_low], ignore_index=True)
+    # #rename some columns
+    df_tosave = df_tosave.rename(columns={"capex": "MtJ_capex","opex": "MtJ_opex","elec": "MtJ_elec", "h2_capex":"MtJ_h2_capex", "h2_elec":"MtJ_h2_elec", "h2_opex":"MtJ_h2_opex"})
+    print(df_tosave)
+    # # #save df
 
     df_tosave.to_csv("keroseneLCO_only.csv", index=False)
 

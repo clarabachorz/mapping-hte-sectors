@@ -122,9 +122,10 @@
         {
             "key": "h2",
             "capex": 121,
-            "opex": 2,
-            "lifetime": 20,
+            "opex": 3,
+            "lifetime": 30,
             "flh": 0.3,
+            "wacc": 0.08,
             "elecdemand ": 1.61,
             "unit": "EUR/MWh",
             "desc": "h2 using electrolysis"
