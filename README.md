@@ -1,6 +1,6 @@
 # Research software for exploring techno-economic landscapes of abatement options for hard-to-electrify sectors.
 ## Overview
-This research software was used to obtain results for the article **Exploring techno-economic landscapes of abatement options for hard-to-electrify sectors** (link and DOI TBC).
+This research software was used to obtain results for the article **Exploring techno-economic landscapes of abatement options for hard-to-electrify sectors** ([https://doi.org/10.1038/s41467-025-59277-1](https://doi.org/10.1038/s41467-025-59277-1)).
 
 It performs a techno-economic analysis of different abatement options for the hard-to-electrify (HTE) sectors: steel, cement, chemical feedstocks, international aviation and international transport. The levelized cost of different products (LCOPs) and the fuel-switching CO2 price (FSCP) are then obtained, and plotted in different figures.
 
@@ -43,7 +43,7 @@ This script will update every csv files in the `data` folder. It takes between 2
 
 ### Interactive webapp
 
-A webapp associated with this work can be found [here](https://github.com/clarabachorz/mapping-hte-sectors-webapp), to interactively view the detail of the technoeconomic assumptions taken, and the different levelized cost components.
+A webapp associated with this work can be found [here](https://doi.org/10.5880/pik.2025.001), to interactively view the detail of the technoeconomic assumptions taken, and the different levelized cost components. The associated software is available on GitHub [in this repository](https://github.com/clarabachorz/mapping-hte-sectors-webapp).
 
 ## How to cite this work
 
